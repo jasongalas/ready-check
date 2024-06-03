@@ -7,18 +7,28 @@ const userSchema = new Schema({
   userName: {
     type: String,
     required: true,
+    unique: true,
     trim: true,
   },
   email: {
     type: String,
     required: true,
     unique: true,
+    trim: true,
   },
   password: {
     type: String,
     required: true,
     minlength: 8,
   },
+  friends: [{
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  }]
+});
+
+userSchema.virtual('Friend Count').get(function() {
+    return this.friends.length;
 });
 
 userSchema.methods.isCorrectPassword = async function (password) {
