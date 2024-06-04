@@ -4,6 +4,13 @@ const typeDefs = `
         username: String
         email: String
         password: String
+        profile: [Profile]
+    }
+
+    type Profile {
+        status: String
+        bio: String
+        friends: [User]
     }
 
     type ReadyCheck {
@@ -11,7 +18,12 @@ const typeDefs = `
         title: String
         description: String
         createdat: String
-        attendees: [User]
+        attendees: [Attendee]
+    }
+
+    type Attendee {
+        user: User
+        status: String
     }
 
     type Auth {
@@ -51,6 +63,10 @@ const typeDefs = `
             createdat: String,
             attendees: [User]
         ): ReadyCheck
+        updateUserStatus(
+            status: String!
+        ): User
+
     }
 `
 

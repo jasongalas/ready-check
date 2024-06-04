@@ -11,7 +11,7 @@ const Home = () => {
   const [isModalOpen, setModalOpen] = useState(false);
 
   return (
-    <>
+    <section>
       <Navbar />
         <main>
           {isAuthenticated ? (
@@ -64,7 +64,7 @@ const Home = () => {
       </main>
       <Footer />
       {isModalOpen && <ReadyCheckForm closeModal={() => setModalOpen(false)} />}
-    </>
+    </section>
   );
 };
 
