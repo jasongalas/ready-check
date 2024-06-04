@@ -1,5 +1,26 @@
 import { gql } from '@apollo/client';
 
+export const QUERY_READY_CHECK = gql`
+    query ReadyCheck($id: ID!) {
+        readyCheck(id: $id) {
+            id
+            title
+            whatToBeReadyFor
+            whenToBeReady
+            description
+            users {
+                id
+                name
+            }
+            responses {
+                userId
+                answer
+            }
+            responseOptions
+        }
+    }
+`;
+
 export const QUERY_USER = gql`
   query user($username: String!) {
     user(username: $username) {
@@ -15,32 +36,15 @@ export const QUERY_USER = gql`
   }
 `;
 
-export const QUERY_THOUGHTS = gql`
-  query getThoughts {
-    thoughts {
-      _id
-      thoughtText
-      thoughtAuthor
-      createdAt
+export const QUERY_FRIENDS = gql`
+    query Friends($userId: ID!) {
+        user(id: $userId) {
+            friends {
+                id
+                name
+            }
+        }
     }
-  }
-`;
-
-export const QUERY_SINGLE_THOUGHT = gql`
-  query getSingleThought($thoughtId: ID!) {
-    thought(thoughtId: $thoughtId) {
-      _id
-      thoughtText
-      thoughtAuthor
-      createdAt
-      comments {
-        _id
-        commentText
-        commentAuthor
-        createdAt
-      }
-    }
-  }
 `;
 
 export const QUERY_ME = gql`
@@ -56,5 +60,22 @@ export const QUERY_ME = gql`
         createdAt
       }
     }
+  }
+`;
+
+export const QUERY_NOTIFICATIONS = gql`
+  query notification {notifications(userId: $userId) {
+    id
+    type
+    sender {
+      id
+      name
+    }
+    readyCheck {
+      id
+      title
+      description
+    }
+
   }
 `;
