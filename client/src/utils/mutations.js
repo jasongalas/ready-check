@@ -5,8 +5,8 @@ export const CREATE_READY_CHECK = gql`
         createReadyCheck(input: $input) {
             id
             title
-            whatToBeReadyFor
-            whenToBeReady
+            activity
+            timing
             description
             users
             responseOptions
@@ -19,8 +19,8 @@ export const UPDATE_READY_CHECK = gql`
         updateReadyCheck(id: $id, input: $input) {
             id
             title
-            whatToBeReadyFor
-            whenToBeReady
+            activity
+            timing
             description
             users {
                 id

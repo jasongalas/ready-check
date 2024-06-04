@@ -5,8 +5,8 @@ export const QUERY_READY_CHECK = gql`
         readyCheck(id: $id) {
             id
             title
-            whatToBeReadyFor
-            whenToBeReady
+            activity
+            timing
             description
             users {
                 id
@@ -21,17 +21,22 @@ export const QUERY_READY_CHECK = gql`
     }
 `;
 
+export const QUERY_USERS = gql`
+  query users($username: String!) {
+    users(username: $username) {
+      _id
+      username
+      email
+    }
+  }
+`;
+
 export const QUERY_USER = gql`
   query user($username: String!) {
     user(username: $username) {
       _id
       username
       email
-      thoughts {
-        _id
-        thoughtText
-        createdAt
-      }
     }
   }
 `;
