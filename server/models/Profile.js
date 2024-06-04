@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose');
+const readyCheckSchema = require('./ReadyCheck');
 
 const profileSchema = new Schema({
     status: {
@@ -16,10 +17,10 @@ const profileSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User'
       }],
-    readyCheck: [readyCheckShema],
+    readyCheck: [readyCheckSchema],
 });
 
-userSchema.virtual('Following').get(function() {
+profileSchema.virtual('Following').get(function() {
     return this.friends.length;
 });
 
