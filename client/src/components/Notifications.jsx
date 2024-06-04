@@ -1,10 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
-import { GET_NOTIFICATIONS } from '../utils/queries';
+import { QUERY_NOTIFICATIONS } from '../utils/queries';
 
 function Notifications({ userId }) {
-    const { data } = useQuery(GET_NOTIFICATIONS, { variables: { userId } });
+    const { data } = useQuery(QUERY_NOTIFICATIONS, { variables: { userId } });
 
     return (
         <div className="navbar-end">

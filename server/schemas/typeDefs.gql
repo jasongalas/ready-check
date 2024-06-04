@@ -4,18 +4,28 @@ const typeDefs = `
         username: String
         email: String
         password: String
-        profile: [Profile]
-    }
-
-    type Profile {
         status: String
         bio: String
         friends: [User]
+        ownedReadyChecks: [ReadyCheck]
+        receivedReadyChecks: [ReadyCheck]
+
+    }
+
+    input ReadyCheckInput {
+        owner: ID!
+        title: String!
+        activity: String!
+        timing: String!
+        description: String!
     }
 
     type ReadyCheck {
         _id: ID
+        owner: User
         title: String
+        activity: String
+        timing: String
         description: String
         createdat: String
         attendees: [Attendee]
@@ -23,7 +33,7 @@ const typeDefs = `
 
     type Attendee {
         user: User
-        status: String
+        rsvp: String
     }
 
     type Notification {
@@ -35,15 +45,14 @@ const typeDefs = `
         read: Boolean
     }
 
-
     type Auth {
         token: ID!
         user: User
     }
 
     type Query {
-        getUser (username: String!): User
-        getReadyCheck(id: ID!): ReadyCheck
+        getUser: User
+        getReadyCheck(id: String!): ReadyCheck
         getFriends(userId: ID!): [User]
         me: User
         notifications(userId: ID!): [Notification]
@@ -66,17 +75,13 @@ const typeDefs = `
         unfollowFriend (
             username: String!
         ): User
-        createReadyCheck(
-            title: String!,
-            description: String,
-            createdat: String,
-            attendees: [User]
-        ): ReadyCheck
+        createReadyCheck(input: ReadyCheckInput!): ReadyCheck!
         updateReadyCheck(
-            title: String!,
-            description: String,
-            createdat: String,
-            attendees: [User]
+            title: String
+            activity: String
+            timing: String
+            description: String
+            # attendees: [User]
         ): ReadyCheck
         updateUserStatus(
             status: String!

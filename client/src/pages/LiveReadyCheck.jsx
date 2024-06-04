@@ -44,7 +44,7 @@ function LiveReadyCheckPage() {
     const { title, description, activity, timing, attendees } = data.readyCheck;
 
     // Check if the current user is the owner of the ready check
-    const isOwner = data.readyCheck.owner === currentUser; // Replace currentUser with the actual logged-in user
+    const isOwner = data.readyCheck.owner === currentUser; 
 
     return (
         <div>

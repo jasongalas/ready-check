@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import UserList from './UserList';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { CREATE_READY_CHECK } from '../utils/mutations';
 
@@ -11,11 +11,11 @@ function ReadyCheckForm() {
     const [timing, setTiming] = useState('');
     const [recipients, setRecipients] = useState([]);
     const responseOptions = [`I'm In`, `I'm Out`, `Maybe`];
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const [createReadyCheck, { loading, error }] = useMutation(CREATE_READY_CHECK, {
         onCompleted: (data) => {
-            history.push(`/rsvp/${data.createReadyCheck.id}`);
+            navigate(`/rsvp/${data.createReadyCheck.id}`);
         }
     });
 
