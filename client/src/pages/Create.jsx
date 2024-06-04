@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { CREATE_READY_CHECK } from '../utils/mutations';
-import ResponseOptions from './ResponseOptions';
 
 function CreateReadyCheckPage() {
     const [readyCheck, setReadyCheck] = useState({
@@ -67,10 +66,6 @@ function CreateReadyCheckPage() {
                     type="text"
                     value={readyCheck.users}
                     onChange={(e) => setReadyCheck({ ...readyCheck, users: e.target.value })}
-                />
-                <ResponseOptions
-                    responseOptions={readyCheck.responseOptions}
-                    setResponseOptions={handleResponseOptionsChange}
                 />
                 <button type="submit" disabled={loading}>
                     {loading ? 'Creating...' : 'Create Ready Check'}
