@@ -6,8 +6,8 @@ import { CREATE_READY_CHECK, UPDATE_READY_CHECK } from '../utils/mutations';
 function CreateReadyCheckPage({ readyCheckData }) {
     const [readyCheck, setReadyCheck] = useState({
         title: '',
-        whatToBeReadyFor: '',
-        whenToBeReady: '',
+        activity: '',
+        timing: '',
         description: '',
         users: '',
         responseOptions: [
@@ -29,8 +29,8 @@ function CreateReadyCheckPage({ readyCheckData }) {
         e.preventDefault();
         try {
             const { data } = await mutationFunction({ variables: { input: readyCheck } });
-            const createdReadyCheck = data.createReadyCheck || data.updateReadyCheck;
-            history.push(`/rsvp/${createdReadyCheck.id}`);
+            const newReadyCheck = data.createReadyCheck || data.updateReadyCheck;
+            history.push(`/rsvp/${newReadyCheck.id}`);
         } catch (err) {
             console.error('Error creating or updating Ready Check:', err);
         }
