@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { CREATE_READY_CHECK, UPDATE_READY_CHECK } from '../utils/mutations';
 
 function CreateReadyCheckPage({ readyCheckData }) {
+    const navigate = useNavigate();
+
     const [readyCheck, setReadyCheck] = useState({
         title: '',
         activity: '',
@@ -13,7 +15,7 @@ function CreateReadyCheckPage({ readyCheckData }) {
         responseOptions: [
             { text: "I'm Ready", value: 'accepted' },
             { text: "Maybe", value: 'maybe' },
-            { text: "I Can't Join", value: 'denied' }
+            { text: "I Can't Join", value: 'declined' }
         ]
     });
     const [mutationFunction, { loading, error }] = useMutation(readyCheckData ? UPDATE_READY_CHECK : CREATE_READY_CHECK);
