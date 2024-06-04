@@ -1,53 +1,58 @@
 import { gql } from '@apollo/client';
 
 export const CREATE_READY_CHECK = gql`
-    mutation CreateReadyCheck($input: ReadyCheckInput!) {
-        createReadyCheck(input: $input) {
-            id
+    mutation CreateReadyCheck($title: String!, $description: String) {
+        createReadyCheck(title: $title, description: $description) {
+            _id
             title
             activity
             timing
             description
-            users
-            responseOptions
+            createdAt
+            attendees {
+                user {
+                    _id
+                    username
+                }
+                status
         }
     }
 `;
 
 export const UPDATE_READY_CHECK = gql`
-    mutation UpdateReadyCheck($id: ID!, $input: ReadyCheckInput!) {
-        updateReadyCheck(id: $id, input: $input) {
-            id
+    mutation UpdateReadyCheck($id: ID!, $title: String!, $description: String) {
+        updateReadyCheck(id: $id, title: $title, description: $description) {
+            _id
             title
             activity
             timing
             description
-            users {
-                id
-                name
-            }
-            responses {
-                userId
-                answer
-            }
-            responseOptions
+            createdAt
+            attendees {
+                user {
+                    _id
+                    username
+                }
+                status
         }
     }
 `;
 
 export const UPDATE_USER_STATUS = gql`
-    mutation UpdateUserStatus($userId: ID!, $status: String!) {
-        updateUserStatus(userId: $userId, status: $status) {
-            id
-            status
+    mutation UpdateUserStatus($status: String!) {
+        updateUserStatus(status: $status) {
+            _id
+            profile {
+                status
+            }
         }
     }
 `;
 
 
 export const ADD_FRIEND = gql`
-    mutation AddFriend($userId: ID!, $friendId: ID!) {
-        addFriend(userId: $userId, friendId: $friendId) {
+    mutation AddFriend($username: String!) {
+        addFriend(username: $username) {
             id
             friends {
                 id
@@ -58,8 +63,8 @@ export const ADD_FRIEND = gql`
 `;
 
 export const REMOVE_FRIEND = gql`
-    mutation RemoveFriend($userId: ID!, $friendId: ID!) {
-        removeFriend(userId: $userId, friendId: $friendId) {
+    mutation RemoveFriend($username: String!) {
+        removeFriend(username: $username) {
             id
             friends {
                 id
@@ -71,7 +76,7 @@ export const REMOVE_FRIEND = gql`
 
 //
 
-export const LOGIN_USER = gql`
+export const LOGIN = gql`
   mutation login($email: String!, $password: String!) {
     login(email: $email, password: $password) {
       token
@@ -83,7 +88,7 @@ export const LOGIN_USER = gql`
   }
 `;
 
-export const ADD_USER = gql`
+export const CREATE_USER = gql`
   mutation addUser($username: String!, $email: String!, $password: String!) {
     addUser(username: $username, email: $email, password: $password) {
       token
@@ -94,34 +99,3 @@ export const ADD_USER = gql`
     }
   }
 `;
-
-// export const ADD_THOUGHT = gql`
-//   mutation addThought($thoughtText: String!) {
-//     addThought(thoughtText: $thoughtText) {
-//       _id
-//       thoughtText
-//       thoughtAuthor
-//       createdAt
-//       comments {
-//         _id
-//         commentText
-//       }
-//     }
-//   }
-// `;
-
-// export const ADD_COMMENT = gql`
-//   mutation addComment($thoughtId: ID!, $commentText: String!) {
-//     addComment(thoughtId: $thoughtId, commentText: $commentText) {
-//       _id
-//       thoughtText
-//       thoughtAuthor
-//       createdAt
-//       comments {
-//         _id
-//         commentText
-//         createdAt
-//       }
-//     }
-//   }
-// `;

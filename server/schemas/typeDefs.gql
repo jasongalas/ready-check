@@ -1,0 +1,73 @@
+const typeDefs = `
+    type User {
+        _id: ID
+        username: String
+        email: String
+        password: String
+        profile: [Profile]
+    }
+
+    type Profile {
+        status: String
+        bio: String
+        friends: [User]
+    }
+
+    type ReadyCheck {
+        _id: ID
+        title: String
+        description: String
+        createdat: String
+        attendees: [Attendee]
+    }
+
+    type Attendee {
+        user: User
+        status: String
+    }
+
+    type Auth {
+        token: ID!
+        user: User
+    }
+
+    type Query {
+        getUser: User
+    }
+
+    type Mutation {
+        createUser(
+            username: String!,
+            email: String!,
+            password: String!
+        ): Auth
+        login(
+            email: String!,
+            password: String!
+        ): Auth
+        followFriend (
+            username: String!
+        ): User
+        unfollowFriend (
+            username: String!
+        ): User
+        createReadyCheck(
+            title: String!,
+            description: String,
+            createdat: String,
+            attendees: [User]
+        ): ReadyCheck
+        updateReadyCheck(
+            title: String!,
+            description: String,
+            createdat: String,
+            attendees: [User]
+        ): ReadyCheck
+        updateUserStatus(
+            status: String!
+        ): User
+
+    }
+`
+
+module.exports = typeDefs;
