@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { fetchUsers } from '../utils/api';
+import { QUERY_USER } from '../utils/queries';
 
 function UserList() {
 

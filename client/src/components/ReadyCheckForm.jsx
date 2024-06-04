@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import UserList from './UserList';
 import { useHistory } from 'react-router-dom';
-import { createReadyCheck } from '../utils/api';
+import { useMutation } from '@apollo/client';
+import { CREATE_READY_CHECK } from '../utils/mutations';
 
 function ReadyCheckForm() {
     const [title, setTitle] = useState('');
@@ -11,6 +12,12 @@ function ReadyCheckForm() {
     const [recipients, setRecipients] = useState([]);
     const responseOptions = [`I'm In`, `I'm Out`, `Maybe`];
     const history = useHistory();
+
+    const [createReadyCheck, { loading, error }] = useMutation(CREATE_READY_CHECK, {
+        onCompleted: (data) => {
+            history.push(`/rsvp/${data.createReadyCheck.id}`);
+        }
+    });
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -23,8 +30,7 @@ function ReadyCheckForm() {
             responseOptions
         };
         
-        const newReadyCheck = await createReadyCheck(readyCheck);
-        history.push(`/rsvp/${newReadyCheck.id}`);
+        await createReadyCheck({ variables: { input: readyCheck } });
     };
 
     return (
@@ -65,7 +71,10 @@ function ReadyCheckForm() {
                 />
             </div>
             <UserList recipients={recipients} setRecipients={setRecipients} />
-            <button type="submit">Create Ready Check</button>
+            <button type="submit" disabled={loading}>
+                {loading ? 'Creating...' : 'Create Ready Check'}
+            </button>
+            {error && <p>Error: {error.message}</p>}
         </form>
     );
 }
