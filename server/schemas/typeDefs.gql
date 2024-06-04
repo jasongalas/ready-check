@@ -1,7 +1,7 @@
 const typeDefs = `
     type User {
         _id: ID
-        userName: String
+        username: String
         email: String
         password: String
     }
@@ -25,7 +25,7 @@ const typeDefs = `
 
     type Mutation {
         createUser(
-            userName: String!,
+            username: String!,
             email: String!,
             password: String!
         ): Auth
@@ -33,7 +33,10 @@ const typeDefs = `
             email: String!,
             password: String!
         ): Auth
-        addFriend (
+        followFriend (
+            username: String!
+        ): User
+        unfollowFriend (
             username: String!
         ): User
         createReadyCheck(
