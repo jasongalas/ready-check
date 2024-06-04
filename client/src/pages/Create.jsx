@@ -31,7 +31,7 @@ function CreateReadyCheckPage({ readyCheckData }) {
         try {
             const { data } = await mutationFunction({ variables: { input: readyCheck } });
             const newReadyCheck = data.createReadyCheck || data.updateReadyCheck;
-            navigate(`/rsvp/${newReadyCheck.id}`);
+            navigate(`/readycheck/${newReadyCheck.id}`);
         } catch (err) {
             console.error('Error creating or updating Ready Check:', err);
         }

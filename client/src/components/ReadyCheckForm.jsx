@@ -15,7 +15,7 @@ function ReadyCheckForm() {
 
     const [createReadyCheck, { loading, error }] = useMutation(CREATE_READY_CHECK, {
         onCompleted: (data) => {
-            navigate(`/rsvp/${data.createReadyCheck.id}`);
+            navigate(`/readycheck/${data.createReadyCheck.id}`);
         }
     });
 
