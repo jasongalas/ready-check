@@ -1,14 +1,7 @@
 import React from 'react';
 import "./style.css";
 
-function Nav({ pages, setCurrentPage, currentPage }) {
-    const handleScroll = (sectionId) => {
-        const section = document.getElementById(sectionId);
-        if (section) {
-            section.scrollIntoView({ behavior: 'smooth' });
-        }
-    };
-
+function Nav() {
     return (
         <nav className="nav-container">
 

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { CREATE_READY_CHECK } from '../utils/mutations';
+import ResponseOptions from './ResponseOptions';
 
 function CreateReadyCheckPage() {
     const [readyCheck, setReadyCheck] = useState({
@@ -10,9 +11,12 @@ function CreateReadyCheckPage() {
         whenToBeReady: '',
         description: '',
         users: '',
-        responseOptions: ["I'm Ready", "I'll be Late", "I Can't Join"]
+        responseOptions: [
+            { text: "I'm Ready", value: 'accepted' },
+            { text: "I'll be Late", value: 'accepted-late' },
+            { text: "I Can't Join", value: 'denied' }
+        ]
     });
-    const [customResponseOption, setCustomResponseOption] = useState('');
     const history = useHistory();
     const [createReadyCheck, { loading, error }] = useMutation(CREATE_READY_CHECK);
 
@@ -27,19 +31,7 @@ function CreateReadyCheckPage() {
         }
     };
 
-    const handleAddCustomOption = () => {
-        if (customResponseOption) {
-            setReadyCheck({
-                ...readyCheck,
-                responseOptions: [...readyCheck.responseOptions, customResponseOption]
-            });
-            setCustomResponseOption('');
-        }
-    };
-
-    const handleOptionChange = (index, value) => {
-        const newOptions = [...readyCheck.responseOptions];
-        newOptions[index] = value;
+    const handleResponseOptionsChange = (newOptions) => {
         setReadyCheck({ ...readyCheck, responseOptions: newOptions });
     };
 
@@ -76,25 +68,10 @@ function CreateReadyCheckPage() {
                     value={readyCheck.users}
                     onChange={(e) => setReadyCheck({ ...readyCheck, users: e.target.value })}
                 />
-                <label>Response options</label>
-                {readyCheck.responseOptions.map((option, index) => (
-                    <div key={index}>
-                        <input
-                            type="text"
-                            value={option}
-                            onChange={(e) => handleOptionChange(index, e.target.value)}
-                        />
-                    </div>
-                ))}
-                <input
-                    type="text"
-                    placeholder="Add custom response option"
-                    value={customResponseOption}
-                    onChange={(e) => setCustomResponseOption(e.target.value)}
+                <ResponseOptions
+                    responseOptions={readyCheck.responseOptions}
+                    setResponseOptions={handleResponseOptionsChange}
                 />
-                <button type="button" onClick={handleAddCustomOption}>
-                    Add Option
-                </button>
                 <button type="submit" disabled={loading}>
                     {loading ? 'Creating...' : 'Create Ready Check'}
                 </button>

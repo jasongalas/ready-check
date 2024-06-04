@@ -5,9 +5,15 @@ function ResponseOptions({ responseOptions, setResponseOptions }) {
 
     const addOption = () => {
         if (option) {
-            setResponseOptions([...responseOptions, option]);
+            setResponseOptions([...responseOptions, { text: option, value: 'pending' }]);
             setOption('');
         }
+    };
+
+    const handleOptionValueChange = (index, value) => {
+        const newOptions = [...responseOptions];
+        newOptions[index].value = value;
+        setResponseOptions(newOptions);
     };
 
     return (
@@ -23,7 +29,22 @@ function ResponseOptions({ responseOptions, setResponseOptions }) {
             </div>
             <ul>
                 {responseOptions.map((opt, index) => (
-                    <li key={index}>{opt}</li>
+                    <li key={index}>
+                        <input
+                            type="text"
+                            value={opt.text}
+                            readOnly
+                        />
+                        <select
+                            value={opt.value}
+                            onChange={(e) => handleOptionValueChange(index, e.target.value)}
+                        >
+                            <option value="accepted">Accepted</option>
+                            <option value="denied">Denied</option>
+                            <option value="accepted-late">Accepted Late</option>
+                            <option value="pending">Pending</option>
+                        </select>
+                    </li>
                 ))}
             </ul>
         </div>

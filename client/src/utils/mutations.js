@@ -35,6 +35,42 @@ export const UPDATE_READY_CHECK = gql`
     }
 `;
 
+export const UPDATE_USER_STATUS = gql`
+    mutation UpdateUserStatus($userId: ID!, $status: String!) {
+        updateUserStatus(userId: $userId, status: $status) {
+            id
+            status
+        }
+    }
+`;
+
+
+export const ADD_FRIEND = gql`
+    mutation AddFriend($userId: ID!, $friendId: ID!) {
+        addFriend(userId: $userId, friendId: $friendId) {
+            id
+            friends {
+                id
+                name
+            }
+        }
+    }
+`;
+
+export const REMOVE_FRIEND = gql`
+    mutation RemoveFriend($userId: ID!, $friendId: ID!) {
+        removeFriend(userId: $userId, friendId: $friendId) {
+            id
+            friends {
+                id
+                name
+            }
+        }
+    }
+`;
+
+//
+
 export const LOGIN_USER = gql`
   mutation login($email: String!, $password: String!) {
     login(email: $email, password: $password) {
