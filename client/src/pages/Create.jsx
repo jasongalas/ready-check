@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
-import { CREATE_READY_CHECK } from '../utils/mutations';
-import ResponseOptions from './ResponseOptions';
+import { CREATE_READY_CHECK, UPDATE_READY_CHECK } from '../utils/mutations';
 
-function CreateReadyCheckPage() {
+function CreateReadyCheckPage({ readyCheckData }) {
     const [readyCheck, setReadyCheck] = useState({
         title: '',
         whatToBeReadyFor: '',
@@ -13,31 +12,33 @@ function CreateReadyCheckPage() {
         users: '',
         responseOptions: [
             { text: "I'm Ready", value: 'accepted' },
-            { text: "I'll be Late", value: 'accepted-late' },
+            { text: "Maybe", value: 'maybe' },
             { text: "I Can't Join", value: 'denied' }
         ]
     });
     const history = useHistory();
-    const [createReadyCheck, { loading, error }] = useMutation(CREATE_READY_CHECK);
+    const [mutationFunction, { loading, error }] = useMutation(readyCheckData ? UPDATE_READY_CHECK : CREATE_READY_CHECK);
+
+    useEffect(() => {
+        if (readyCheckData) {
+            setReadyCheck(readyCheckData);
+        }
+    }, [readyCheckData]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const { data } = await createReadyCheck({ variables: { input: readyCheck } });
-            const createdReadyCheck = data.createReadyCheck;
+            const { data } = await mutationFunction({ variables: { input: readyCheck } });
+            const createdReadyCheck = data.createReadyCheck || data.updateReadyCheck;
             history.push(`/rsvp/${createdReadyCheck.id}`);
         } catch (err) {
-            console.error('Error creating Ready Check:', err);
+            console.error('Error creating or updating Ready Check:', err);
         }
-    };
-
-    const handleResponseOptionsChange = (newOptions) => {
-        setReadyCheck({ ...readyCheck, responseOptions: newOptions });
     };
 
     return (
         <div>
-            <h1>Create Ready Check</h1>
+            <h1>{readyCheckData ? 'Edit' : 'Create'} Ready Check</h1>
             <form onSubmit={handleSubmit}>
                 <label>Title</label>
                 <input
@@ -68,14 +69,36 @@ function CreateReadyCheckPage() {
                     value={readyCheck.users}
                     onChange={(e) => setReadyCheck({ ...readyCheck, users: e.target.value })}
                 />
-                <ResponseOptions
-                    responseOptions={readyCheck.responseOptions}
-                    setResponseOptions={handleResponseOptionsChange}
-                />
+                <label>RSVP Options</label>
+                <div>
+                    {readyCheck.responseOptions.map((option, index) => (
+                        <div key={index}>
+                            <input
+                                type="checkbox"
+                                id={option.value}
+                                value={option.value}
+                                onChange={(e) => {
+                                    const checked = e.target.checked;
+                                    setReadyCheck(prevState => {
+                                        const updatedOptions = prevState.responseOptions.map((o, i) => {
+                                            if (index === i) {
+                                                return { ...o, selected: checked };
+                                            } else {
+                                                return o;
+                                            }
+                                        });
+                                        return { ...prevState, responseOptions: updatedOptions };
+                                    });
+                                }}
+                            />
+                            <label htmlFor={option.value}>{option.text}</label>
+                        </div>
+                    ))}
+                </div>
                 <button type="submit" disabled={loading}>
-                    {loading ? 'Creating...' : 'Create Ready Check'}
+                    {loading ? 'Submitting...' : `${readyCheckData ? 'Update' : 'Create'} Ready Check`}
                 </button>
-                {error && <p>Error creating Ready Check: {error.message}</p>}
+                {error && <p>Error {readyCheckData ? 'updating' : 'creating'} Ready Check: {error.message}</p>}
             </form>
         </div>
     );
