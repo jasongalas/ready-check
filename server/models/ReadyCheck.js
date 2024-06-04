@@ -28,7 +28,7 @@ const readyCheckSchema = new Schema({
         },
         status: {
             type: String,
-            enum: ['accepted', 'denied', 'pending'],
+            enum: ['accepted', 'denied', 'accepted-late', 'pending'],
             default: 'pending'
         }
     }]
