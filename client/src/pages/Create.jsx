@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { navigate } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { CREATE_READY_CHECK, UPDATE_READY_CHECK } from '../utils/mutations';
 
@@ -16,7 +16,6 @@ function CreateReadyCheckPage({ readyCheckData }) {
             { text: "I Can't Join", value: 'denied' }
         ]
     });
-    const history = useHistory();
     const [mutationFunction, { loading, error }] = useMutation(readyCheckData ? UPDATE_READY_CHECK : CREATE_READY_CHECK);
 
     useEffect(() => {
@@ -30,7 +29,7 @@ function CreateReadyCheckPage({ readyCheckData }) {
         try {
             const { data } = await mutationFunction({ variables: { input: readyCheck } });
             const newReadyCheck = data.createReadyCheck || data.updateReadyCheck;
-            history.push(`/rsvp/${newReadyCheck.id}`);
+            navigate(`/rsvp/${newReadyCheck.id}`);
         } catch (err) {
             console.error('Error creating or updating Ready Check:', err);
         }
@@ -49,14 +48,14 @@ function CreateReadyCheckPage({ readyCheckData }) {
                 <label>Get Ready For...</label>
                 <input
                     type="text"
-                    value={readyCheck.whatToBeReadyFor}
-                    onChange={(e) => setReadyCheck({ ...readyCheck, whatToBeReadyFor: e.target.value })}
+                    value={readyCheck.activity}
+                    onChange={(e) => setReadyCheck({ ...readyCheck, activity: e.target.value })}
                 />
                 <label>When to be ready</label>
                 <input
                     type="datetime-local"
-                    value={readyCheck.whenToBeReady}
-                    onChange={(e) => setReadyCheck({ ...readyCheck, whenToBeReady: e.target.value })}
+                    value={readyCheck.timing}
+                    onChange={(e) => setReadyCheck({ ...readyCheck, timing: e.target.value })}
                 />
                 <label>Description</label>
                 <textarea
