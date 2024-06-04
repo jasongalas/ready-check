@@ -5,6 +5,8 @@ export const CREATE_READY_CHECK = gql`
         createReadyCheck(title: $title, description: $description) {
             _id
             title
+            activity
+            timing
             description
             createdAt
             attendees {
@@ -22,6 +24,8 @@ export const UPDATE_READY_CHECK = gql`
         updateReadyCheck(id: $id, title: $title, description: $description) {
             _id
             title
+            activity
+            timing
             description
             createdAt
             attendees {
