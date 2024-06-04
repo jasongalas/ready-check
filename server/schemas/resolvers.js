@@ -4,7 +4,10 @@ const { signToken, AuthenticationError } = require('../utils/auth')
 const resolvers = {
     Query: {
         getUser: async (parent, _,context) => {
-            return Thought.findById({ _id: context.user._id });
+            if (!context.user) {
+                throw new AuthenticationError('You need to be logged in!');
+            }
+            return User.findById({ _id: context.user._id }).populate('profile.friends');
         }
     },
 
@@ -36,7 +39,7 @@ const resolvers = {
                 { _id: context.user._id },
                 { $addToSet: { friends: username }},
                 { new: true },
-            )
+            ).populate('profile.friends');
             return hiFriend;
         },
         unfollowFriend: async (parent, { username }, context) => {
@@ -44,7 +47,7 @@ const resolvers = {
                 { _id: context.user._id },
                 { $pull: { friends: username }},
                 { new: true },
-            )
+            ).populate('profile.friends');
             return byeFriend;
         },
         createReadyCheck: async (parent, { title, description }, context) => {
@@ -63,6 +66,20 @@ const resolvers = {
             )
             return updateData;
         },
+        updateUserStatus: async (parent, { status }, context) => {
+            if (!context.user) {
+                throw new AuthenticationError('You need to be logged in!');
+            }
+
+            const updatedUser = await User.findOneAndUpdate(
+                { _id: context.user._id },
+                { $set: { status } },
+                { new: true }
+            ).populate('profile.friends');
+
+            return updatedUser;
+        }
+
     }
 }
 
