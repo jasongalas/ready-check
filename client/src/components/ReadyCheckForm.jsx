@@ -1,34 +1,36 @@
-
-
-
 import React, { useState } from 'react';
 import UserList from './UserList';
-import ResponseOptions from './ResponseOptions';
 import { useHistory } from 'react-router-dom';
-import { createReadyCheck } from '../utils/api';
+import { useMutation } from '@apollo/client';
+import { CREATE_READY_CHECK } from '../utils/mutations';
 
 function ReadyCheckForm() {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
-    const [whatToBeReadyFor, setWhatToBeReadyFor] = useState('');
-    const [whenToBeReady, setWhenToBeReady] = useState('');
-    const [selectedUsers, setSelectedUsers] = useState([]);
-    const [responseOptions, setResponseOptions] = useState([]);
+    const [activity, setActivity] = useState('');
+    const [timing, setTiming] = useState('');
+    const [recipients, setRecipients] = useState([]);
+    const responseOptions = [`I'm In`, `I'm Out`, `Maybe`];
     const history = useHistory();
+
+    const [createReadyCheck, { loading, error }] = useMutation(CREATE_READY_CHECK, {
+        onCompleted: (data) => {
+            history.push(`/rsvp/${data.createReadyCheck.id}`);
+        }
+    });
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         const readyCheck = {
             title,
             description,
-            whatToBeReadyFor,
-            whenToBeReady,
-            selectedUsers,
+            activity,
+            timing,
+            recipients,
             responseOptions
         };
         
-        const newReadyCheck = await createReadyCheck(readyCheck);
-        history.push(`/rsvp/${newReadyCheck.id}`);
+        await createReadyCheck({ variables: { input: readyCheck } });
     };
 
     return (
@@ -54,8 +56,8 @@ function ReadyCheckForm() {
                 <label>What to be ready for</label>
                 <input 
                     type="text" 
-                    value={whatToBeReadyFor} 
-                    onChange={(e) => setWhatToBeReadyFor(e.target.value)} 
+                    value={activity} 
+                    onChange={(e) => setActivity(e.target.value)} 
                     required 
                 />
             </div>
@@ -63,14 +65,16 @@ function ReadyCheckForm() {
                 <label>When to be ready</label>
                 <input 
                     type="datetime-local" 
-                    value={whenToBeReady} 
-                    onChange={(e) => setWhenToBeReady(e.target.value)} 
+                    value={timing} 
+                    onChange={(e) => setTiming(e.target.value)} 
                     required 
                 />
             </div>
-            <UserList selectedUsers={selectedUsers} setSelectedUsers={setSelectedUsers} />
-            <ResponseOptions responseOptions={responseOptions} setResponseOptions={setResponseOptions} />
-            <button type="submit">Create Ready Check</button>
+            <UserList recipients={recipients} setRecipients={setRecipients} />
+            <button type="submit" disabled={loading}>
+                {loading ? 'Creating...' : 'Create Ready Check'}
+            </button>
+            {error && <p>Error: {error.message}</p>}
         </form>
     );
 }
