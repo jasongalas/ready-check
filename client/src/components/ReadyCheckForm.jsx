@@ -1,9 +1,5 @@
-
-
-
 import React, { useState } from 'react';
 import UserList from './UserList';
-import ResponseOptions from './ResponseOptions';
 import { useHistory } from 'react-router-dom';
 import { createReadyCheck } from '../utils/api';
 
@@ -13,7 +9,7 @@ function ReadyCheckForm() {
     const [activity, setActivity] = useState('');
     const [timing, setTiming] = useState('');
     const [recipients, setRecipients] = useState([]);
-    const [responseOptions, setResponseOptions] = useState([]);
+    const responseOptions = [`I'm In`, `I'm Out`, `Maybe`];
     const history = useHistory();
 
     const handleSubmit = async (e) => {
@@ -69,7 +65,6 @@ function ReadyCheckForm() {
                 />
             </div>
             <UserList recipients={recipients} setRecipients={setRecipients} />
-            <ResponseOptions responseOptions={responseOptions} setResponseOptions={setResponseOptions} />
             <button type="submit">Create Ready Check</button>
         </form>
     );
