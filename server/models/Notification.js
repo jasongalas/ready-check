@@ -19,7 +19,6 @@ const notificationSchema = new Schema({
   readyCheck: {
     type: Schema.Types.ObjectId,
     ref: 'ReadyCheck',
-    required: false
   },
   createdAt: {
     type: Date,

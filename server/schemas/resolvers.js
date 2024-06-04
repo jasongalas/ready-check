@@ -1,29 +1,28 @@
-const { User, ReadyCheck, Notification } = require ('../models');
+const { User, ReadyCheck, Notification } = require('../models');
 const { signToken, AuthenticationError } = require('../utils/auth')
 
 const resolvers = {
     Query: {
 
-        getUser: async (parent, _,context) => {
+        getUser: async (p, _, context) => {
             if (!context.user) {
                 throw new AuthenticationError('You need to be logged in!');
-                }
-            return User.findById({ _id: context.user._id }).populate('profile.friends');
             }
+            return User.findById({ _id: context.user._id });
         },
 
         getReadyCheck: async (parent, { id }, context) => {
             if (!context.user) {
                 throw new AuthenticationError('You need to be logged in!');
             }
-            return ReadyCheck.findById(id).populate('attendees.user');
+            return ReadyCheck.findById(id);
         },
 
         getFriends: async (parent, { userId }, context) => {
             if (!context.user) {
                 throw new AuthenticationError('You need to be logged in!');
             }
-            const user = await User.findById(userId).populate('profile.friends');
+            const user = await User.findById(userId).populate('user.friends');
             return user.profile.friends;
         },
 
@@ -34,12 +33,13 @@ const resolvers = {
             return User.findById(context.user._id).populate('profile.friends');
         },
 
-        getNotifications: async (parent, { userId }, context) => {
+        notifications: async (parent, { userId }, context) => {
             if (!context.user) {
                 throw new AuthenticationError('You need to be logged in!');
             }
             return Notification.find({ recipient: userId }).populate('sender readyCheck');
         },
+    },
 
     Mutation: {
 
@@ -51,21 +51,21 @@ const resolvers = {
 
         login: async (parent, { email, password }) => {
             const user = await User.findOne({ email });
-      
+
             if (!user) {
-              throw new AuthenticationError('User not found');
+                throw new AuthenticationError('User not found');
             }
-      
+
             const correctPw = await user.isCorrectPassword(password);
-      
+
             if (!correctPw) {
-              throw new AuthenticationError('Incorrect password');
+                throw new AuthenticationError('Incorrect password');
             }
-      
+
             const token = signToken(user);
-      
+
             return { token, user };
-          },
+        },
 
         followFriend: async (parent, { username }, context) => {
             if (!context.user) {
@@ -79,7 +79,7 @@ const resolvers = {
 
             const updatedFriend = await User.findOneAndUpdate(
                 { _id: context.user._id },
-                { $addToSet: { 'profile.friends': friend._id }},
+                { $addToSet: { 'profile.friends': friend._id } },
                 { new: true },
             ).populate('profile.friends');
 
@@ -104,7 +104,7 @@ const resolvers = {
 
             const updatedFriend = await User.findOneAndUpdate(
                 { _id: context.user._id },
-                { $pull: { friends: username }},
+                { $pull: { friends: username } },
                 { new: true },
             ).populate('profile.friends');
 
@@ -118,14 +118,18 @@ const resolvers = {
 
         },
 
-        createReadyCheck: async (parent, { title, description }, context) => {
-            const data = await ReadyCheck.create(
-                { _id: context.user._id },
-                { $addToSet: { readyCheck: { title, description } } },
-                { new: true },
-            )
+        createReadyCheck: async (parent, { input }, context) => {
+            const { owner, title, activity, timing, description } = input;
+            const data = await ReadyCheck.create({
+              owner,
+              title,
+              activity,
+              timing,
+              description,
+              createdAt: new Date().toISOString(), // Assuming createdAt should be populated with current time
+            });
             return data;
-        },
+          },
 
         updateReadyCheck: async (parent, { title, description }, context) => {
             const updatedData = await ReadyCheck.findOneAndUpdate(
@@ -133,9 +137,9 @@ const resolvers = {
                 { $set: { readyCheck: { title, description } } },
                 { new: true },
             )
-            return updateData;
+            return updatedData;
         },
-        
+
         updateUserStatus: async (parent, { status }, context) => {
             if (!context.user) {
                 throw new AuthenticationError('You need to be logged in!');

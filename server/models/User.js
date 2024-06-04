@@ -1,6 +1,4 @@
-const mongoose = require('mongoose');
-const { Schema } = mongoose;
-const profileSchema = require('./Profile');
+const { Schema, model } = require('mongoose');
 const bcrypt = require('bcrypt');
 
 const userSchema = new Schema({
@@ -21,13 +19,39 @@ const userSchema = new Schema({
     required: true,
     minlength: 8,
   },
-  profile: [profileSchema]
+  status: {
+    type: String,
+    required: true,
+    trim: true,
+    maxlength: 50,
+  },
+  bio: {
+    type: String,
+    trim: true,
+    maxlength: 140,
+  },
+  friends: [{
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  ownedReadyChecks: [{
+    type: Schema.Types.ObjectId,
+    ref: 'ReadyCheck',
+  }],
+  receivedReadyChecks: [{
+    type: Schema.Types.ObjectId,
+    ref: 'ReadyCheck',
+  }]
 });
 
 userSchema.methods.isCorrectPassword = async function (password) {
-    await bcrypt.compare(password, this.password);
-  };
+  await bcrypt.compare(password, this.password);
+};
 
-const User = mongoose.model('User', userSchema);
+userSchema.virtual('Following').get(function () {
+  return this.friends.length;
+});
+
+const User = model('User', userSchema);
 
 module.exports = User;

@@ -2,6 +2,10 @@ const { Schema, model } = require('mongoose');
 const dateFormat = require('../utils/dateFormat');
 
 const readyCheckSchema = new Schema({
+    owner: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+    },
     title: {
         type: String,
         required: true,
@@ -35,9 +39,9 @@ const readyCheckSchema = new Schema({
             ref:'User',
             required: true
         },
-        status: {
+        rsvp: {
             type: String,
-            enum: ['accepted', 'denied', 'pending'],
+            enum: ['accepted', 'maybe', 'declined', 'pending'],
             default: 'pending'
         }
     }]
