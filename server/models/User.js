@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-
 const { Schema } = mongoose;
+const profileSchema = require('./Profile');
 const bcrypt = require('bcrypt');
 
 const userSchema = new Schema({
@@ -21,14 +21,7 @@ const userSchema = new Schema({
     required: true,
     minlength: 8,
   },
-  friends: [{
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  }]
-});
-
-userSchema.virtual('Friend Count').get(function() {
-    return this.friends.length;
+  profile: [profileSchema]
 });
 
 userSchema.methods.isCorrectPassword = async function (password) {
