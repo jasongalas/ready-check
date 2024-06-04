@@ -20,7 +20,7 @@ function Notifications({ userId }) {
                             {data &&
                                 data.notifications.map((notification) => (
                                     <div key={notification.id}>
-                                        <Link to={`/rsvp/${notification.relatedId}`}>
+                                        <Link to={`/readycheck/${notification.relatedId}`}>
                                             <div className="collapse-title text-lg font-medium">{notification.title}</div>
                                             <div className="collapse-content">
                                                 <p>{notification.message}</p>
