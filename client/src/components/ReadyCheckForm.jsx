@@ -10,9 +10,9 @@ import { createReadyCheck } from '../utils/api';
 function ReadyCheckForm() {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
-    const [whatToBeReadyFor, setWhatToBeReadyFor] = useState('');
-    const [whenToBeReady, setWhenToBeReady] = useState('');
-    const [selectedUsers, setSelectedUsers] = useState([]);
+    const [activity, setActivity] = useState('');
+    const [timing, setTiming] = useState('');
+    const [recipients, setRecipients] = useState([]);
     const [responseOptions, setResponseOptions] = useState([]);
     const history = useHistory();
 
@@ -21,9 +21,9 @@ function ReadyCheckForm() {
         const readyCheck = {
             title,
             description,
-            whatToBeReadyFor,
-            whenToBeReady,
-            selectedUsers,
+            activity,
+            timing,
+            recipients,
             responseOptions
         };
         
@@ -54,8 +54,8 @@ function ReadyCheckForm() {
                 <label>What to be ready for</label>
                 <input 
                     type="text" 
-                    value={whatToBeReadyFor} 
-                    onChange={(e) => setWhatToBeReadyFor(e.target.value)} 
+                    value={activity} 
+                    onChange={(e) => setActivity(e.target.value)} 
                     required 
                 />
             </div>
@@ -63,12 +63,12 @@ function ReadyCheckForm() {
                 <label>When to be ready</label>
                 <input 
                     type="datetime-local" 
-                    value={whenToBeReady} 
-                    onChange={(e) => setWhenToBeReady(e.target.value)} 
+                    value={timing} 
+                    onChange={(e) => setTiming(e.target.value)} 
                     required 
                 />
             </div>
-            <UserList selectedUsers={selectedUsers} setSelectedUsers={setSelectedUsers} />
+            <UserList recipients={recipients} setRecipients={setRecipients} />
             <ResponseOptions responseOptions={responseOptions} setResponseOptions={setResponseOptions} />
             <button type="submit">Create Ready Check</button>
         </form>
