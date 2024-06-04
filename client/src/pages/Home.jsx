@@ -2,7 +2,7 @@ import React from 'react';
 import { useQuery } from '@apollo/client';
 import Navbar from '../components/NavBar';
 import Footer from '../components/Footer';
-import ReadyCheckForm from './components/ReadyCheckForm';
+import ReadyCheckForm from '../components/ReadyCheckForm';
 
 const Home = () => {
   // Placeholder for user authentication 

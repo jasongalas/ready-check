@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { CREATE_READY_CHECK, UPDATE_READY_CHECK } from '../utils/mutations';
 
+
 function CreateReadyCheckPage({ readyCheckData }) {
     const [readyCheck, setReadyCheck] = useState({
         title: '',

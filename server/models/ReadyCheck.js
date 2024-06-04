@@ -9,6 +9,15 @@ const readyCheckSchema = new Schema({
         maxLength: 100,
         trim: true
     },
+    activity: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    timing: {
+        type: Date,
+        required: true,
+    },
     description: {
         type: String,
         required: false,

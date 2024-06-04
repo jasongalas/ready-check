@@ -9,7 +9,7 @@ import Footer from './components/Footer';
 import LoginPage from './pages/Login';
 import SignUpPage from './pages/Signup';
 
-import { AuthProvider } from './AuthContext';
+import { AuthProvider } from './utils/authContext';
 
 
 function App() {
