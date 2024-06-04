@@ -31,6 +31,8 @@ const typeDefs = `
         type: String
         sender: User
         readyCheck: ReadyCheck
+        createdAt: String
+        read: Boolean
     }
 
 
@@ -79,6 +81,12 @@ const typeDefs = `
         updateUserStatus(
             status: String!
         ): User
+         markNotificationAsRead(
+            notificationId: ID!
+        ): Notification
+        deleteNotification(
+            notificationId: ID!
+        ): Notification
 
     }
 `

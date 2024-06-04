@@ -8,15 +8,11 @@ export const QUERY_READY_CHECK = gql`
             activity
             timing
             description
-            users {
-                id
-                name
+            createdAt
+            attendees {
+                user
+                status
             }
-            responses {
-                userId
-                answer
-            }
-            responseOptions
         }
     }
 `;
