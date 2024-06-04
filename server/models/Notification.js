@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose');
+const dateFormat = require('../utils/dateFormat');
 
 const notificationSchema = new Schema({
   type: {
@@ -19,8 +20,17 @@ const notificationSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'ReadyCheck',
     required: false
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+    get: (timestamp) => dateFormat(timestamp)
+  },
+  read: {
+    type: Boolean,
+    default: false
   }
 });
 
-const Notification = model('Notification', notificationSchema);
+const Notification = model('Notifications', notificationSchema);
 module.exports = Notification;
