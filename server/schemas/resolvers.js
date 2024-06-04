@@ -6,10 +6,35 @@ const resolvers = {
         getUser: async (parent, _,context) => {
             if (!context.user) {
                 throw new AuthenticationError('You need to be logged in!');
-            }
+                }
             return User.findById({ _id: context.user._id }).populate('profile.friends');
-        }
-    },
+            }
+        },
+        getReadyCheck: async (parent, { id }, context) => {
+            if (!context.user) {
+                throw new AuthenticationError('You need to be logged in!');
+            }
+            return ReadyCheck.findById(id).populate('attendees.user');
+        },
+        getFriends: async (parent, { userId }, context) => {
+            if (!context.user) {
+                throw new AuthenticationError('You need to be logged in!');
+            }
+            const user = await User.findById(userId).populate('profile.friends');
+            return user.profile.friends;
+        },
+        me: async (parent, args, context) => {
+            if (!context.user) {
+                throw new AuthenticationError('You need to be logged in!');
+            }
+            return User.findById(context.user._id).populate('profile.friends');
+        },
+        notifications: async (parent, { userId }, context) => {
+            if (!context.user) {
+                throw new AuthenticationError('You need to be logged in!');
+            }
+            return Notification.find({ recipient: userId }).populate('sender readyCheck');
+        },
 
     Mutation: {
         createUser: async (parent, { username, email, password }) => {

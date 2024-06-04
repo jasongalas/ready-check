@@ -3,7 +3,7 @@ import { gql } from '@apollo/client';
 export const QUERY_READY_CHECK = gql`
     query ReadyCheck($id: ID!) {
         readyCheck(id: $id) {
-            id
+            _id
             title
             activity
             timing
@@ -45,7 +45,7 @@ export const QUERY_FRIENDS = gql`
     query Friends($userId: ID!) {
         user(id: $userId) {
             friends {
-                id
+                _id
                 name
             }
         }
@@ -73,11 +73,11 @@ export const QUERY_NOTIFICATIONS = gql`
     id
     type
     sender {
-      id
+      _id
       name
     }
     readyCheck {
-      id
+      _id
       title
       description
     }
