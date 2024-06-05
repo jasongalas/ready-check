@@ -3,8 +3,8 @@ import App from './App.jsx'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import './index.css'
 // import LiveReadyCheck from './pages/LiveReadyCheck';
-import Home from './pages/Home';
-// import LoginPage from './pages/Login';
+import Home from './pages/Home.jsx';
+// import LoginPage from './pages/Login.jsx';
 // import SignUpPage from './pages/Signup';
 // import ProfilePage from './pages/ProfilePage.jsx'
 

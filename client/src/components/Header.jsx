@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 //import './Header.css';
 
 const Header = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -23,7 +23,7 @@ const Header = () => {
   }
 
   const goToProfilePage = () => {
-    navigate('/profile');
+    navigate('/myprofile');
   }
 
   const goToReadyCheckPage = () => {
