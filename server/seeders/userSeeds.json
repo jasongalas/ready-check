@@ -2,21 +2,25 @@
     {
       "username": "cfriedman",
       "email": "chaseafriedman@gmail.com",
-      "password": "password123"
+      "password": "password123",
+      "status": "Online"
     },
     {
       "username": "jalas",
       "email": "jasongalas@gmail.com",
-      "password": "password123"
+      "password": "password123",
+      "status": "Online"
     },
     {
       "username": "win",
       "email": "win@gmail.com",
-      "password": "password123"
+      "password": "password123",
+      "status": "Online"
     },
     {
       "username": "mariedevil",
       "email": "marie@gmail.com",
-      "password": "password123"
+      "password": "password123",
+      "status": "Online"
     }
 ]
