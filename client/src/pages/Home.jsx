@@ -1,8 +1,7 @@
-import React from 'react';
+import { useState } from 'react';
 import { useQuery } from '@apollo/client';
-import Navbar from '../components/NavBar';
-import Footer from '../components/Footer';
-import ReadyCheckForm from '../components/ReadyCheckForm';
+
+// import ReadyCheckForm from '../components/ReadyCheckForm';
 
 const Home = () => {
   // Placeholder for user authentication 
@@ -11,9 +10,9 @@ const Home = () => {
   const [isModalOpen, setModalOpen] = useState(false);
 
   return (
-    <section>
-      <Navbar />
-        <main>
+    
+   
+       <main>
           {isAuthenticated ? (
             <div className="flex flex-wrap justify-center gap-4">
               <div className="card w-96 bg-accent text-primary-content">
@@ -61,10 +60,9 @@ const Home = () => {
               </div>
             </div>
         )}
+      {/* {isModalOpen && (<ReadyCheckForm closeModal={() => setModalOpen(false)} />)}  */}
       </main>
-      <Footer />
-      {isModalOpen && <ReadyCheckForm closeModal={() => setModalOpen(false)} />}
-    </section>
+
   );
 };
 
