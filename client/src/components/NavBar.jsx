@@ -28,3 +28,5 @@ function NavBar({ isLoggedIn, setIsLoggedIn }) {
 }
 
 export default NavBar;
+
+
