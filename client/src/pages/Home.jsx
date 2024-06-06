@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useQuery } from '@apollo/client';
+import { useNavigate } from 'react-router-dom';
 
 // import ReadyCheckForm from '../components/ReadyCheckForm';
 
 const Home = () => {
   // Placeholder for user authentication 
+  const navigate = useNavigate();
   const isAuthenticated = true;
 
   const [isModalOpen, setModalOpen] = useState(false);
@@ -65,7 +67,6 @@ const Home = () => {
                         </div>
                       <div className="modal-action">
                         <form method="dialog">
-                          {/* if there is a button in form, it will close the modal */}
                           <button className="btn">Close</button>
                         </form>
                       </div>
@@ -75,17 +76,17 @@ const Home = () => {
               <div className="divider lg:divider-horizontal">
               </div>              
                 <div className="flex flex-wrap w-1/2 justify-center gap-4">
-                  <button onClick={() => window.location.href = '/active-readychecks'} className="btn btn-accent card mt-10 py-20 w-full bg-accent text-primary-content shadow-xl">
+                  <button onClick={() => navigate('/active-readychecks')} className="btn btn-accent card mt-10 py-20 w-full bg-accent text-primary-content shadow-xl">
                     <div className="card-body text-white text-center">
                       <h2 className="text-center font-bold text-4xl m-3">Active ReadyChecks</h2>
                     </div>
                   </button>
-                  <button onClick={() => window.location.href = '/social'} className="btn btn-success card py-20 w-full text-primary-content shadow-xl">
+                  <button onClick={() => navigate('/social')} className="btn btn-success card py-20 w-full text-primary-content shadow-xl">
                     <div className="card-body text-white text-center">
                       <h2 className="text-center font-bold text-4xl m-3">Social</h2>
                     </div>
                   </button>
-                  <button onClick={() => window.location.href = '/myprofile'} className="btn btn-warning card  py-20 w-full text-primary-content shadow-xl">
+                  <button onClick={() => navigate('/myprofile')} className="btn btn-warning card  py-20 w-full text-primary-content shadow-xl">
                     <div className="card-body text-white text-center">
                       <h2 className="text-center font-bold text-4xl m-3">Profile</h2>
                     </div>
@@ -99,9 +100,9 @@ const Home = () => {
                 <div className="max-w-md">
                   <h1 className="text-5xl font-bold">Welcome to Ready Check!</h1>
                   <p className="py-6">An app where you can invite friends to join you while playing video games!</p>
-                  <button className='text-primary' onClick={() => window.location.href = '/signup'}>New here? Sign up!</button>
+                  <button className='text-primary' onClick={() => navigate('/signup')}>New here? Sign up!</button>
                   <br></br>
-                  <button className='text-primary' onClick={() => window.location.href = '/login'}>Already have an account? Log in!</button>
+                  <button className='text-primary' onClick={() => navigate('/login')}>Already have an account? Log in!</button>
                 </div>
               </div>
             </div>
