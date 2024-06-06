@@ -123,18 +123,26 @@ const resolvers = {
             return updatedUser;
         },
 
-        createReadyCheck: async (_, { input }) => {
-            const { owner, title, activity, timing, description } = input;
-            const readyCheck = await ReadyCheck.create({
-                owner,
-                title,
-                activity,
-                timing,
-                description,
-                createdAt: new Date().toISOString(),
+        createReadyCheck: async (_, { ownerId, title, activity, timing, description, inviteeIds }) => {
+            const RSVPs = inviteeIds.map(userId => ({
+              user: userId,
+              reply: 'pending',
+            }));
+      
+            const newReadyCheck = new ReadyCheck({
+              owner: ownerId,
+              title,
+              activity,
+              timing,
+              description,
+              invitees: inviteeIds,
+              RSVPs,
             });
-            return readyCheck.populate('owner');
-        },
+      
+            await newReadyCheck.save();
+            
+            return newReadyCheck.populate('owner RSVPs.user').execPopulate();
+          },
 
         updateReadyCheck: async (_, { title, description }, context) => {
             const updatedData = await ReadyCheck.findOneAndUpdate(
@@ -183,24 +191,28 @@ const resolvers = {
             return notification;
         },
 
-        rsvpReadyCheck: async (_, { readyCheckId, userId, rsvp }) => {
+        rsvpReadyCheck: async (_, { readyCheckId, userId, reply }) => {
             const readyCheck = await ReadyCheck.findById(readyCheckId);
             if (!readyCheck) {
-                throw new Error('ReadyCheck not found');
+              throw new Error('ReadyCheck not found');
             }
-
-            const attendee = readyCheck.attendees.find(att => att.user.toString() === userId);
-            if (attendee) {
-                attendee.rsvp = rsvp;
+      
+            // Find the existing RSVP for the user
+            const existingRSVP = readyCheck.RSVPs.find((rsvp) => rsvp.user.toString() === userId);
+      
+            if (existingRSVP) {
+              // Update the reply for the existing RSVP
+              existingRSVP.reply = reply;
             } else {
-                readyCheck.attendees.push({ user: userId, rsvp });
+              // Create a new RSVP and add it to the RSVPs array
+              readyCheck.RSVPs.push({ user: userId, reply });
             }
-
+      
             await readyCheck.save();
-
-            return readyCheck.populate('owner attendees.user');
+      
+            return readyCheck.populate('owner RSVPs.user').execPopulate();
+          },
         },
-    },
 };
 
 module.exports = resolvers;

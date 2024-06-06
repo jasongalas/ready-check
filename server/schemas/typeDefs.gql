@@ -13,19 +13,6 @@ const typeDefs = `
     receivedReadyChecks: [ReadyCheck]
   }
 
-  input ReadyCheckInput {
-    owner: ID!
-    title: String!
-    activity: String!
-    timing: String!
-    description: String!
-  }
-
-  type Attendee {
-    user: User
-    rsvp: String
-  }
-
   type ReadyCheck {
     _id: ID
     owner: User
@@ -34,7 +21,22 @@ const typeDefs = `
     timing: String
     description: String
     createdAt: String
-    attendees: [Attendee]
+    invitees: [User]
+    RSVPs: [RSVP]
+  }
+
+  type RSVP {
+    user: User
+    reply: String
+  }
+
+  input ReadyCheckInput {
+    owner: ID!
+    title: String!
+    activity: String!
+    timing: String!
+    description: String!
+    inviteeIds: [ID!]!
   }
 
   type Notification {
@@ -83,7 +85,6 @@ const typeDefs = `
       activity: String
       timing: String
       description: String
-      # attendees: [User]
     ): ReadyCheck
     updateUserStatus(
       status: String!
@@ -94,7 +95,11 @@ const typeDefs = `
     deleteNotification(
       notificationId: ID!
     ): Notification
-    rsvpReadyCheck(readyCheckId: ID!, userId: ID!, rsvp: String!): ReadyCheck
+    rsvpReadyCheck(
+      readyCheckId: ID!,
+      userId: ID!,
+      reply: String!
+    ): ReadyCheck
   }
 `;
 
