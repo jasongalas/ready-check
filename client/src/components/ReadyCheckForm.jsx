@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import FriendsList from './FriendsList';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { CREATE_READY_CHECK } from '../utils/mutations';
 import { useSocket } from '../pages/SocketContext';
-import Auth from '../utils/auth';
+// import Auth from '../utils/auth';
 
 function ReadyCheckForm() {
     const [readyCheck, setReadyCheck] = useState({
@@ -58,7 +58,7 @@ function ReadyCheckForm() {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form id="my-modal-1" onSubmit={handleSubmit}>
             <div>
                 <label>Title</label>
                 <input 
@@ -97,7 +97,7 @@ function ReadyCheckForm() {
                     name="description"
                 />
             </div>
-            <FriendsList setRecipients={setRecipients} />
+            <FriendsList userId={userId} setRecipients={setRecipients} />
 
             <button id="submitReadyCheck" type="submit" disabled={loading}>
                 {loading ? 'Creating...' : 'Create Ready Check'}

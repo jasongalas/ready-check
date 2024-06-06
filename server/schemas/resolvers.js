@@ -123,33 +123,38 @@ const resolvers = {
             return updatedUser;
         },
 
-        createReadyCheck: async (_, { ownerId, title, activity, timing, description, inviteeIds }) => {
+        createReadyCheck: async (_, { input }) => {
+            const { owner, title, activity, timing, description, inviteeIds } = input;
+        
             const RSVPs = inviteeIds.map(userId => ({
-              user: userId,
-              reply: 'pending',
+                user: userId,
+                reply: 'pending',
             }));
-      
+        
             const newReadyCheck = new ReadyCheck({
-              owner: ownerId,
-              title,
-              activity,
-              timing,
-              description,
-              invitees: inviteeIds,
-              RSVPs,
+                owner,
+                title,
+                activity,
+                timing,
+                description,
+                invitees: inviteeIds,
+                RSVPs,
             });
-      
+        
             await newReadyCheck.save();
-            
-            return newReadyCheck.populate('owner RSVPs.user').execPopulate();
-          },
+        
+            // Populate the owner and RSVPs fields
+            await newReadyCheck.populate('owner RSVPs.user').execPopulate();
+        
+            return newReadyCheck;
+        },        
 
-        updateReadyCheck: async (_, { title, description }, context) => {
-            const updatedData = await ReadyCheck.findOneAndUpdate(
-                { _id: context.readyCheck._id },
-                { $set: { readyCheck: { title, description } } },
+          updateReadyCheck: async (_, { id, title, description }, context) => {
+            const updatedData = await ReadyCheck.findByIdAndUpdate(
+                id,
+                { title, description },
                 { new: true }
-            );
+            ).populate('owner invitees RSVPs.user');
             return updatedData;
         },
 
