@@ -7,7 +7,7 @@ export const useSocket = () => {
 export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   useEffect(() => {
-    const newSocket = io(process.env.CLIENT_SOCKET || 'http://localhost:3001'); 
+    const newSocket = io(import.meta.env.CLIENT_SOCKET || 'http://localhost:3001'); 
     setSocket(newSocket);
     return () => newSocket.close();
   }, []);
