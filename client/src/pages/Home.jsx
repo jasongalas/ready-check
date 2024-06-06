@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import ReadyCheckForm from '../components/ReadyCheckForm';
 
 const Home = () => {
+  const userId = 1;
   // Placeholder for user authentication 
   const navigate = useNavigate();
   const isAuthenticated = true;
@@ -41,6 +42,17 @@ const Home = () => {
                 </div>
               </div>
             </button>
+            <dialog id="my_modal_1" className="modal">
+              <div className="modal-box">
+                <ReadyCheckForm userId={1}/>
+                <div className="modal-action">
+                  <form method="dialog">
+
+                    <button className="btn">Close</button>
+                  </form>
+                </div>
+              </div>
+            </dialog>
           </div>
           <div className="divider lg:divider-horizontal"></div>
           <div className="flex flex-wrap w-1/2 justify-center gap-4">

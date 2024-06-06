@@ -15,7 +15,6 @@ const readyCheckSchema = new Schema({
   },
   activity: {
     type: String,
-    required: true,
     trim: true,
   },
   timing: {
@@ -35,17 +34,17 @@ const readyCheckSchema = new Schema({
   invitees: [{
     type: Schema.Types.ObjectId,
     ref: 'User',
-    required: true,
+    required: false,
   }],
   RSVPs: [{
     user: {
       type: Schema.Types.ObjectId,
       ref: 'User',
-      required: true,
+      // required: true,
     },
     reply: {
       type: String,
-      enum: ['accepted', 'declined', 'pending'],
+      enum: ['accepted', 'declined', 'maybe', 'pending'],
       default: 'pending',
     },
   }],

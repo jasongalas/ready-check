@@ -5,7 +5,7 @@ import { QUERY_USERS, QUERY_FRIENDS} from '../utils/queries';
 
 import Auth from '../utils/auth';
 
-function FriendsList({setRecipients}) {
+function FriendsList({setRecipients, userId}) {
     useEffect(() => {
         const user = Auth.getProfile()
         console.log(user)
@@ -74,6 +74,16 @@ function FriendsList({setRecipients}) {
     const toggleOptions = (friendId) => {
         setVisibleOptionsUserId((prevUserId) => (prevUserId === friendId ? null : friendId));
     };
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        
+        const { data } = await updateFriends({ variables: { input: readyCheck } });
+
+        if (data) {
+            socket.emit('updateFriends', data.updateFriends);
+        }
+    };
+
     return (
         <div>
             {/* Add Friend Form */}
