@@ -1,23 +1,19 @@
 import { gql } from '@apollo/client';
 
 export const CREATE_READY_CHECK = gql`
-    mutation CreateReadyCheck($title: String!, $description: String) {
-        createReadyCheck(title: $title, description: $description) {
-            _id
-            title
-            activity
-            timing
-            description
-            createdAt
-            attendees {
-                user {
-                    _id
-                    username
-                }
-                status
-            }
-        }
+mutation CreateReadyCheck($input: ReadyCheckInput!) {
+  createReadyCheck(input: $input) {
+    _id
+    title
+    activity
+    createdAt
+    description
+    invitees {
+      _id
     }
+    timing
+  }
+}
 `;
 
 export const UPDATE_READY_CHECK = gql`
@@ -29,7 +25,7 @@ export const UPDATE_READY_CHECK = gql`
             timing
             description
             createdAt
-            attendees {
+            invitees {
                 user {
                     _id
                     username

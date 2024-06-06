@@ -10,6 +10,10 @@ const resolvers = {
             return User.findById(context.user._id);
         },
 
+        getUsers: async (_, __, context) => {
+            return User.find({});
+        },
+
         getReadyCheck: async (_, { id }, context) => {
             if (!context.user) {
                 throw new AuthenticationError('You need to be logged in!');
@@ -124,7 +128,7 @@ const resolvers = {
         },
 
         createReadyCheck: async (_, { input }) => {
-            const { owner, title, activity, timing, description, inviteeIds } = input;
+            const { title, activity, timing, description, inviteeIds } = input;
         
             const RSVPs = inviteeIds.map(userId => ({
                 user: userId,
@@ -132,19 +136,17 @@ const resolvers = {
             }));
         
             const newReadyCheck = new ReadyCheck({
-                owner,
                 title,
                 activity,
                 timing,
                 description,
-                invitees: inviteeIds,
-                RSVPs,
+                invitees: inviteeIds
             });
         
             await newReadyCheck.save();
         
             // Populate the owner and RSVPs fields
-            await newReadyCheck.populate('owner RSVPs.user').execPopulate();
+            await newReadyCheck.populate('owner');
         
             return newReadyCheck;
         },        

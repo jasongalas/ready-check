@@ -31,12 +31,11 @@ const typeDefs = `
   }
 
   input ReadyCheckInput {
-    owner: ID!
     title: String!
-    activity: String!
+    activity: String
     timing: String!
-    description: String!
-    inviteeIds: [ID!]!
+    description: String
+    inviteeIds: [ID]
   }
 
   type Notification {
@@ -55,6 +54,7 @@ const typeDefs = `
 
   type Query {
     getUser: User
+    getUsers: [User]
     getReadyCheck(id: String!): ReadyCheck
     getFriends(userId: ID!): [User]
     me: User

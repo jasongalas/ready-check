@@ -21,7 +21,6 @@ const userSchema = new Schema({
   },
   status: {
     type: String,
-    required: true,
     trim: true,
     maxlength: 50,
   },

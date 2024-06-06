@@ -3,8 +3,8 @@ const { GraphQLError } = require('graphql');
 const jwt = require('jsonwebtoken');
 
 // set token secret and expiration date
-const secret = process.env.DB_SECRET;
-const expiration = process.env.DB_EXPIRATION;
+const secret = process.env.DB_SECRET || 'nottelling';
+const expiration = process.env.DB_EXPIRATION || '24h';
 
 module.exports = {
   AuthenticationError: new GraphQLError('Could not authenticate user.', {
@@ -35,7 +35,6 @@ module.exports = {
       console.log('Invalid token');
     }
     return req
-
 
   },
   signToken: function ({ username, email, _id }) {
