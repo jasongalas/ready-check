@@ -1,47 +1,27 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-
-// import { useMutation } from '@apollo/client';
-// import { CREATE_USER } from '../utils/mutations';
-
-// import Auth from '../utils/auth';
+import { useMutation } from '@apollo/client';
+import { CREATE_USER } from '../utils/mutations';
+import Auth from '../utils/auth';
 
 const Signup = () => {
-  const [formState, setFormState] = useState({
-    username: '',
-    email: '',
-    password: '',
-  });
-  //const [createUser, { error, data }] = useMutation(CREATE_USER);
+  const [formState, setFormState] = useState({ username: '', email: '', password: '' });
+  const [createUser, { error, data }] = useMutation(CREATE_USER);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-
-    setFormState({
-      ...formState,
-      [name]: value,
-    });
+    setFormState({ ...formState, [name]: value });
   };
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
-    console.log(formState);
-
-    // try {
-    //   const { data } = await createUser({
-    //     variables: { ...formState },
-    //   });
-
-    //   Auth.login(data.createUser.token);
-    // } catch (e) {
-    //   console.error(e);
-    // }
-
-    setFormState({
-      username: '',
-      email: '',
-      password: '',
-    });
+    try {
+      const { data } = await createUser({ variables: { ...formState } });
+      Auth.login(data.createUser.token);
+    } catch (e) {
+      console.error(e);
+    }
+    setFormState({ username: '', email: '', password: '' });
   };
 
   return (
@@ -50,20 +30,19 @@ const Signup = () => {
         <div className="card">
           <h4 className="card-header bg-dark text-light p-2">Sign Up</h4>
           <div className="card-body">
-            {/* {data ? (
+            {data ? (
               <p>
                 Success! You may now head{' '}
                 <Link to="/">back to the homepage.</Link>
-              </p> */}
-            {/* ) :
-             ( */} 
+              </p>
+            ) : (
               <form onSubmit={handleFormSubmit}>
                 <input
                   className="form-input"
                   placeholder="Your username"
                   name="username"
                   type="text"
-                  value={formState.name}
+                  value={formState.username}
                   onChange={handleChange}
                 />
                 <input
@@ -82,21 +61,12 @@ const Signup = () => {
                   value={formState.password}
                   onChange={handleChange}
                 />
-                <button
-                  className="btn btn-block btn-primary"
-                  style={{ cursor: 'pointer' }}
-                  type="submit"
-                >
+                <button className="btn btn-block btn-primary" style={{ cursor: 'pointer' }} type="submit">
                   Submit
                 </button>
               </form>
-            {/* )} */}
-
-            {/* {error && (
-              <div className="my-3 p-3 bg-danger text-white">
-                {error.message}
-              </div>
-            )} */}
+            )}
+            {error && <div className="my-3 p-3 bg-danger text-white">{error.message}</div>}
           </div>
         </div>
       </div>

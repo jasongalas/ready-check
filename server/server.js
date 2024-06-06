@@ -2,37 +2,62 @@ const express = require('express');
 const { ApolloServer } = require('@apollo/server');
 const { expressMiddleware } = require('@apollo/server/express4');
 const path = require('path');
+const http = require('http');
+const cors = require("cors");
 
+const { Server } = require('socket.io');
 const { typeDefs, resolvers } = require('./schemas');
 const db = require('./config/connection');
 const { authMiddleware } = require('./utils/auth');
-
 const PORT = process.env.PORT || 3001;
+
 const app = express();
-const server = new ApolloServer({
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: process.env.SOCKET_URL || "http://localhost:3000",
+  },
+});
+
+const apolloServer = new ApolloServer({
   typeDefs,
   resolvers,
 });
 
 const startApolloServer = async () => {
-  await server.start();
-  
+  await apolloServer.start();
+
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
-  
-  app.use('/graphql', expressMiddleware(server, { context: authMiddleware }));
 
-  // if we're in production, serve client/dist as static assets
+  app.use('/graphql', expressMiddleware(apolloServer, { context: authMiddleware }));
+
   if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.join(__dirname, '../client/dist')));
-
     app.get('*', (req, res) => {
       res.sendFile(path.join(__dirname, '../client/dist/index.html'));
     });
-  } 
+  }
 
   db.once('open', () => {
-    app.listen(PORT, () => {
+    io.on('connection', (socket) => {
+      console.log('A user connected');
+
+      socket.on('readycheck', (rc) => {
+        io.emit('readycheck', rc);
+      });
+
+      socket.on('chat message', (msg) => {
+        io.emit('chat message', msg);
+      });
+
+      socket.on('disconnect', () => {
+        console.log('A user disconnected');
+      });
+    });
+
+    server.listen(PORT, () => {
       console.log(`API server running on port ${PORT}!`);
       console.log(`Use GraphQL at http://localhost:${PORT}/graphql`);
     });
