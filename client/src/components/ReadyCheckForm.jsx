@@ -1,17 +1,22 @@
 import React, { useState } from 'react';
-import UserList from './UserList';
+import FriendsList from './FriendsList';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { CREATE_READY_CHECK } from '../utils/mutations';
+import { useSocket } from '../pages/SocketContext';
+import Auth from '../utils/auth';
 
 function ReadyCheckForm() {
-    const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
-    const [activity, setActivity] = useState('');
-    const [timing, setTiming] = useState('');
-    const [recipients, setRecipients] = useState([]);
-    const responseOptions = [`I'm In`, `I'm Out`, `Maybe`];
+    const [readyCheck, setReadyCheck] = useState({
+        title: '',
+        description: '',
+        activity: '',
+        timing: '',
+        recipients: [],
+    });
+
     const navigate = useNavigate();
+    const socket = useSocket();
 
     const [createReadyCheck, { loading, error }] = useMutation(CREATE_READY_CHECK, {
         onCompleted: (data) => {
@@ -19,58 +24,81 @@ function ReadyCheckForm() {
         }
     });
 
+    const handleReadyCheck = (e) => {
+        const {name, value} = e.target;
+        setReadyCheck({...readyCheck, name: value})
+    }
+
+    const setRecipients = (recipients) => {
+        setReadyCheck({...readyCheck, recipients: [...recipients]})
+    }
+
+    useEffect(() => {
+        if (socket) {
+            socket.on('readyCheckCreated', (readyCheck) => {
+                console.log('ReadyCheck created:', readyCheck);
+                // Additional logic to handle the created ReadyCheck if necessary
+            });
+
+            // Clean up the event listener when the component unmounts
+            return () => {
+                socket.off('readyCheckCreated');
+            };
+        }
+    }, [socket]);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const readyCheck = {
-            title,
-            description,
-            activity,
-            timing,
-            recipients,
-            responseOptions
-        };
         
-        await createReadyCheck({ variables: { input: readyCheck } });
+        const { data } = await createReadyCheck({ variables: { input: readyCheck } });
+
+        if (data) {
+            socket.emit('createReadyCheck', data.createReadyCheck);
+        }
     };
 
     return (
-        <form id="readyCheckForm" onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
             <div>
                 <label>Title</label>
                 <input 
                     type="text" 
-                    value={title} 
-                    onChange={(e) => setTitle(e.target.value)} 
+                    value={readyCheck.title} 
+                    onChange={handleReadyCheck} 
                     required 
-                />
-            </div>
-            <div>
-                <label>Description</label>
-                <textarea 
-                    value={description} 
-                    onChange={(e) => setDescription(e.target.value)} 
-                    required 
-                />
-            </div>
-            <div>
-                <label>What to be ready for</label>
-                <input 
-                    type="text" 
-                    value={activity} 
-                    onChange={(e) => setActivity(e.target.value)} 
-                    required 
+                    name="title"
                 />
             </div>
             <div>
                 <label>When to be ready</label>
                 <input 
                     type="datetime-local" 
-                    value={timing} 
-                    onChange={(e) => setTiming(e.target.value)} 
+                    value={readyCheck.timing} 
+                    onChange={handleReadyCheck} 
                     required 
+                    name="timing"
                 />
             </div>
-            <UserList recipients={recipients} setRecipients={setRecipients} />
+            <div>
+                <label>What to be ready for</label>
+                <input 
+                    type="text" 
+                    value={readyCheck.activity} 
+                    onChange={handleReadyCheck} 
+                    required 
+                    name="activity"
+                />
+            </div>
+            <div>
+                <label>Description</label>
+                <textarea 
+                    value={readyCheck.description} 
+                    onChange={handleReadyCheck}  
+                    name="description"
+                />
+            </div>
+            <FriendsList setRecipients={setRecipients} />
+
             <button id="submitReadyCheck" type="submit" disabled={loading}>
                 {loading ? 'Creating...' : 'Create Ready Check'}
             </button>

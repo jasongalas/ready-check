@@ -44,9 +44,20 @@ const startApolloServer = async () => {
     io.on('connection', (socket) => {
       console.log('A user connected');
 
-      socket.on('readycheck', (rc) => {
-        io.emit('readycheck', rc);
+      socket.on('readycheck', (readyCheckID) => {
+        io.emit('readycheck', readyCheckID);
+        io.join(readyCheckID)
       });
+
+      socket.on('readycheckUpdate', (readyCheckID) => {
+        io.emit('readycheckUpdate', readyCheckID);
+        io.join(readyCheckID)
+      });
+
+      // socket.on('readycheckRSVP', (readyCheckID) => {
+      //   io.emit('readycheckRSVP', readyCheckID);
+      //   io.join(readyCheckID)
+      // });
 
       socket.on('chat message', (msg) => {
         io.emit('chat message', msg);

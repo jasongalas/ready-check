@@ -1,14 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { useMutation, useQuery } from '@apollo/client';
-import { QUERY_USERS, QUERY_FRIENDS, ADD_FRIEND, REMOVE_FRIEND } from '../utils/mutations';
+import { ADD_FRIEND, REMOVE_FRIEND } from '../utils/mutations';
+import { QUERY_USERS, QUERY_FRIENDS} from '../utils/queries';
 
-function FriendsList({ userId }) {
+import Auth from '../utils/auth';
+
+function FriendsList({setRecipients}) {
+    useEffect(() => {
+        const user = Auth.getProfile()
+        console.log(user)
+    }, []);
+    
     // State to store the list of friends
     const [friends, setFriends] = useState([]);
+
     // State to store the search query
     const [searchQuery, setSearchQuery] = useState('');
+
     // State to store the search results
     const [searchResults, setSearchResults] = useState([]);
+
     // State to store the ID of the user whose options are visible
     const [visibleOptionsUserId, setVisibleOptionsUserId] = useState(null);
     const [addFriend] = useMutation(ADD_FRIEND);
@@ -19,12 +30,14 @@ function FriendsList({ userId }) {
     const { loading: usersLoading, data: usersData } = useQuery(QUERY_USERS, {
         variables: { username: searchQuery },
     });
+
     // Effect to update the friends list when friends data changes
     useEffect(() => {
         if (friendsData) {
             setFriends(friendsData.friends);
         }
     }, [friendsData]);
+
     // Effect to update the search results when users data changes
     useEffect(() => {
         if (usersData) {
