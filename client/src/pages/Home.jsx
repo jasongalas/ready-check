@@ -5,7 +5,7 @@ import { useQuery } from '@apollo/client';
 
 const Home = () => {
   // Placeholder for user authentication 
-  const isAuthenticated = true;  
+  const isAuthenticated = true;
 
   const [isModalOpen, setModalOpen] = useState(false);
 
@@ -114,4 +114,8 @@ const Home = () => {
   );
 };
 
+<<<<<<< HEAD
 export default Home;
+=======
+export default Home;
+>>>>>>> 5f3d05f188132f8b727534f7bece53f298cd758b

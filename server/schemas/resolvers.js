@@ -1,55 +1,61 @@
 const { User, ReadyCheck, Notification } = require('../models');
-const { signToken, AuthenticationError } = require('../utils/auth')
+const { signToken, AuthenticationError } = require('../utils/auth');
 
 const resolvers = {
     Query: {
-
-        getUser: async (p, _, context) => {
+        getUser: async (_, __, context) => {
             if (!context.user) {
                 throw new AuthenticationError('You need to be logged in!');
             }
-            return User.findById({ _id: context.user._id });
+            return User.findById(context.user._id);
         },
 
-        getReadyCheck: async (parent, { id }, context) => {
+        getReadyCheck: async (_, { id }, context) => {
             if (!context.user) {
                 throw new AuthenticationError('You need to be logged in!');
             }
             return ReadyCheck.findById(id);
         },
 
-        getFriends: async (parent, { userId }, context) => {
+        getFriends: async (_, { userId }, context) => {
             if (!context.user) {
                 throw new AuthenticationError('You need to be logged in!');
             }
-            const user = await User.findById(userId).populate('user.friends');
-            return user.profile.friends;
+            const user = await User.findById(userId).populate('friends');
+            return user.friends;
         },
 
-        me: async (parent, args, context) => {
+        me: async (_, __, context) => {
             if (!context.user) {
                 throw new AuthenticationError('You need to be logged in!');
             }
-            return User.findById(context.user._id).populate('profile.friends');
+            return User.findById(context.user._id).populate('friends');
         },
 
-        notifications: async (parent, { userId }, context) => {
+        notifications: async (_, { userId }, context) => {
             if (!context.user) {
                 throw new AuthenticationError('You need to be logged in!');
             }
             return Notification.find({ recipient: userId }).populate('sender readyCheck');
         },
+
+        readyChecks: async () => {
+            return ReadyCheck.find().populate('owner attendees.user');
+        },
+
+        readyCheck: async (_, { _id }) => {
+            return ReadyCheck.findById(_id).populate('owner attendees.user');
+        },
     },
 
     Mutation: {
-
-        createUser: async (parent, { username, email, password }) => {
+        createUser: async (_, { username, email, password }) => {
             const newUser = await User.create({ username, email, password });
             const token = signToken(newUser);
             return { token, newUser };
         },
 
-        login: async (parent, { email, password }) => {
+        login: async (_, { email, password }) => {
             const user = await User.findOne({ email });
 
             if (!user) {
@@ -67,21 +73,21 @@ const resolvers = {
             return { token, user };
         },
 
-        followFriend: async (parent, { username }, context) => {
+        followFriend: async (_, { username }, context) => {
             if (!context.user) {
                 throw new AuthenticationError('You need to be logged in!');
             }
 
-            const hiFriend = await User.findOne({ username });
-            if (!hiFriend) {
+            const friend = await User.findOne({ username });
+            if (!friend) {
                 throw new AuthenticationError('Friend not found');
             }
 
-            const updatedFriend = await User.findOneAndUpdate(
-                { _id: context.user._id },
-                { $addToSet: { 'profile.friends': friend._id } },
-                { new: true },
-            ).populate('profile.friends');
+            const updatedUser = await User.findByIdAndUpdate(
+                context.user._id,
+                { $addToSet: { friends: friend._id } },
+                { new: true }
+            ).populate('friends');
 
             await Notification.create({
                 type: 'follow',
@@ -89,24 +95,24 @@ const resolvers = {
                 recipient: friend._id,
             });
 
-            return updatedFriend;
+            return updatedUser;
         },
 
-        unfollowFriend: async (parent, { username }, context) => {
+        unfollowFriend: async (_, { username }, context) => {
             if (!context.user) {
                 throw new AuthenticationError('You need to be logged in!');
             }
 
-            const byeFriend = await User.findOne({ username });
-            if (!byeFriend) {
+            const friend = await User.findOne({ username });
+            if (!friend) {
                 throw new AuthenticationError('Friend not found');
             }
 
-            const updatedFriend = await User.findOneAndUpdate(
-                { _id: context.user._id },
-                { $pull: { friends: username } },
-                { new: true },
-            ).populate('profile.friends');
+            const updatedUser = await User.findByIdAndUpdate(
+                context.user._id,
+                { $pull: { friends: friend._id } },
+                { new: true }
+            ).populate('friends');
 
             await Notification.create({
                 type: 'unfollow',
@@ -114,47 +120,46 @@ const resolvers = {
                 recipient: friend._id,
             });
 
-            return updatedFriend
-
+            return updatedUser;
         },
 
-        createReadyCheck: async (parent, { input }, context) => {
+        createReadyCheck: async (_, { input }) => {
             const { owner, title, activity, timing, description } = input;
-            const data = await ReadyCheck.create({
-              owner,
-              title,
-              activity,
-              timing,
-              description,
-              createdAt: new Date().toISOString(), // Assuming createdAt should be populated with current time
+            const readyCheck = await ReadyCheck.create({
+                owner,
+                title,
+                activity,
+                timing,
+                description,
+                createdAt: new Date().toISOString(),
             });
-            return data;
-          },
+            return readyCheck.populate('owner');
+        },
 
-        updateReadyCheck: async (parent, { title, description }, context) => {
+        updateReadyCheck: async (_, { title, description }, context) => {
             const updatedData = await ReadyCheck.findOneAndUpdate(
                 { _id: context.readyCheck._id },
                 { $set: { readyCheck: { title, description } } },
-                { new: true },
-            )
+                { new: true }
+            );
             return updatedData;
         },
 
-        updateUserStatus: async (parent, { status }, context) => {
+        updateUserStatus: async (_, { status }, context) => {
             if (!context.user) {
                 throw new AuthenticationError('You need to be logged in!');
             }
 
-            const updatedUser = await User.findOneAndUpdate(
-                { _id: context.user._id },
+            const updatedUser = await User.findByIdAndUpdate(
+                context.user._id,
                 { $set: { status } },
                 { new: true }
-            ).populate('profile.friends');
+            ).populate('friends');
 
             return updatedUser;
         },
 
-        markNotificationAsRead: async (parent, { notificationId }, context) => {
+        markNotificationAsRead: async (_, { notificationId }, context) => {
             if (!context.user) {
                 throw new AuthenticationError('You need to be logged in!');
             }
@@ -168,7 +173,7 @@ const resolvers = {
             return notification;
         },
 
-        deleteNotification: async (parent, { notificationId }, context) => {
+        deleteNotification: async (_, { notificationId }, context) => {
             if (!context.user) {
                 throw new AuthenticationError('You need to be logged in!');
             }
@@ -176,8 +181,26 @@ const resolvers = {
             const notification = await Notification.findByIdAndDelete(notificationId).populate('sender readyCheck');
 
             return notification;
-        }
-    }
-}
+        },
+
+        rsvpReadyCheck: async (_, { readyCheckId, userId, rsvp }) => {
+            const readyCheck = await ReadyCheck.findById(readyCheckId);
+            if (!readyCheck) {
+                throw new Error('ReadyCheck not found');
+            }
+
+            const attendee = readyCheck.attendees.find(att => att.user.toString() === userId);
+            if (attendee) {
+                attendee.rsvp = rsvp;
+            } else {
+                readyCheck.attendees.push({ user: userId, rsvp });
+            }
+
+            await readyCheck.save();
+
+            return readyCheck.populate('owner attendees.user');
+        },
+    },
+};
 
 module.exports = resolvers;

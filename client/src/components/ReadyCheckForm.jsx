@@ -34,7 +34,7 @@ function ReadyCheckForm() {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form id="readyCheckForm" onSubmit={handleSubmit}>
             <div>
                 <label>Title</label>
                 <input 
@@ -71,7 +71,7 @@ function ReadyCheckForm() {
                 />
             </div>
             <UserList recipients={recipients} setRecipients={setRecipients} />
-            <button type="submit" disabled={loading}>
+            <button id="submitReadyCheck" type="submit" disabled={loading}>
                 {loading ? 'Creating...' : 'Create Ready Check'}
             </button>
             {error && <p>Error: {error.message}</p>}

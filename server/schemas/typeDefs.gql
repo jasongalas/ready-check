@@ -1,99 +1,101 @@
-const typeDefs = `
-    type User {
-        _id: ID
-        username: String
-        email: String
-        password: String
-        status: String
-        bio: String
-        friends: [User]
-        ownedReadyChecks: [ReadyCheck]
-        receivedReadyChecks: [ReadyCheck]
+const { gql } = require('apollo-server-express');
 
-    }
+const typeDefs = gql`
+  type User {
+    _id: ID
+    username: String
+    email: String
+    password: String
+    status: String
+    bio: String
+    friends: [User]
+    ownedReadyChecks: [ReadyCheck]
+    receivedReadyChecks: [ReadyCheck]
+  }
 
-    input ReadyCheckInput {
-        owner: ID!
-        title: String!
-        activity: String!
-        timing: String!
-        description: String!
-    }
+  input ReadyCheckInput {
+    owner: ID!
+    title: String!
+    activity: String!
+    timing: String!
+    description: String!
+  }
 
-    type ReadyCheck {
-        _id: ID
-        owner: User
-        title: String
-        activity: String
-        timing: String
-        description: String
-        createdat: String
-        attendees: [Attendee]
-    }
+  type Attendee {
+    user: User
+    rsvp: String
+  }
 
-    type Attendee {
-        user: User
-        rsvp: String
-    }
+  type ReadyCheck {
+    _id: ID
+    owner: User
+    title: String
+    activity: String
+    timing: String
+    description: String
+    createdAt: String
+    attendees: [Attendee]
+  }
 
-    type Notification {
-        _id: ID
-        type: String
-        sender: User
-        readyCheck: ReadyCheck
-        createdAt: String
-        read: Boolean
-    }
+  type Notification {
+    _id: ID
+    type: String
+    sender: User
+    readyCheck: ReadyCheck
+    createdAt: String
+    read: Boolean
+  }
 
-    type Auth {
-        token: ID!
-        user: User
-    }
+  type Auth {
+    token: ID!
+    user: User
+  }
 
-    type Query {
-        getUser: User
-        getReadyCheck(id: String!): ReadyCheck
-        getFriends(userId: ID!): [User]
-        me: User
-        notifications(userId: ID!): [Notification]
+  type Query {
+    getUser: User
+    getReadyCheck(id: String!): ReadyCheck
+    getFriends(userId: ID!): [User]
+    me: User
+    notifications(userId: ID!): [Notification]
+    readyChecks: [ReadyCheck]
+    readyCheck(_id: ID!): ReadyCheck
+  }
 
-    }
-
-    type Mutation {
-        createUser(
-            username: String!,
-            email: String!,
-            password: String!
-        ): Auth
-        login(
-            email: String!,
-            password: String!
-        ): Auth
-        followFriend (
-            username: String!
-        ): User
-        unfollowFriend (
-            username: String!
-        ): User
-        createReadyCheck(input: ReadyCheckInput!): ReadyCheck!
-        updateReadyCheck(
-            title: String
-            activity: String
-            timing: String
-            description: String
-            # attendees: [User]
-        ): ReadyCheck
-        updateUserStatus(
-            status: String!
-        ): User
-         markNotificationAsRead(
-            notificationId: ID!
-        ): Notification
-        deleteNotification(
-            notificationId: ID!
-        ): Notification
-
-    }
-`
+  type Mutation {
+    createUser(
+      username: String!,
+      email: String!,
+      password: String!
+    ): Auth
+    login(
+      email: String!,
+      password: String!
+    ): Auth
+    followFriend (
+      username: String!
+    ): User
+    unfollowFriend (
+      username: String!
+    ): User
+    createReadyCheck(input: ReadyCheckInput!): ReadyCheck!
+    updateReadyCheck(
+      title: String
+      activity: String
+      timing: String
+      description: String
+      # attendees: [User]
+    ): ReadyCheck
+    updateUserStatus(
+      status: String!
+    ): User
+    markNotificationAsRead(
+      notificationId: ID!
+    ): Notification
+    deleteNotification(
+      notificationId: ID!
+    ): Notification
+    rsvpReadyCheck(readyCheckId: ID!, userId: ID!, rsvp: String!): ReadyCheck
+  }
+`;
 
 module.exports = typeDefs;

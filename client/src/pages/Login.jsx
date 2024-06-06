@@ -4,36 +4,24 @@ import { useMutation } from '@apollo/client';
 import { LOGIN } from '../utils/mutations';
 import Auth from '../utils/auth';
 
-const Login = (props) => {
+const Login = () => {
   const [formState, setFormState] = useState({ email: '', password: '' });
   const [login, { error, data }] = useMutation(LOGIN);
 
-  // Update state based on form input changes
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setFormState({
-      ...formState,
-      [name]: value,
-    });
+    setFormState({ ...formState, [name]: value });
   };
 
-  // Handle form submission
   const handleFormSubmit = async (event) => {
     event.preventDefault();
     try {
-      const { data } = await login({
-        variables: { ...formState },
-      });
-
-      Auth.login(data.login.token); 
+      const { data } = await login({ variables: { ...formState } });
+      Auth.login(data.login.token);
     } catch (e) {
       console.error(e);
     }
-
-    setFormState({
-      email: '',
-      password: '',
-    });
+    setFormState({ email: '', password: '' });
   };
 
   return (
