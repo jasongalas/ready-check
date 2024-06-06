@@ -34,9 +34,9 @@ const Header = () => {
 
   return (
     <header className="header">
-      <div className="navbar bg-base-100">
+      <div className="navbar bg-base-100 shadow-md">
         <div className="flex-1">
-          <a className="btn btn-ghost text-xl">ReadyCheck</a>
+          <a className="btn btn-ghost text-xl" onClick={goToHomePage}>ReadyCheck</a>
         </div>
         <div className="flex-none">
           <ul className="menu menu-horizontal px-1">

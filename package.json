@@ -17,5 +17,6 @@
     "concurrently": "^8.2.0"
   },
   "dependencies": {
+    "flowbite": "^2.3.0"
   }
 }
