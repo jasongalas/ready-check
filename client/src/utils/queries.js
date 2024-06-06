@@ -1,20 +1,20 @@
 import { gql } from '@apollo/client';
 
 export const QUERY_READY_CHECK = gql`
-    query ReadyCheck($id: ID!) {
-        readyCheck(id: $id) {
-            _id
-            title
-            activity
-            timing
-            description
-            createdAt
-            attendees {
-                user
-                status
-            }
-        }
+  query ReadyCheck($id: ID!) {
+    readyCheck(id: $id) {
+      _id
+      title
+      activity
+      timing
+      description
+      createdAt
+      attendees {
+        user
+        status
+      }
     }
+  }
 `;
 
 export const QUERY_USERS = gql`
@@ -65,18 +65,19 @@ export const QUERY_ME = gql`
 `;
 
 export const QUERY_NOTIFICATIONS = gql`
-  query notification {notifications(userId: $userId) {
-    id
-    type
-    sender {
-      _id
-      name
+  query notifications($userId: ID!) {
+    notifications(userId: $userId) {
+      id
+      type
+      sender {
+        _id
+        name
+      }
+      readyCheck {
+        _id
+        title
+        description
+      }
     }
-    readyCheck {
-      _id
-      title
-      description
-    }
-
   }
 `;
