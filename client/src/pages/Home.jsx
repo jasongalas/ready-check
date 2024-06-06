@@ -9,9 +9,12 @@ const Home = () => {
 
   const [isModalOpen, setModalOpen] = useState(false);
 
+  const goToProfilePage = () => {
+    navigate('/myprofile');
+  }
+  
   return (
     
-   
        <main className='mx-6'>
           {isAuthenticated ? (
             <div className="flex flex-col w-full lg:flex-row">             
@@ -65,7 +68,7 @@ const Home = () => {
                         </div>
                       <div className="modal-action">
                         <form method="dialog">
-                          {/* if there is a button in form, it will close the modal */}
+                  
                           <button className="btn">Close</button>
                         </form>
                       </div>
@@ -115,3 +118,4 @@ const Home = () => {
 };
 
 export default Home;
+

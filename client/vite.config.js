@@ -13,10 +13,10 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
       },
-      '/socket.io': {
-        target: 'http://localhost:3001',
-        ws: true,
-      },
+      // '/socket.io': {
+      //   target: 'http://localhost:3001',
+      //   ws: true,
+      // },
     },
   },
 });

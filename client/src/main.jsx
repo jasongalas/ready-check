@@ -6,7 +6,7 @@ import './index.css'
 import Home from './pages/Home.jsx';
 import LoginPage from './pages/Login.jsx';
 import SignUpPage from './pages/Signup';
-// import ProfilePage from './pages/ProfilePage.jsx'
+import Profile from './pages/ProfilePage.jsx'
 
 const router = createBrowserRouter([
     {
@@ -25,6 +25,10 @@ const router = createBrowserRouter([
                 path: '/signup',
                 element: <SignUpPage/>,
             },
+            {
+                path: '/myprofile',
+                element: <Profile/>
+            }
             // {
             //     path: `/readycheck/:id`,
             //     element: <LiveReadyCheck/>,
@@ -33,10 +37,7 @@ const router = createBrowserRouter([
             //     path: '/profile/:id',
             //     element: <ProfilePage/>
             // },
-            // {
-            //     path: '/myprofile',
-            //     element: <ProfilePage/>
-            // }
+            
         ]
     }
 ])
