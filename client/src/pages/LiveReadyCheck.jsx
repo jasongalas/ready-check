@@ -24,6 +24,9 @@ function LiveReadyCheckPage() {
     if (socket) {
       socket.on('readyCheckUpdate', (update) => {
         // handle the update
+        // use mutations and useSocket here
+        // response first, then append user data before send
+        
       });
     }
   }, [socket]);

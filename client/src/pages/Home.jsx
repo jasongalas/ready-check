@@ -11,7 +11,6 @@ const Home = () => {
 
   return (
 
-
     <main>
       {isAuthenticated ? (
         <div className="flex flex-wrap justify-center gap-4">

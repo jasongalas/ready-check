@@ -16,8 +16,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST"],
+    origin: process.env.SOCKET_URL || "http://localhost:3000",
   },
 });
 
@@ -28,8 +27,10 @@ const apolloServer = new ApolloServer({
 
 const startApolloServer = async () => {
   await apolloServer.start();
+
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
+
   app.use('/graphql', expressMiddleware(apolloServer, { context: authMiddleware }));
 
   if (process.env.NODE_ENV === 'production') {
@@ -42,6 +43,10 @@ const startApolloServer = async () => {
   db.once('open', () => {
     io.on('connection', (socket) => {
       console.log('A user connected');
+
+      socket.on('readycheck', (rc) => {
+        io.emit('readycheck', rc);
+      });
 
       socket.on('chat message', (msg) => {
         io.emit('chat message', msg);
