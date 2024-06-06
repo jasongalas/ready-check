@@ -15,6 +15,7 @@ export const CREATE_READY_CHECK = gql`
                     username
                 }
                 status
+            }
         }
     }
 `;
@@ -34,6 +35,7 @@ export const UPDATE_READY_CHECK = gql`
                     username
                 }
                 status
+            }
         }
     }
 `;
@@ -48,7 +50,6 @@ export const UPDATE_USER_STATUS = gql`
         }
     }
 `;
-
 
 export const ADD_FRIEND = gql`
     mutation AddFriend($username: String!) {
@@ -73,8 +74,6 @@ export const REMOVE_FRIEND = gql`
         }
     }
 `;
-
-//
 
 export const LOGIN = gql`
   mutation login($email: String!, $password: String!) {

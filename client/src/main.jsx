@@ -3,9 +3,9 @@ import App from './App.jsx'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import './index.css'
 // import LiveReadyCheck from './pages/LiveReadyCheck';
-import Home from './pages/Home';
-// import LoginPage from './pages/Login';
-// import SignUpPage from './pages/Signup';
+import Home from './pages/Home.jsx';
+import LoginPage from './pages/Login.jsx';
+import SignUpPage from './pages/Signup';
 // import ProfilePage from './pages/ProfilePage.jsx'
 
 const router = createBrowserRouter([
@@ -15,16 +15,16 @@ const router = createBrowserRouter([
         children: [
             {
                 index: true,
-                element: <Home/>,
+                element: <Home/>
             },
-            // {
-            //     path: '/login',
-            //     element: <LoginPage/>,
-            // },
-            // {
-            //     path: '/signup',
-            //     element: <SignUpPage/>,
-            // },
+            {
+                path: '/login',
+                element: <LoginPage/>
+            },
+            {
+                path: '/signup',
+                element: <SignUpPage/>,
+            },
             // {
             //     path: `/readycheck/:id`,
             //     element: <LiveReadyCheck/>,

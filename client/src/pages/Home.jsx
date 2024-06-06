@@ -10,7 +10,6 @@ const Home = () => {
   const [isModalOpen, setModalOpen] = useState(false);
 
   return (
-
     <main>
       {isAuthenticated ? (
         <div className="flex flex-wrap justify-center gap-4">
