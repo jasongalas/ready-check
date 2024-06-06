@@ -12,13 +12,13 @@ const Home = () => {
   return (
     
    
-       <main>
+       <main className='mx-6'>
           {isAuthenticated ? (
             <div className="flex flex-col w-full lg:flex-row">             
-                <div className="flex flex-wrap w-1/2 justify-center gap-4">
-                  <div className="card mx-6 mt-12 h-96 w-full bg-primary text-primary-content">
-                    <div className="card-body text-center">
-                      <h2 className="text-center font-bold text-5xl m-3">New ReadyCheck</h2>
+                <div className="flex flex-wrap w-2/3 justify-center gap-4">
+                  <button className="btn btn-sky card m-10 h-fill w-full bg-sky-600 text-primary-content shadow-xl" onClick={()=>document.getElementById('my_modal_1').showModal()}>
+                    <div className="card-body text-white text-center mt-14">
+                      <h2 className="text-center font-bold text-6xl m-5">New ReadyCheck</h2>
                       <div className='m-3'>
                         <p className='text-xl font-semibold mb'>Create a new notification to send out to your friends!</p>
                         <div className='m-4'>
@@ -29,40 +29,67 @@ const Home = () => {
                           </ul>
                         </div>
                         <p className='text-xl font-semibold mb'>The world is your oyster!</p>
-                        <div className="card-actions  justify-center">
-                          <button className="btn mt-6 p-3" onClick={() => setModalOpen(true)}>Select</button>
-                        </div>
                       </div>
                     </div>
-                  </div>
+                  </button>
+                  <dialog id="my_modal_1" className="modal">
+                    <div className="modal-box">
+                      <h3 className="font-bold text-center p-3 text-3xl">New ReadyCheck</h3>
+                        <div className='p-4'>
+                          <label className="form-control w-full m-2 max-w-xs">
+                            <div className="label">
+                              <span className="label-text">Title*</span>                       
+                            </div>
+                            <input type="text" placeholder="Title" className="input input-bordered w-full max-w-xs" />
+                          </label>
+                          <label className="form-control w-full m-2 max-w-xs">
+                            <div className="label">
+                              <span className="label-text">Description</span>                       
+                            </div>
+                            <textarea className="textarea textarea-bordered" placeholder="Description"></textarea>
+                          </label>                          
+                          <label className="form-control w-full m-2 max-w-xs">
+                            <div className="label">
+                              <span className="label-text">Date</span>                       
+                            </div>
+                            <input type="text" placeholder="MM/DD/YY" className="input input-bordered w-full max-w-xs" />
+                          </label>
+                          <label for="time" class="label-text">
+                          <div className="label m-2">
+                              <span className="label-text">Select Time</span>                       
+                            </div>
+                          </label>
+                          <div class="relative m-2">
+                              <input type="time" id="time" className="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-3/4 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" min="09:00" max="18:00" value="00:00" required />
+                          </div>
+                        </div>
+                      <div className="modal-action">
+                        <form method="dialog">
+                          {/* if there is a button in form, it will close the modal */}
+                          <button className="btn">Close</button>
+                        </form>
+                      </div>
+                    </div>
+                  </dialog>
                 </div>              
               <div className="divider lg:divider-horizontal">
               </div>              
                 <div className="flex flex-wrap w-1/2 justify-center gap-4">
-                  <div className="card m-6 w-full bg-accent text-primary-content">
-                    <div className="card-body text-center">
-                      <h2 className="text-center font-bold text-2xl m-3">Active ReadyChecks</h2>
-                      <div className="card-actions justify-end">
-                        <button className="btn" onClick={() => window.location.href = '/active-readychecks'}>Select</button>
-                      </div>
+                  <button onClick={() => window.location.href = '/active-readychecks'} className="btn btn-accent card mt-10 py-20 w-full bg-accent text-primary-content shadow-xl">
+                    <div className="card-body text-white text-center">
+                      <h2 className="text-center font-bold text-4xl m-3">Active ReadyChecks</h2>
                     </div>
-                  </div>
-                  <div className="card mx-6 w-full bg-success text-primary-content">
-                    <div className="card-body">
-                      <h2 className="text-center font-bold text-2xl m-3">Social</h2>
-                      <div className="card-actions justify-end">
-                        <button className="btn" onClick={() => window.location.href = '/social'}>Select</button>
-                      </div>
+                  </button>
+                  <button onClick={() => window.location.href = '/social'} className="btn btn-success card py-20 w-full text-primary-content shadow-xl">
+                    <div className="card-body text-white text-center">
+                      <h2 className="text-center font-bold text-4xl m-3">Social</h2>
                     </div>
-                  </div>
-                  <div className="card m-6 w-full bg-warning text-primary-content">
-                    <div className="card-body">
-                      <h2 className="text-center font-bold text-2xl m-3">Profile</h2>
-                      <div className="card-actions justify-end">
-                        <button className="btn" onClick={() => window.location.href = '/profile'}>Select</button>
-                      </div>
+                  </button>
+                  <button onClick={() => window.location.href = '/myprofile'} className="btn btn-warning card  py-20 w-full text-primary-content shadow-xl">
+                    <div className="card-body text-white text-center">
+                      <h2 className="text-center font-bold text-4xl m-3">Profile</h2>
                     </div>
-                  </div>
+                  </button>
                 </div>
           </div>
             
@@ -80,44 +107,11 @@ const Home = () => {
             </div>
         )}
       {/* {isModalOpen && (<ReadyCheckForm closeModal={() => setModalOpen(false)} />)}  */}
+      <script src="../path/to/flowbite/dist/flowbite.min.js"></script>
       </main>
+      
 
   );
 };
 
 export default Home;
-
-<div className="flex flex-wrap justify-center gap-4">
-  <div className="card w-96 bg-primary text-primary-content">
-    <div className="card-body">
-      <h2 className="card-title">New ReadyCheck</h2>
-      <div className="card-actions justify-end">
-        <button className="btn" onClick={() => setModalOpen(true)}>Select</button>
-      </div>
-    </div>
-  </div>
-  <div className="card w-96 bg-accent text-primary-content">
-    <div className="card-body">
-      <h2 className="card-title">Active ReadyChecks</h2>
-      <div className="card-actions justify-end">
-        <button className="btn" onClick={() => window.location.href = '/active-readychecks'}>Select</button>
-      </div>
-    </div>
-  </div>
-  <div className="card w-96 bg-success text-primary-content">
-    <div className="card-body">
-      <h2 className="card-title">Social</h2>
-      <div className="card-actions justify-end">
-        <button className="btn" onClick={() => window.location.href = '/social'}>Select</button>
-      </div>
-    </div>
-  </div>
-  <div className="card w-96 bg-warning text-primary-content">
-    <div className="card-body">
-      <h2 className="card-title">Profile</h2>
-      <div className="card-actions justify-end">
-        <button className="btn" onClick={() => window.location.href = '/profile'}>Select</button>
-      </div>
-    </div>
-  </div>
-</div>
