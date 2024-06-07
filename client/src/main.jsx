@@ -8,7 +8,8 @@ import LoginPage from './pages/Login.jsx';
 import SignUpPage from './pages/Signup';
 import Profile from './pages/ProfilePage.jsx'
 import Social from './pages/Social.jsx';
-import ActiveReadyChecks from './pages/LiveReadyCheck.jsx';
+import ReadyCheck from './pages/LiveReadyCheck.jsx';
+// import ReadyCheckList from './pages/ReadyCheckList.jsx';
 
 const router = createBrowserRouter([
     {
@@ -36,9 +37,13 @@ const router = createBrowserRouter([
                 element: <Social/>
             },
             {
-                path: '/readycheck',
-                element: <ActiveReadyChecks/>
-            }
+                path: '/readycheck/:id',
+                element: <ReadyCheck/>
+            },
+            // {
+            //     path: '/readychecks',
+            //     element: <ReadyCheckList/>
+            // }
             // {
             //     path: `/readycheck/:id`,
             //     element: <LiveReadyCheck/>,
