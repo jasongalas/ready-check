@@ -15,9 +15,9 @@ const resolvers = {
         },
 
         getReadyCheck: async (_, { id }, context) => {
-            if (!context.user) {
-                throw new AuthenticationError('You need to be logged in!');
-            }
+            // if (!context.user) {
+            //     throw new AuthenticationError('You need to be logged in!');
+            // }
             return ReadyCheck.findById(id);
         },
 
