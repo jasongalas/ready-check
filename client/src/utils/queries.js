@@ -1,25 +1,65 @@
 import { gql } from '@apollo/client';
 
 export const QUERY_READY_CHECK = gql`
-  query ReadyCheck($id: ID!) {
-    readyCheck(id: $id) {
+  query getReadyCheck($id: ID!) {
+    getReadyCheck(id: $id) {
       _id
       title
       activity
       timing
       description
       createdAt
-      attendees {
-        user
-        status
+      invitees {
+        _id
+        username
+      }
+      RSVPs {
+        user {
+          _id
+          username
+        }
+        reply
+      }
+      owner {
+        _id
+        username
       }
     }
   }
 `;
 
+export const QUERY_READY_CHECKS = gql`
+  query readyChecks {
+    readyChecks {
+      _id
+      title
+      activity
+      timing
+      description
+      createdAt
+      invitees {
+        _id
+        username
+      }
+      RSVPs {
+        user {
+          _id
+          username
+        }
+        reply
+      }
+      owner {
+        _id
+        username
+      }
+    }
+  }
+`;
+
+
 export const QUERY_USERS = gql`
-  query users($username: String!) {
-    users(username: $username) {
+  query getUsers($username: String!) {
+    getUsers(username: $username) {
       _id
       username
       email
@@ -28,17 +68,17 @@ export const QUERY_USERS = gql`
 `;
 
 export const QUERY_INVITEES = gql`
-query GetUsers {
-  getUsers {
-    _id
-    username
+  query GetUsers {
+    getUsers {
+      _id
+      username
+    }
   }
-}  
-` 
+`;
 
 export const QUERY_USER = gql`
-  query user($username: String!) {
-    user(username: $username) {
+  query getUser($username: String!) {
+    getUser(username: $username) {
       _id
       username
       email
@@ -47,14 +87,14 @@ export const QUERY_USER = gql`
 `;
 
 export const QUERY_FRIENDS = gql`
-    query Friends($userId: ID!) {
-        user(id: $userId) {
-            friends {
-                _id
-                name
-            }
-        }
+  query getFriends($userId: ID!) {
+    getFriends(userId: $userId) {
+      friends {
+        _id
+        username
+      }
     }
+  }
 `;
 
 export const QUERY_ME = gql`
@@ -63,11 +103,9 @@ export const QUERY_ME = gql`
       _id
       username
       email
-      thoughts {
+      friends {
         _id
-        thoughtText
-        thoughtAuthor
-        createdAt
+        username
       }
     }
   }
@@ -76,11 +114,11 @@ export const QUERY_ME = gql`
 export const QUERY_NOTIFICATIONS = gql`
   query notifications($userId: ID!) {
     notifications(userId: $userId) {
-      id
+      _id
       type
       sender {
         _id
-        name
+        username
       }
       readyCheck {
         _id

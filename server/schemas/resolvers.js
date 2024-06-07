@@ -21,6 +21,10 @@ const resolvers = {
             return ReadyCheck.findById(id);
         },
 
+        readyChecks: async () => {
+            return ReadyCheck.find().populate('owner invitees RSVPs.user');
+        },
+
         getFriends: async (_, { userId }, context) => {
             if (!context.user) {
                 throw new AuthenticationError('You need to be logged in!');

@@ -1,5 +1,3 @@
-
-
 const typeDefs = `
   type User {
     _id: ID
@@ -53,9 +51,9 @@ const typeDefs = `
   }
 
   type Query {
-    getUser: User
+    getUser(username: String!): User
     getUsers: [User]
-    getReadyCheck(id: String!): ReadyCheck
+    getReadyCheck(id: ID!): ReadyCheck
     getFriends(userId: ID!): [User]
     me: User
     notifications(userId: ID!): [Notification]
@@ -81,9 +79,10 @@ const typeDefs = `
     ): User
     createReadyCheck(input: ReadyCheckInput!): ReadyCheck!
     updateReadyCheck(
-      title: String
-      activity: String
-      timing: String
+      id: ID!,
+      title: String,
+      activity: String,
+      timing: String,
       description: String
     ): ReadyCheck
     updateUserStatus(

@@ -40,32 +40,30 @@ export const UPDATE_USER_STATUS = gql`
     mutation UpdateUserStatus($status: String!) {
         updateUserStatus(status: $status) {
             _id
-            profile {
-                status
-            }
+            status
         }
     }
 `;
 
 export const ADD_FRIEND = gql`
-    mutation AddFriend($username: String!) {
-        addFriend(username: $username) {
-            id
+    mutation followFriend($username: String!) {
+      followFriend(username: $username) {
+            _id
             friends {
-                id
-                name
+                _id
+                username
             }
         }
     }
 `;
 
 export const REMOVE_FRIEND = gql`
-    mutation RemoveFriend($username: String!) {
-        removeFriend(username: $username) {
-            id
+    mutation unfollowFriend($username: String!) {
+      unfollowFriend(username: $username) {
+            _id
             friends {
-                id
-                name
+                _id
+                username
             }
         }
     }
