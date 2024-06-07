@@ -1,4 +1,4 @@
-require('dotenv').config();
+// require('dotenv').config();
 const { GraphQLError } = require('graphql');
 const jwt = require('jsonwebtoken');
 
