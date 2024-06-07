@@ -88,6 +88,9 @@ const typeDefs = `
     updateUserStatus(
       status: String!
     ): User
+    updateUserBio(
+      bio: String!
+    ): User
     markNotificationAsRead(
       notificationId: ID!
     ): Notification

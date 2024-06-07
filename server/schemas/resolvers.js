@@ -133,12 +133,12 @@ const resolvers = {
 
         createReadyCheck: async (_, { input }) => {
             const { title, activity, timing, description, inviteeIds } = input;
-        
+
             const RSVPs = inviteeIds.map(userId => ({
                 user: userId,
                 reply: 'pending',
             }));
-        
+
             const newReadyCheck = new ReadyCheck({
                 title,
                 activity,
@@ -146,16 +146,16 @@ const resolvers = {
                 description,
                 invitees: inviteeIds
             });
-        
+
             await newReadyCheck.save();
-        
+
             // Populate the owner and RSVPs fields
             await newReadyCheck.populate('owner');
-        
-            return newReadyCheck;
-        },        
 
-          updateReadyCheck: async (_, { id, title, description }, context) => {
+            return newReadyCheck;
+        },
+
+        updateReadyCheck: async (_, { id, title, description }, context) => {
             const updatedData = await ReadyCheck.findByIdAndUpdate(
                 id,
                 { title, description },
@@ -177,6 +177,21 @@ const resolvers = {
 
             return updatedUser;
         },
+
+        updateUserBio: async (_, { bio }, context) => {
+            if (!context.user) {
+                throw new AuthenticationError('You need to be logged in!');
+            }
+
+            const updatedUser = await User.findByIdAndUpdate(
+                context.user._id,
+                { bio },
+                { new: true }
+            );
+
+            return updatedUser;
+        },
+
 
         markNotificationAsRead: async (_, { notificationId }, context) => {
             if (!context.user) {
@@ -205,25 +220,25 @@ const resolvers = {
         rsvpReadyCheck: async (_, { readyCheckId, userId, reply }) => {
             const readyCheck = await ReadyCheck.findById(readyCheckId);
             if (!readyCheck) {
-              throw new Error('ReadyCheck not found');
+                throw new Error('ReadyCheck not found');
             }
-      
+
             // Find the existing RSVP for the user
             const existingRSVP = readyCheck.RSVPs.find((rsvp) => rsvp.user.toString() === userId);
-      
+
             if (existingRSVP) {
-              // Update the reply for the existing RSVP
-              existingRSVP.reply = reply;
+                // Update the reply for the existing RSVP
+                existingRSVP.reply = reply;
             } else {
-              // Create a new RSVP and add it to the RSVPs array
-              readyCheck.RSVPs.push({ user: userId, reply });
+                // Create a new RSVP and add it to the RSVPs array
+                readyCheck.RSVPs.push({ user: userId, reply });
             }
-      
+
             await readyCheck.save();
-      
+
             return readyCheck.populate('owner RSVPs.user').execPopulate();
-          },
         },
+    },
 };
 
 module.exports = resolvers;

@@ -45,6 +45,15 @@ export const UPDATE_USER_STATUS = gql`
     }
 `;
 
+export const UPDATE_USER_BIO = gql`
+  mutation UpdateUserBio($bio: String!) {
+    updateUserBio(bio: $bio) {
+      _id
+      bio
+    }
+  }
+`;
+
 export const ADD_FRIEND = gql`
     mutation followFriend($username: String!) {
       followFriend(username: $username) {
@@ -82,8 +91,8 @@ export const LOGIN = gql`
 `;
 
 export const CREATE_USER = gql`
-  mutation addUser($username: String!, $email: String!, $password: String!) {
-    addUser(username: $username, email: $email, password: $password) {
+  mutation createUser($username: String!, $email: String!, $password: String!) {
+    createUser(username: $username, email: $email, password: $password) {
       token
       user {
         _id

@@ -50,10 +50,10 @@ const Social = () => {
     return (
         <main>
             <div className="flex flex-col w-full lg:flex-row">
-                <div className="grid flex-grow h-fill w-1/2 card bg-base-300 rounded-box place-items-center m-6">
-                    <h1 className='text-3xl font-bold'>Friends List</h1>
-                    <div className="card w-96 bg-base-100 shadow-xl">
-                        <div className="card-body h-96 w-full ml-6">
+                <div className="grid flex-grow h-fill w-1/2 card bg-darker-background rounded-box place-items-center m-6">
+                    <h1 className='text-3xl text-navy-blue font-bold'>Friends List</h1>
+                    <div className="card w-96 bg-green-hover shadow-xl">
+                        <div className="card-body text-navy-blue h-96 w-full ml-6">
                             <p>Friend 1</p>
                             <p>Friend 2</p>
                             <p>Friend 3</p>
@@ -63,11 +63,11 @@ const Social = () => {
                     </div>
                 </div>
                 <div className="divider lg:divider-horizontal"></div>
-                <div className="flex-grow h-fill w-1/2 card bg-base-300 rounded-box place-items-center m-6">
-                    <h1 className='text-3xl font-bold my-7'>Add a Friend</h1>
-                    <div className="card w-96 bg-base-100 shadow-xl mt-8">
+                <div className="flex-grow h-fill w-1/2 card bg-darker-background rounded-box place-items-center m-6">
+                    <h1 className='text-3xl text-navy-blue font-bold my-7'>Add a Friend</h1>
+                    <div className="card w-96 bg-blue-btn shadow-xl mt-8">
                         <div className="card-body p-12 w-full">
-                            <label className="input input-bordered flex items-center gap-2 mb-4">
+                            <label className="input bg-darker-background input-bordered flex items-center gap-2 mb-4">
                                 Username
                                 <input type="text" className="grow" />
                             </label>

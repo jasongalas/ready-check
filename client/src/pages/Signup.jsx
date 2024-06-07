@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
-import { LOGIN } from '../utils/mutations';
+import { CREATE_USER } from '../utils/mutations';
 import Auth from '../utils/auth';
 
-const Login = (props) => {
-  const [formState, setFormState] = useState({ email: '', password: '' });
-  const [login, { error, data }] = useMutation(LOGIN);
+const SignUp = () => {
+  const [formState, setFormState] = useState({ username: '', email: '', password: '' });
+  const [signUp, { error, data }] = useMutation(CREATE_USER);
 
   // Update state based on form input changes
   const handleChange = (event) => {
@@ -21,28 +21,36 @@ const Login = (props) => {
   const handleFormSubmit = async (event) => {
     event.preventDefault();
     try {
-      const { data } = await login({
+      const response = await signUp({
         variables: { ...formState },
       });
 
-      Auth.login(data.login.token); 
+      const { token } = response.data.createUser;
+      Auth.login(token); 
     } catch (e) {
       console.error(e);
     }
 
     setFormState({
+      username: '',
       email: '',
       password: '',
     });
   };
 
   return (
-    <div className="hero min-h-screen bg-base-200">
+    <div className="hero min-h-screen bg-darker-background">
       <div className="hero-content flex-col lg:flex-row-reverse">
         <div className="text-center w-96">
-          <h1 className="text-5xl font-bold">Sign Up!</h1>
+          <h1 className="text-5xl text-navy-blue font-bold">Sign Up!</h1>
         </div>
         <div className="card shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
+        {data ? (
+              <p>
+                Success! You may now head{' '}
+                <Link to="/">back to the homepage.</Link>
+              </p>
+            ) : (
           <form className="card-body" onSubmit={handleFormSubmit}>
             <div className="form-control">
               <label className="label">
@@ -52,7 +60,7 @@ const Login = (props) => {
                 type="username" 
                 placeholder="username" 
                 name="username"
-                value={formState.email}
+                value={formState.username}
                 onChange={handleChange}
                 className="input input-bordered" 
                 required 
@@ -90,10 +98,12 @@ const Login = (props) => {
               <button className="btn btn-primary" type="submit">Submit</button>
             </div>
           </form>
+            )}
+            {error && <div className="my-3 p-3 bg-danger text-white">{error.message}</div>}
         </div>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default SignUp;
