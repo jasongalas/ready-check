@@ -16,6 +16,7 @@ export default {
         "blue-hover": '#2583fd',
         "dark-green": '#008148',
         "green-hover": '#00ab5f',
+        "darker-background": '##ded6d6'
     },
   },  
   },

@@ -55,11 +55,11 @@ const Profile = () => {
             <div className="flex flex-col w-full h-full lg:flex-row">
                 <div className="flex flex-wrap justify-center">
                     <div className="text-center m-6 p-7">
-                        <h1 className="text-5xl font-bold">My ReadyChecks</h1>
-                        <p className="pt-12 text-lg">Click on an active ReadyCheck for more details</p>
+                        <h1 className="text-5xl text-navy-blue font-bold">My ReadyChecks</h1>
+                        <p className="pt-12 text-navy-blue text-lg">Click on an active ReadyCheck for more details</p>
                         
                     </div>
-                    <button onClick={openReadyCheckForm} className="btn btn-sky card h-fit bg-sky-600 text-primary-content shadow-xl">
+                    <button onClick={openReadyCheckForm} className="btn btn-sky card h-fit bg-sky-600 hover:bg-aquamarine text-primary-content shadow-xl">
                         <div className="card-body text-white text-center ">
                             <h2 className="text-center font-bold text-xl">New ReadyCheck</h2>
                         </div>
@@ -76,37 +76,37 @@ const Profile = () => {
 
                 <div className="divider lg:divider-horizontal"></div>
                 <div className="flex flex-wrap justify-center w-3/5 p-4 overflow-auto max-h-[calc(100vh-200px)]">
-                    <button onClick={() => navigate('')} className="btn-accent card m-2 w-full h-32 bg-accent text-primary-content shadow-xl">
+                    <button onClick={() => navigate('')} className="btn-accent card m-2 w-full h-32 bg-blue-btn hover:bg-blue-hover text-primary-content shadow-xl">
                         <div className="p-2 text-white text-left">
                             <h2 className="font-bold text-4xl m-3">ReadyCheck 1</h2>
                             <p className='py-2 px-6 text-lg'>Description</p>
                         </div>
                     </button>
-                    <button onClick={() => navigate('')} className="btn-accent card m-2 w-full h-32 bg-accent text-primary-content shadow-xl">
+                    <button onClick={() => navigate('')} className="btn-accent card m-2 w-full h-32 bg-blue-btn hover:bg-blue-hover text-primary-content shadow-xl">
                         <div className="p-2 text-white text-left">
                             <h2 className="font-bold text-4xl m-3">ReadyCheck 2</h2>
                             <p className='py-2 px-6 text-lg'>Description</p>
                         </div>
                     </button>
-                    <button onClick={() => navigate('')} className="btn-accent card m-2 w-full h-32 bg-accent text-primary-content shadow-xl">
+                    <button onClick={() => navigate('')} className="btn-accent card m-2 w-full h-32 bg-blue-btn hover:bg-blue-hover text-primary-content shadow-xl">
                         <div className="p-2 text-white text-left">
                             <h2 className="font-bold text-4xl m-3">ReadyCheck 3</h2>
                             <p className='py-2 px-6 text-lg'>Description</p>
                         </div>
                     </button>
-                    <button onClick={() => navigate('')} className="btn-accent card m-2 w-full h-32 bg-accent text-primary-content shadow-xl">
+                    <button onClick={() => navigate('')} className="btn-accent card m-2 w-full h-32 bg-blue-btn hover:bg-blue-hover text-primary-content shadow-xl">
                         <div className="p-2 text-white text-left">
                             <h2 className="font-bold text-4xl m-3">ReadyCheck 4</h2>
                             <p className='py-2 px-6 text-lg'>Description</p>
                         </div>
                     </button>
-                    <button onClick={() => navigate('')} className="btn-accent card m-2 w-full h-32 bg-accent text-primary-content shadow-xl">
+                    <button onClick={() => navigate('')} className="btn-accent card m-2 w-full h-32 bg-blue-btn hover:bg-blue-hover text-primary-content shadow-xl">
                         <div className="p-2 text-white text-left">
                             <h2 className="font-bold text-4xl m-3">ReadyCheck 5</h2>
                             <p className='py-2 px-6 text-lg'>Description</p>
                         </div>
                     </button>
-                    <button onClick={() => navigate('')} className="btn-accent card m-2 w-full h-32 bg-accent text-primary-content shadow-xl">
+                    <button onClick={() => navigate('')} className="btn-accent card m-2 w-full h-32 bg-blue-btn hover:bg-blue-hover text-primary-content shadow-xl">
                         <div className="p-2 text-white text-left">
                             <h2 className="font-bold text-4xl m-3">ReadyCheck 6</h2>
                             <p className='py-2 px-6 text-lg'>Description</p>
