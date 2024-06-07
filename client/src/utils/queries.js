@@ -28,13 +28,13 @@ export const QUERY_USERS = gql`
 `;
 
 export const QUERY_INVITEES = gql`
-query GetUsers {
-  getUsers {
-    _id
-    username
+  query GetUsers {
+    getUsers {
+      _id
+      username
+    }
   }
-}  
-` 
+`;
 
 export const QUERY_USER = gql`
   query user($username: String!) {
@@ -47,14 +47,14 @@ export const QUERY_USER = gql`
 `;
 
 export const QUERY_FRIENDS = gql`
-    query Friends($userId: ID!) {
-        user(id: $userId) {
-            friends {
-                _id
-                name
-            }
-        }
+  query Friends($userId: ID!) {
+    user(id: $userId) {
+      friends {
+        _id
+        username
+      }
     }
+  }
 `;
 
 export const QUERY_ME = gql`
@@ -63,11 +63,9 @@ export const QUERY_ME = gql`
       _id
       username
       email
-      thoughts {
+      friends {
         _id
-        thoughtText
-        thoughtAuthor
-        createdAt
+        username
       }
     }
   }
@@ -76,11 +74,11 @@ export const QUERY_ME = gql`
 export const QUERY_NOTIFICATIONS = gql`
   query notifications($userId: ID!) {
     notifications(userId: $userId) {
-      id
+      _id
       type
       sender {
         _id
-        name
+        username
       }
       readyCheck {
         _id
