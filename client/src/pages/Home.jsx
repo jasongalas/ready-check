@@ -1,24 +1,13 @@
 import { useState } from 'react';
-import { useQuery } from '@apollo/client';
 import { useNavigate } from 'react-router-dom';
 import ReadyCheckForm from '../components/ReadyCheckForm';
 
 const Home = () => {
-  const userId = 1;
-  // Placeholder for user authentication 
   const navigate = useNavigate();
-  const isAuthenticated = true;
-
-  // const [isModalOpen, setModalOpen] = useState(false);
-
-  const goToProfilePage = () => {
-    navigate('/myprofile');
-  }
-
-  const [isReadyCheckFormOpen, setReadyCheckFormOpen] = useState(false);
+  const isAuthenticated = true;  // Placeholder for user authentication 
 
   const openReadyCheckForm = () => {
-    setReadyCheckFormOpen(true);
+    document.getElementById('my_modal_3').showModal();
   };
 
   return (
@@ -42,15 +31,13 @@ const Home = () => {
                 </div>
               </div>
             </button>
-            <dialog id="my_modal_1" className="modal">
-              <div className="modal-box">
-                <ReadyCheckForm userId={1}/>
-                <div className="modal-action">
-                  <form method="dialog">
 
-                    <button className="btn">Close</button>
-                  </form>
-                </div>
+            <dialog id="my_modal_3" className="modal">
+              <div className="modal-box">
+                <form method="dialog">
+                  <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                </form>
+                <ReadyCheckForm userId={1} />
               </div>
             </dialog>
           </div>
@@ -66,14 +53,13 @@ const Home = () => {
                 <h2 className="text-center font-bold text-4xl m-3">Social</h2>
               </div>
             </button>
-            <button onClick={() => navigate('/myprofile')} className="btn btn-warning card  py-20 w-full text-primary-content shadow-xl">
+            <button onClick={() => navigate('/myprofile')} className="btn btn-warning card py-20 w-full text-primary-content shadow-xl">
               <div className="card-body text-white text-center">
                 <h2 className="text-center font-bold text-4xl m-3">Profile</h2>
               </div>
             </button>
           </div>
         </div>
-
       ) : (
         <div className="hero min-h-screen bg-base-200">
           <div className="hero-content text-center">
@@ -87,7 +73,6 @@ const Home = () => {
           </div>
         </div>
       )}
-      {isReadyCheckFormOpen && <ReadyCheckForm />}
     </main>
   );
 };
