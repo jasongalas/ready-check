@@ -3,7 +3,6 @@ const typeDefs = `
     _id: ID
     username: String
     email: String
-    password: String
     status: String
     bio: String
     friends: [User]
@@ -51,7 +50,7 @@ const typeDefs = `
   }
 
   type Query {
-    getUser(username: String!): User
+    getUser(id: ID!): User
     getUsers: [User]
     getReadyCheck(id: ID!): ReadyCheck
     getFriends(userId: ID!): [User]

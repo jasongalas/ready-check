@@ -3,11 +3,8 @@ const { signToken, AuthenticationError } = require('../utils/auth');
 
 const resolvers = {
     Query: {
-        getUser: async (_, __, context) => {
-            if (!context.user) {
-                throw new AuthenticationError('You need to be logged in!');
-            }
-            return User.findById(context.user._id);
+        getUser: async (_, { id }) => {
+            return User.findById(id).populate('friends ownedReadyChecks');
         },
 
         getUsers: async (_, __, context) => {

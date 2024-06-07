@@ -77,15 +77,24 @@ export const QUERY_INVITEES = gql`
 `;
 
 export const QUERY_USER = gql`
-  query getUser($username: String!) {
-    getUser(username: $username) {
+  query getUser($id: ID!) {
+    getUser(id: $id) {
       _id
       username
-      email
       bio
+      friends {
+        _id
+        username
+      }
+      ownedReadyChecks {
+        _id
+        title
+      }
     }
   }
 `;
+
+
 
 export const QUERY_FRIENDS = gql`
   query getFriends($userId: ID!) {
@@ -108,6 +117,12 @@ export const QUERY_ME = gql`
       friends {
         _id
         username
+      }
+      ownedReadyChecks {
+        _id
+        title
+        description
+        createdAt
       }
     }
   }
