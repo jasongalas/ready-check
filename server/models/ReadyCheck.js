@@ -1,6 +1,22 @@
 const { Schema, model } = require('mongoose');
 const dateFormat = require('../utils/dateFormat');
 
+const chatMessageSchema = new Schema({
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
+  content: {
+    type: String,
+    required: true,
+  },
+  timestamp: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
 const readyCheckSchema = new Schema({
   owner: {
     type: Schema.Types.ObjectId,
@@ -45,10 +61,11 @@ const readyCheckSchema = new Schema({
     },
     reply: {
       type: String,
-      enum: ['accepted', 'declined', 'maybe', 'pending'],
-      default: 'pending',
+      enum: ['Ready', 'Declined', 'Maybe', 'Pending'],
+      default: 'Pending',
     },
   }],
+  chatMessages: [chatMessageSchema], 
 });
 
 const ReadyCheck = model('ReadyCheck', readyCheckSchema);
