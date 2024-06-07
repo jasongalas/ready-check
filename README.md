@@ -7,7 +7,7 @@ Are you ready? ✅
 
 ## Installation
 
-No installation is required for this app to function. You only need to create an account at ____ to get started with ReadyCheck!
+No installation is required for this app to function. You only need to create an account at [readyCheck](https://ready-check.onrender.com) to get started!
 
 ## Usage
 

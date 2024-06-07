@@ -3,8 +3,11 @@ const { GraphQLError } = require('graphql');
 const jwt = require('jsonwebtoken');
 
 // set token secret and expiration date
-const secret = process.env.DB_SECRET || 'nottelling';
-const expiration = process.env.DB_EXPIRATION || '24h';
+// const secret = process.env.DB_SECRET || 'nottelling';
+// const expiration = process.env.DB_EXPIRATION || '24h';
+
+const secret = 'nottelling';
+const expiration = '24h';
 
 class AuthenticationError extends GraphQLError {
   constructor(message) {
