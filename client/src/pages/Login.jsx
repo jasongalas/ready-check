@@ -25,41 +25,53 @@ const Login = () => {
   };
 
   return (
-    <main className="flex-row justify-center mb-4">
-      <div className="col-12 col-lg-10">
-        <div className="card">
-          <h4 className="card-header bg-dark text-light p-2">Login</h4>
-          <div className="card-body">
-            {data ? (
-              <p>
-                Success! You may now head{' '}
-                <Link to="/">back to the homepage.</Link>
-              </p>
-            ) : (
-              <form onSubmit={handleFormSubmit}>
+    <main className="hero min-h-screen bg-darker-background">
+      <div className="hero-content flex-col lg:flex-row-reverse">
+        <div className="text-center w-96">
+          <h1 className="text-5xl text-navy-blue font-bold">Login!</h1>
+        </div>
+        <div className="card shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
+          {data ? (
+            <p>
+              Success! You may now head{' '}
+              <Link to="/">back to the homepage.</Link>
+            </p>
+          ) : (
+            <form className="card-body" onSubmit={handleFormSubmit}>
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">Username</span>
+                </label>
                 <input
-                  className="form-input"
-                  placeholder="Your email"
-                  name="email"
-                  type="email"
-                  value={formState.email}
+                  className="input input-bordered"
+                  placeholder="Your username"
+                  name="username"
+                  type="username"
+                  value={formState.username}
                   onChange={handleChange}
+                  required
                 />
+              </div>
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">Password</span>
+                </label>
                 <input
-                  className="form-input"
-                  placeholder="******"
-                  name="password"
                   type="password"
+                  placeholder="*******"
+                  name="password"
                   value={formState.password}
                   onChange={handleChange}
+                  className="input input-bordered"
+                  required
                 />
-                <button className="btn btn-block btn-primary" style={{ cursor: 'pointer' }} type="submit">
-                  Submit
-                </button>
-              </form>
-            )}
-            {error && <div className="my-3 p-3 bg-danger text-white">{error.message}</div>}
-          </div>
+                <div className="form-control mt-6">
+                  <button className="btn btn-primary" type="submit">Submit</button>
+                </div>
+              </div>
+            </form>
+          )}
+          {error && <div className="my-3 p-3 bg-danger text-white">{error.message}</div>}
         </div>
       </div>
     </main>
