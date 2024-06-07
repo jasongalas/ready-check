@@ -14,12 +14,19 @@ const resolvers = {
             return User.find({});
         },
 
-        getReadyCheck: async (_, { id }, context) => {
-            // if (!context.user) {
-            //     throw new AuthenticationError('You need to be logged in!');
-            // }
-            return ReadyCheck.findById(id);
-        },
+        getReadyCheck: async (_, { id }) => {
+            return ReadyCheck.findById(id)
+              .populate('owner')
+              .populate('invitees')
+              .populate({
+                path: 'RSVPs.user',
+                model: 'User',
+              })
+              .populate({
+                path: 'chatMessages.user',
+                model: 'User',
+              });
+          },
 
         readyChecks: async () => {
             return ReadyCheck.find().populate('owner invitees RSVPs.user');
@@ -52,7 +59,7 @@ const resolvers = {
         },
 
         readyCheck: async (_, { _id }) => {
-            return ReadyCheck.findById(_id).populate('owner attendees.user');
+            return ReadyCheck.findById(_id).populate('owner').populate("RSVPs[0]");
         },
     },
 
@@ -218,6 +225,7 @@ const resolvers = {
         },
 
         rsvpReadyCheck: async (_, { readyCheckId, userId, reply }) => {
+            console.log("test")
             const readyCheck = await ReadyCheck.findById(readyCheckId);
             if (!readyCheck) {
                 throw new Error('ReadyCheck not found');
@@ -236,9 +244,33 @@ const resolvers = {
 
             await readyCheck.save();
 
-            return readyCheck.populate('owner RSVPs.user').execPopulate();
+            // Optionally, populate any fields you need before returning the updated ready check
+            return readyCheck.populate('owner RSVPs.user');
         },
-    },
+
+        sendMessage: async (_, { readyCheckId, userId, content }) => {
+            const readyCheck = await ReadyCheck.findById(readyCheckId);
+            if (!readyCheck) {
+                throw new Error('ReadyCheck not found');
+            }
+
+            // Create a new chat message
+            const newMessage = {
+                user: userId,
+                content,
+                timestamp: new Date().toISOString(), // Use current timestamp
+            };
+
+            // Add the new message to the chatMessages array
+            readyCheck.chatMessages.push(newMessage);
+
+            // Save the updated ready check
+            await readyCheck.save();
+
+            // Return the updated ready check with populated chat messages
+            return readyCheck.populate('chatMessages.user');
+        },
+    }
 };
 
 module.exports = resolvers;

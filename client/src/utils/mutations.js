@@ -36,6 +36,19 @@ export const UPDATE_READY_CHECK = gql`
     }
 `;
 
+export const RSVP_READY_CHECK = gql`
+mutation rsvpReadyCheck($readyCheckId: String!, $userId: String!, $reply: String!) {
+  rsvpReadyCheck(readyCheckId: $readyCheckId, userId: $userId, reply: $reply) {
+    _id
+    RSVPs {
+      user {
+        _id
+      }
+      reply
+    }
+  }
+}`
+
 export const UPDATE_USER_STATUS = gql`
     mutation UpdateUserStatus($status: String!) {
         updateUserStatus(status: $status) {
@@ -97,6 +110,22 @@ export const CREATE_USER = gql`
       user {
         _id
         username
+      }
+    }
+  }
+`;
+
+export const SEND_CHAT_MESSAGE = gql`
+  mutation SendMessage($readyCheckId: ID!, $userId: ID!, $content: String!) {
+    sendMessage(readyCheckId: $readyCheckId, userId: $userId, content: $content) {
+      _id
+      chatMessages {
+        user {
+          _id
+          username
+        }
+        content
+        timestamp
       }
     }
   }
