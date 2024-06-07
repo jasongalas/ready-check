@@ -34,7 +34,7 @@ const Header = () => {
 
   return (
     <header className="header">
-      <div className="navbar bg-base-100 shadow-md">
+      <div className="navbar bg-transparent text-navy-blue shadow-md">
         <div className="flex-1">
           <a className="btn btn-ghost text-xl" onClick={goToHomePage}>ReadyCheck</a>
         </div>
