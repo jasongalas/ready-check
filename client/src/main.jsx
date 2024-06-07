@@ -7,6 +7,7 @@ import Home from './pages/Home.jsx';
 import LoginPage from './pages/Login.jsx';
 import SignUpPage from './pages/Signup';
 import Profile from './pages/ProfilePage.jsx'
+import Social from './pages/Social.jsx';
 
 const router = createBrowserRouter([
     {
@@ -28,6 +29,10 @@ const router = createBrowserRouter([
             {
                 path: '/myprofile',
                 element: <Profile/>
+            },
+            {
+                path: '/social',
+                element: <Social/>
             }
             // {
             //     path: `/readycheck/:id`,
