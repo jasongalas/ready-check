@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams } from 'react-router-dom'; // Import useParams from react-router-dom
+import { useParams } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/client';
 import { QUERY_READY_CHECK } from '../utils/queries';
 import { UPDATE_READY_CHECK } from '../utils/mutations';
@@ -11,7 +11,7 @@ function LiveReadyCheckPage() {
   const currentUser = { username: 'testuser' };
 
   const [updatedReadyCheckData, setUpdatedReadyCheckData] = useState({});
-  const [selectedResponse, setSelectedResponse] = useState('');
+  const [selectedResponse, setSelectedResponse] = useState('Pending'); // Initialize selectedResponse to 'Pending'
   const formRef = useRef(null);
   const inputRef = useRef(null);
   const messagesRef = useRef(null);
@@ -33,7 +33,9 @@ function LiveReadyCheckPage() {
       // Handle receiving chat messages
       socket.on('chat message', (msg) => {
         const item = document.createElement('li');
-        item.textContent = msg;
+        const msgArr = msg.split('|');
+        item.innerHTML = `<strong>${msgArr[0]}:</strong> ${msgArr[1]} <span class="text-sm text-gray-500">${msgArr[2]}</span>`;
+        item.classList.add('border-b', 'py-2');
         messagesRef.current.appendChild(item);
         window.scrollTo(0, document.body.scrollHeight);
       });
@@ -47,66 +49,107 @@ function LiveReadyCheckPage() {
     };
   }, [socket]);
 
-  function formatDate(timestamp) {
-    const options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit' };
-    const date = new Date(timestamp);
-    return date.toLocaleDateString(undefined, options);
-  }
-
   const handleSendMessage = (e) => {
     e.preventDefault();
     const message = inputRef.current.value;
     if (message.trim() !== '') {
-      socket.emit('chat message', message);
+      const timestamp = new Date().toLocaleTimeString();
+      socket.emit('chat message', `${currentUser.username}|${message}|${timestamp}`);
       inputRef.current.value = '';
     }
   };
 
   const handleRSVPSelection = (response) => {
     setSelectedResponse(response);
-    // Add username beneath the chosen option
-    setUpdatedReadyCheckData({ ...updatedReadyCheckData, attendees: [{ user: currentUser, status: response }] });
+    // Update the selected response in the updatedReadyCheckData state
+    setUpdatedReadyCheckData({ ...updatedReadyCheckData, reply: response });
   };
 
-  if (readyCheckLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
+  if (readyCheckLoading) return <div className="py-4">Loading...</div>;
+  if (error) return <div className="py-4">Error: {error.message}</div>;
 
-  const { title, owner, timing, activity, attendees, description } = readyCheckdata.getReadyCheck || {};
+  const { title, owner, timing, activity, invitees, description } = readyCheckdata.getReadyCheck || {};
   const isOwner = owner === currentUser;
 
   return (
-    <div>
-      <h1>{title}</h1>
-      <p>Timing: {timing}</p>
-      <p>Owner: {owner?.username}</p>
-      <p>{activity}</p>
-      <p>{description}</p>
-      {attendees && (
-        <ul>
-          {attendees.map((attendee) => (
-            <li key={attendee._id}>
-              {attendee.username} - {attendee.reply}
-            </li>
-          ))}
-        </ul>
+    <div className="p-4 border border-gray-300 rounded">
+      <h1 className="text-2xl font-semibold text-center mb-4">{title}</h1>
+      <div className="mb-4">
+        {timing && <p>When: {timing}</p>}
+        {owner?.username && <p>Owner: {owner?.username}</p>}
+        {activity && <p>Activity: {activity}</p>}
+        {description && <p>Description: {description}</p>}
+      </div>
+      {isOwner && (
+        <button onClick={handleEditReadyCheck} className="btn btn-sm btn-secondary">
+          Edit ReadyCheck
+        </button>
       )}
-      {isOwner ? (
-        <form onSubmit={updateReadyCheck}>
-          {/* Add form fields to update ready check */}
-          <button type="submit">Update Ready Check</button>
-        </form>
-      ) : (
-        <div>
-          <label>
+      {!isOwner && (
+        <div className="mt-4">
+          <label className="block mb-2">
             RSVP Options:
-            <div>
-              <button onClick={() => handleRSVPSelection('ready')} style={{ backgroundColor: selectedResponse === 'ready' ? 'lightgreen' : '' }}>I'm Ready</button>
-              <button onClick={() => handleRSVPSelection('maybe')} style={{ backgroundColor: selectedResponse === 'maybe' ? 'lightyellow' : '' }}>Maybe</button>
-              <button onClick={() => handleRSVPSelection('declined')} style={{ backgroundColor: selectedResponse === 'declined' ? 'lightcoral' : '' }}>I Can't Join</button>
+            <div className="flex flex-wrap gap-2">
+              {/* Add button for 'Pending' option */}
+              <button
+                onClick={() => handleRSVPSelection('Pending')}
+                className={`btn btn-sm ${selectedResponse === 'Pending' ? 'btn-primary' : 'btn-outline-primary'}`}
+              >
+                Pending
+              </button>
+              <button
+                onClick={() => handleRSVPSelection('Ready')}
+                className={`btn btn-sm ${selectedResponse === 'Ready' ? 'btn-success' : 'btn-outline-success'}`}
+              >
+                I'm Ready
+              </button>
+              <button
+                onClick={() => handleRSVPSelection('Maybe')}
+                className={`btn btn-sm ${selectedResponse === 'Maybe' ? 'btn-warning' : 'btn-outline-warning'}`}
+              >
+                Maybe
+              </button>
+              <button
+                onClick={() => handleRSVPSelection('Declined')}
+                className={`btn btn-sm ${selectedResponse === 'Declined' ? 'btn-error' : 'btn-outline-error'}`}
+              >
+                I Can't Join
+              </button>
             </div>
+            <div className="mt-4 grid grid-cols-4 gap-4">
+              {/* Pending RSVP */}
+              <div className="col-span-1">
+                <p className="font-semibold">Pending</p>
+                {invitees &&
+                  invitees
+                    .filter((invitee) => invitee.reply === 'Pending')
+                    .map((invitee) => <p key={invitee._id}>{invitee.user.username}</p>)}
+              </div>
+              <div className="col-span-1">
+                <p className="font-semibold">Ready</p>
+                {invitees &&
+                  invitees
+                    .filter((invitee) => invitee.reply === 'Ready')
+                    .map((invitee) => <p key={invitee._id}>{invitee.user.username}</p>)}
+              </div>
+              <div className="col-span-1">
+                <p className="font-semibold">Maybe</p>
+                {invitees &&
+                  invitees
+                    .filter((invitee) => invitee.reply === 'Maybe')
+                    .map((invitee) => <p key={invitee._id}>{invitee.user.username}</p>)}
+              </div>
+              <div className="col-span-1">
+                <p className="font-semibold">Declined</p>
+                {invitees &&
+                  invitees
+                    .filter((invitee) => invitee.reply === 'Declined')
+                    .map((invitee) => <p key={invitee._id}>{invitee.user.username}</p>)}
+              </div>
 
+            </div>
             {/* Display username beneath the chosen option */}
-            <p>
+            <p className="text-sm mt-2">
               {selectedResponse && `${currentUser.username} - ${selectedResponse}`}
             </p>
           </label>
@@ -114,12 +157,17 @@ function LiveReadyCheckPage() {
       )}
 
       {/* Messaging System */}
-      <ul ref={messagesRef}></ul>
-      <form ref={formRef} onSubmit={handleSendMessage}>
-        <input ref={inputRef} autoComplete="off" /><button>Send</button>
-      </form>
+      <div className="border-t border-gray-300 mt-4 pt-4">
+        <h3 className="mb-2">ReadyCheck Live Chat</h3>
+        <ul ref={messagesRef} className="overflow-y-auto max-h-60"></ul>
+        <form onSubmit={handleSendMessage} className="mt-4 flex">
+          <input ref={inputRef} autoComplete="off" className="form-input flex-grow mr-2" />
+          <button type="submit" className="btn btn-sm btn-primary">Send</button>
+        </form>
+      </div>
     </div>
   );
 }
 
 export default LiveReadyCheckPage;
+
