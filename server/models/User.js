@@ -43,8 +43,20 @@ const userSchema = new Schema({
   }]
 });
 
+userSchema.pre('save', async function (next) {
+  if (this.isNew || this.isModified('password')) {
+    const saltRounds = 10;
+    this.password = await bcrypt.hash(this.password, saltRounds);
+    console.log('Hashed Password:', this.password); // Log hashed password for debugging
+  }
+
+  next();
+});
+
 userSchema.methods.isCorrectPassword = async function (password) {
-  await bcrypt.compare(password, this.password);
+  const isCorrect = await bcrypt.compare(password, this.password);
+  console.log('Password comparison result:', isCorrect); // Log comparison result for debugging
+  return isCorrect;
 };
 
 userSchema.virtual('Following').get(function () {
