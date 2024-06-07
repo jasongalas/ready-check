@@ -6,7 +6,18 @@ export default {
     "./node_modules/flowbite/**/*.js"
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        "aquamarine": '#0298e6',
+        "navy-blue": '#03045E',
+        "navy-blue-hover": '#0608c6',
+        "honolulu-blue": '#0077B6',
+        "blue-btn": '#0259CA',
+        "blue-hover": '#2583fd',
+        "dark-green": '#008148',
+        "green-hover": '#00ab5f',
+    },
+  },  
   },
   plugins: [
     require('daisyui'),

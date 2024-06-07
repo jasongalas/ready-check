@@ -15,7 +15,7 @@ const Home = () => {
       {isAuthenticated ? (
         <div className="flex flex-col w-full lg:flex-row">
           <div className="flex flex-wrap w-2/3 justify-center gap-4">
-            <button onClick={openReadyCheckForm} className="btn btn-sky card m-10 h-fill w-full bg-sky-600 text-primary-content shadow-xl">
+          <button onClick={openReadyCheckForm} className="btn btn-sky card m-10 h-fill w-full bg-sky-600 hover:bg-aquamarine text-primary-content shadow-xl">
               <div className="card-body text-white text-center mt-14">
                 <h2 className="text-center font-bold text-6xl m-5">New ReadyCheck</h2>
                 <div className='m-3'>
@@ -43,17 +43,17 @@ const Home = () => {
           </div>
           <div className="divider lg:divider-horizontal"></div>
           <div className="flex flex-wrap w-1/2 justify-center gap-4">
-            <button onClick={() => navigate('/readychecks')} className="btn btn-accent card mt-10 py-20 w-full bg-accent text-primary-content shadow-xl">
+            <button onClick={() => navigate('/readychecks')} className="btn bg-dark-green hover:bg-green-hover card mt-10 py-20 w-full text-primary-content shadow-xl">
               <div className="card-body text-white text-center">
                 <h2 className="text-center font-bold text-4xl m-3">Active ReadyChecks</h2>
               </div>
             </button>
-            <button onClick={() => navigate('/social')} className="btn btn-success card py-20 w-full text-primary-content shadow-xl">
+            <button onClick={() => navigate('/social')} className="btn bg-blue-btn hover:bg-blue-hover card py-20 w-full text-primary-content shadow-xl">
               <div className="card-body text-white text-center">
                 <h2 className="text-center font-bold text-4xl m-3">Social</h2>
               </div>
             </button>
-            <button onClick={() => navigate('/myprofile')} className="btn btn-warning card py-20 w-full text-primary-content shadow-xl">
+            <button onClick={() => navigate('/myprofile')} className="btn bg-navy-blue hover:bg-navy-blue-hover card py-20 w-full text-primary-content shadow-xl">
               <div className="card-body text-white text-center">
                 <h2 className="text-center font-bold text-4xl m-3">Profile</h2>
               </div>
