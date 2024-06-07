@@ -82,6 +82,7 @@ export const QUERY_USER = gql`
       _id
       username
       email
+      bio
     }
   }
 `;
@@ -103,6 +104,7 @@ export const QUERY_ME = gql`
       _id
       username
       email
+      bio
       friends {
         _id
         username
