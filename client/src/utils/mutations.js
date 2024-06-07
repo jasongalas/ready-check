@@ -45,6 +45,15 @@ export const UPDATE_USER_STATUS = gql`
     }
 `;
 
+export const UPDATE_USER_BIO = gql`
+  mutation UpdateUserBio($bio: String!) {
+    updateUserBio(bio: $bio) {
+      _id
+      bio
+    }
+  }
+`;
+
 export const ADD_FRIEND = gql`
     mutation followFriend($username: String!) {
       followFriend(username: $username) {
