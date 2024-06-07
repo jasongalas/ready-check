@@ -43,7 +43,7 @@ const Home = () => {
           </div>
           <div className="divider lg:divider-horizontal"></div>
           <div className="flex flex-wrap w-1/2 justify-center gap-4">
-            <button onClick={() => navigate('/active-readychecks')} className="btn btn-accent card mt-10 py-20 w-full bg-accent text-primary-content shadow-xl">
+            <button onClick={() => navigate('/readycheck')} className="btn btn-accent card mt-10 py-20 w-full bg-accent text-primary-content shadow-xl">
               <div className="card-body text-white text-center">
                 <h2 className="text-center font-bold text-4xl m-3">Active ReadyChecks</h2>
               </div>
