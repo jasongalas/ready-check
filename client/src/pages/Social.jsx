@@ -10,21 +10,22 @@ const Social = () => {
         variables: { username: userParam },
     });
 
-    const user = data?.me || data?.user || {};
+    // const user = data?.me || data?.user || {};
+    const user = { username: 'testuser' };
 
     const navigate = useNavigate();
-    
+
     const goToLoginPage = () => {
         navigate('/login');
-      }
+    }
 
     const goToSignUpPage = () => {
-    navigate('/signup');
+        navigate('/signup');
     }
 
-    if (Auth.loggedIn() && Auth.getProfile().data.username === userParam) {
-        return <Navigate to="/social" />;
-    }
+    // if (Auth.loggedIn() && Auth.getProfile().data.username === userParam) {
+    //     return <Navigate to="/social" />;
+    // }
 
     if (loading) {
         return <div>Loading...</div>;
@@ -47,14 +48,35 @@ const Social = () => {
     }
 
     return (
-        <div>
-            Hi
-            <div className="flex-row justify-center mb-3">
-                <h2 className="col-12 col-md-10 bg-dark text-light p-3 mb-5">
-                    Viewing {userParam ? `${user.username}'s` : 'your'} profile.
-                </h2>
+        <main>
+            <div className="flex flex-col w-full lg:flex-row">
+                <div className="grid flex-grow h-fill w-1/2 card bg-base-300 rounded-box place-items-center m-6">
+                    <h1 className='text-3xl font-bold'>Friends List</h1>
+                    <div className="card w-96 bg-base-100 shadow-xl">
+                        <div className="card-body h-96 w-full ml-6">
+                            <p>Friend 1</p>
+                            <p>Friend 2</p>
+                            <p>Friend 3</p>
+                            <p>Friend 4</p>
+                            <p>Friend 5</p>
+                        </div>
+                    </div>
+                </div>
+                <div className="divider lg:divider-horizontal"></div>
+                <div className="flex-grow h-fill w-1/2 card bg-base-300 rounded-box place-items-center m-6">
+                    <h1 className='text-3xl font-bold my-7'>Add a Friend</h1>
+                    <div className="card w-96 bg-base-100 shadow-xl mt-8">
+                        <div className="card-body p-12 w-full">
+                            <label className="input input-bordered flex items-center gap-2 mb-4">
+                                Username
+                                <input type="text" className="grow" />
+                            </label>
+                            <button className="btn btn-primary">Add</button>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
+        </main>
     );
 };
 
