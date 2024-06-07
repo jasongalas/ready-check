@@ -1,25 +1,65 @@
 import { gql } from '@apollo/client';
 
 export const QUERY_READY_CHECK = gql`
-  query ReadyCheck($id: ID!) {
-    readyCheck(id: $id) {
+  query getReadyCheck($id: ID!) {
+    getReadyCheck(id: $id) {
       _id
       title
       activity
       timing
       description
       createdAt
-      attendees {
-        user
-        status
+      invitees {
+        _id
+        username
+      }
+      RSVPs {
+        user {
+          _id
+          username
+        }
+        reply
+      }
+      owner {
+        _id
+        username
       }
     }
   }
 `;
 
+export const QUERY_READY_CHECKS = gql`
+  query readyChecks {
+    readyChecks {
+      _id
+      title
+      activity
+      timing
+      description
+      createdAt
+      invitees {
+        _id
+        username
+      }
+      RSVPs {
+        user {
+          _id
+          username
+        }
+        reply
+      }
+      owner {
+        _id
+        username
+      }
+    }
+  }
+`;
+
+
 export const QUERY_USERS = gql`
-  query users($username: String!) {
-    users(username: $username) {
+  query getUsers($username: String!) {
+    getUsers(username: $username) {
       _id
       username
       email
@@ -37,8 +77,8 @@ export const QUERY_INVITEES = gql`
 `;
 
 export const QUERY_USER = gql`
-  query user($username: String!) {
-    user(username: $username) {
+  query getUser($username: String!) {
+    getUser(username: $username) {
       _id
       username
       email
@@ -47,8 +87,8 @@ export const QUERY_USER = gql`
 `;
 
 export const QUERY_FRIENDS = gql`
-  query Friends($userId: ID!) {
-    user(id: $userId) {
+  query getFriends($userId: ID!) {
+    getFriends(userId: $userId) {
       friends {
         _id
         username

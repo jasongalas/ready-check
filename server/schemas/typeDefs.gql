@@ -51,7 +51,7 @@ const typeDefs = `
   }
 
   type Query {
-    getUser: User
+    getUser(username: String!): User
     getUsers: [User]
     getReadyCheck(id: ID!): ReadyCheck
     getFriends(userId: ID!): [User]
@@ -71,10 +71,10 @@ const typeDefs = `
       email: String!,
       password: String!
     ): Auth
-    addFriend (
+    followFriend (
       username: String!
     ): User
-    removeFriend (
+    unfollowFriend (
       username: String!
     ): User
     createReadyCheck(input: ReadyCheckInput!): ReadyCheck!
