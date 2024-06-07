@@ -20,6 +20,7 @@ const readyCheckSchema = new Schema({
   timing: {
     type: Date,
     required: true,
+    get: (timestamp) => dateFormat(timestamp),
   },
   description: {
     type: String,
