@@ -40,14 +40,14 @@ const Login = () => {
             <form className="card-body" onSubmit={handleFormSubmit}>
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text">Username</span>
+                  <span className="label-text">Email</span>
                 </label>
                 <input
                   className="input input-bordered"
-                  placeholder="Your username"
-                  name="username"
-                  type="username"
-                  value={formState.username}
+                  placeholder="Your email"
+                  name="email"
+                  type="email"
+                  value={formState.email}
                   onChange={handleChange}
                   required
                 />
@@ -71,7 +71,7 @@ const Login = () => {
               </div>
             </form>
           )}
-          {error && <div className="my-3 p-3 bg-danger text-white">{error.message}</div>}
+          {error && <div className="my-3 p-3 bg-danger">{error.message}</div>}
         </div>
       </div>
     </main>

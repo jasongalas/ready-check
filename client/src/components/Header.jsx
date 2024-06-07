@@ -1,17 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-//import './Header.css';
+import AuthService from '../utils/auth';
 
 const Header = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    setIsLoggedIn(AuthService.loggedIn());
+  }, []);
+
   const handleLogout = () => {
-    setIsLoggedIn(!isLoggedIn);
+    AuthService.logout();
+    setIsLoggedIn(false);
   }
 
   const goToLoginPage = () => {
     navigate('/login');
+  }
+
+  const goToSocialPage = () => {
+    navigate('/social');
   }
 
   const goToSignUpPage = () => {
@@ -30,8 +39,6 @@ const Header = () => {
     navigate('/ready');
   }
 
-
-
   return (
     <header className="header">
       <div className="navbar bg-transparent text-navy-blue shadow-md">
@@ -44,6 +51,7 @@ const Header = () => {
               <>
                 <li className="nav-item"><button onClick={goToHomePage} className="nav-link">Home</button></li>
                 <li className="nav-item"><button onClick={goToProfilePage} className="nav-link">Profile</button></li>
+                <li className="nav-item"><button onClick={goToSocialPage} className="nav-link">Social</button></li>
                 <li className="nav-item"><button onClick={goToReadyCheckPage} className="nav-link">New Ready Check</button></li>
                 <li className="nav-item"><button onClick={handleLogout} className="auth-button">Log Out</button></li>
               </>
