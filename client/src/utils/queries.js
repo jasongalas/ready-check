@@ -24,6 +24,14 @@ export const QUERY_READY_CHECK = gql`
         _id
         username
       }
+      chatMessages {
+        user {
+          _id
+          username
+        }
+        content
+        timestamp
+      }
     }
   }
 `;
@@ -52,10 +60,17 @@ export const QUERY_READY_CHECKS = gql`
         _id
         username
       }
+      chatMessages {
+        user {
+          _id
+          username
+        }
+        content
+        timestamp
+      }
     }
   }
 `;
-
 
 export const QUERY_USERS = gql`
   query getUsers($username: String!) {
