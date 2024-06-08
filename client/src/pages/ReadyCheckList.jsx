@@ -20,11 +20,11 @@ const ActiveReadyChecks = () => {
 
   const goToLoginPage = () => {
     navigate('/login');
-  }
+  };
 
   const goToSignUpPage = () => {
     navigate('/signup');
-  }
+  };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -42,8 +42,10 @@ const ActiveReadyChecks = () => {
           </div>
         </div>
       </div>
-    )
+    );
   }
+
+  console.log(user);
 
   return (
     <main className='mx-6 h-fill'>
@@ -63,7 +65,7 @@ const ActiveReadyChecks = () => {
               <form method="dialog">
                 <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
               </form>
-              <ReadyCheckForm userId={1} />
+              <ReadyCheckForm userId={user._id} />
             </div>
           </dialog>
         </div>

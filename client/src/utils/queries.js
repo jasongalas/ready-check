@@ -104,6 +104,8 @@ export const QUERY_USER = gql`
       ownedReadyChecks {
         _id
         title
+        description
+        createdAt
       }
     }
   }
