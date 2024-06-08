@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { LOGIN } from '../utils/mutations';
 import { AuthServiceInstance } from '../utils/auth';
@@ -7,6 +7,7 @@ import { AuthServiceInstance } from '../utils/auth';
 const Login = () => {
   const [formState, setFormState] = useState({ email: '', password: '' });
   const [login, { error, data }] = useMutation(LOGIN);
+  const navigate = useNavigate();
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -18,6 +19,7 @@ const Login = () => {
     try {
       const { data } = await login({ variables: { ...formState } });
       AuthServiceInstance.login(data.login.token);
+      navigate('/');
     } catch (e) {
       console.error(e);
     }
