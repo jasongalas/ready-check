@@ -2,7 +2,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 import { QUERY_USER, QUERY_ME } from '../utils/queries';
 import ReadyCheckForm from '../components/ReadyCheckForm';
-import Auth from '../utils/auth';
+import { AuthServiceInstance } from '../utils/auth';
 
 const ActiveReadyChecks = () => {
   const { username: userParam } = useParams();

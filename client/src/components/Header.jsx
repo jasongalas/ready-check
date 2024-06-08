@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import AuthService from '../utils/auth';
+import { AuthServiceInstance  } from '../utils/auth';
 import ReadyCheckForm from './ReadyCheckForm';
 
 const Header = () => {
@@ -9,11 +9,11 @@ const Header = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setIsLoggedIn(AuthService.loggedIn());
+    setIsLoggedIn(AuthServiceInstance.loggedIn());
   }, []);
 
   const handleLogout = () => {
-    AuthService.logout();
+    AuthServiceInstance.logout();
     setIsLoggedIn(false);
   }
 

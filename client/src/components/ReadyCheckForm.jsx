@@ -52,6 +52,7 @@ function ReadyCheckForm({ userId }) {
                     timing,
                     description,
                     inviteeIds: invitees,
+                    ownerId: userId, // Assign the owner ID
                 }
             }
         });
@@ -68,6 +69,8 @@ function ReadyCheckForm({ userId }) {
                 : [...prevInvitees, id]
         );
     };
+
+    const filteredInvitees = inviteeData?.getUsers.filter(user => user._id !== userId) || [];
 
     return (
         <div>
@@ -138,7 +141,7 @@ function ReadyCheckForm({ userId }) {
                                 onChange={(e) => handleInviteeClick(e.target.value)}
                             >
                                 <option value="">Select Invitees</option>
-                                {inviteeData.getUsers.map((user) => (
+                                {filteredInvitees.map((user) => (
                                     <option key={user._id} value={user._id}>
                                         {user.username}
                                     </option>

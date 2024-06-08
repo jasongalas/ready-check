@@ -8,7 +8,7 @@ import { useSocket } from './SocketContext';
 function LiveReadyCheckPage() {
   const { id } = useParams();
   const socket = useSocket();
-  const { data: userData } = useQuery(QUERY_ME); // Fetch current user's data
+  const { loading: userDataLoading, error: userDataError, data: userData } = useQuery(QUERY_ME); 
 
   const [updatedReadyCheckData, setUpdatedReadyCheckData] = useState({});
   const [selectedResponse, setSelectedResponse] = useState('Pending');
@@ -75,11 +75,11 @@ function LiveReadyCheckPage() {
     }
   };
 
-  if (loading) return <div className="py-4">Loading...</div>;
-  if (error) return <div className="py-4">Error: {error.message}</div>;
+  if (loading || userDataLoading) return <div className="py-4">Loading...</div>;
+  if (error || userDataError) return <div className="py-4">Error: {error?.message || userDataError?.message}</div>;
 
   const { title, owner, timing, activity, invitees, description, RSVPs, chatMessages } = data.getReadyCheck || {};
-  const isOwner = owner?.username === userData.me.username; // Use current user's data
+  const isOwner = userData?.me && owner?.username === userData.me.username; // Use optional chaining
 
   console.log("Chat messages:", chatMessages);
 
