@@ -9,7 +9,8 @@ import SignUpPage from './pages/Signup';
 import Profile from './pages/ProfilePage.jsx'
 import Social from './pages/Social.jsx';
 import ReadyCheck from './pages/LiveReadyCheck.jsx';
-import ReadyCheckList from './pages/ReadyCheckList.jsx'
+import ReadyCheckList from './pages/ReadyCheckList.jsx';
+import FriendProfile from './pages/FriendProfile.jsx';
 
 const router = createBrowserRouter([
     {
@@ -44,10 +45,10 @@ const router = createBrowserRouter([
                 path: `/readychecks`,
                 element: <ReadyCheckList/>,
             },
-            // {
-            //     path: '/profile/:id',
-            //     element: <ProfilePage/>
-            // },
+            {
+                path: '/profile/:id',
+                element: <FriendProfile/>
+            },
             
         ]
     }
