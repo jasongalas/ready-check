@@ -6,6 +6,8 @@ import { QUERY_NOTIFICATIONS } from '../utils/queries';
 function Notifications({ userId }) {
     const { data } = useQuery(QUERY_NOTIFICATIONS, { variables: { userId } });
 
+    const notifications = data?.notifications || []
+
     return (
         <div className="navbar-end">
             <div className="dropdown">
@@ -17,8 +19,8 @@ function Notifications({ userId }) {
                         <input type="radio" name="notification-accordion" defaultChecked />
                         <div className="collapse-title text-xl font-medium">Recent Notifications</div>
                         <div className="collapse-content">
-                            {data &&
-                                data.notifications.map((notification) => (
+                            {notifications &&
+                                notifications.map((notification) => (
                                     <div key={notification.id}>
                                         <Link to={`/readycheck/${notification.relatedId}`}>
                                             <div className="collapse-title text-lg font-medium">{notification.title}</div>
