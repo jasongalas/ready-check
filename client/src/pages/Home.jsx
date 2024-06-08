@@ -1,10 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ReadyCheckForm from '../components/ReadyCheckForm';
+import { AuthServiceInstance } from '../utils/auth';
 
 const Home = () => {
   const navigate = useNavigate();
-  const isAuthenticated = true;  // Placeholder for user authentication 
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    setIsAuthenticated(AuthServiceInstance.loggedIn());
+  }, []);
 
   const openReadyCheckForm = () => {
     document.getElementById('my_modal_3').showModal();

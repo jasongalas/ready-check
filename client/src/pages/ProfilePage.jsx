@@ -3,7 +3,7 @@ import { useQuery, useMutation } from '@apollo/client';
 import { QUERY_USER, QUERY_ME } from '../utils/queries';
 import { UPDATE_USER_BIO } from '../utils/mutations';
 import { useState } from 'react';
-import Auth from '../utils/auth';
+import { AuthServiceInstance } from '../utils/auth';
 
 const Profile = () => {
   const { username: userParam } = useParams();

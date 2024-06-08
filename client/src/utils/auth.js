@@ -38,4 +38,5 @@ class AuthService {
   }
 }
 
-export default new AuthService();
+// Export an instance of the AuthService instead of the class itself
+export const AuthServiceInstance = new AuthService();

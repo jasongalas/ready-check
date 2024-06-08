@@ -3,7 +3,7 @@ import { useQuery, useMutation } from '@apollo/client';
 import { QUERY_USER, QUERY_ME } from '../utils/queries';
 import { ADD_FRIEND, REMOVE_FRIEND } from '../utils/mutations';
 import { useState } from 'react';
-import Auth from '../utils/auth';
+import { AuthServiceInstance } from '../utils/auth';
 
 const Social = () => {
     const { username: userParam } = useParams();
