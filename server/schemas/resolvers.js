@@ -225,7 +225,6 @@ const resolvers = {
         },
 
         rsvpReadyCheck: async (_, { readyCheckId, userId, reply }) => {
-            console.log("test")
             const readyCheck = await ReadyCheck.findById(readyCheckId);
             if (!readyCheck) {
                 throw new Error('ReadyCheck not found');

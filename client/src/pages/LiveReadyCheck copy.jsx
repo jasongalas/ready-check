@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/client';
-import { QUERY_READY_CHECK, QUERY_ME } from '../utils/queries';
+import { QUERY_READY_CHECK } from '../utils/queries';
 import { UPDATE_READY_CHECK, RSVP_READY_CHECK, SEND_CHAT_MESSAGE } from '../utils/mutations';
 import { useSocket } from './SocketContext';
 
 function LiveReadyCheckPage() {
   const { id } = useParams();
   const socket = useSocket();
-  const { data: userData } = useQuery(QUERY_ME); // Fetch current user's data
+  const currentUser = { username: 'win', id: '66622c3c93f1ad069edcbf5d' };
 
   const [updatedReadyCheckData, setUpdatedReadyCheckData] = useState({});
   const [selectedResponse, setSelectedResponse] = useState('Pending');
@@ -28,14 +28,14 @@ function LiveReadyCheckPage() {
   useEffect(() => {
     if (socket) {
       socket.on('readyCheckUpdate', (update) => {
-        setUpdatedReadyCheckData(update);
+        // Handle the update
       });
 
       socket.on('chat message', (msg) => {
+        chatMessages(msg);
         const item = document.createElement('li');
         const msgArr = msg.split('|');
-        const timestamp = new Date(msgArr[2]).toLocaleTimeString(); // Format the timestamp
-        item.innerHTML = `<strong>${msgArr[0]}:</strong> ${msgArr[1]} <span class="text-sm text-gray-500">${timestamp}</span>`;
+        item.innerHTML = `<strong>${msgArr[0]}:</strong> ${msgArr[1]} <span class="text-sm text-gray-500">${msgArr[2]}</span>`;
         item.classList.add('border-b', 'py-2');
         messagesRef.current.appendChild(item);
         window.scrollTo(0, document.body.scrollHeight);
@@ -53,9 +53,9 @@ function LiveReadyCheckPage() {
     e.preventDefault();
     if (messageInput.trim() !== '') {
       const timestamp = new Date().toLocaleTimeString();
-      const message = `${userData.me.username}|${messageInput}|${timestamp}`; // Use current user's data
+      const message = `${currentUser.username}|${messageInput}|${timestamp}`;
       try {
-        await sendChatMessage({ variables: { readyCheckId: id, userId: userData.me._id, content: messageInput } }); // Use current user's ID
+        await sendChatMessage({ variables: { readyCheckId: id, userId: currentUser.username, content: messageInput } });
         setMessageInput('');
       } catch (error) {
         console.error('Error sending message:', error.message);
@@ -66,9 +66,10 @@ function LiveReadyCheckPage() {
   const handleRSVPSelection = async (response) => {
     setSelectedResponse(response);
     try {
+      console.log("ID", id, "CURRENT USER ID", currentUser.id, "REPLY", response)
       await rsvpReadyCheck({
-        variables: { readyCheckId: id, userId: userData.me._id, reply: response }, // Use current user's ID
-        refetchQueries: [{ query: QUERY_READY_CHECK }]
+        variables: { readyCheckId: id, userId: currentUser.id, reply: response },
+        refetchQueries: [{query: QUERY_READY_CHECK}]
       });
     } catch (error) {
       console.error('Error responding to ReadyCheck:', error.message);
@@ -79,9 +80,9 @@ function LiveReadyCheckPage() {
   if (error) return <div className="py-4">Error: {error.message}</div>;
 
   const { title, owner, timing, activity, invitees, description, RSVPs, chatMessages } = data.getReadyCheck || {};
-  const isOwner = owner?.username === userData.me.username; // Use current user's data
+  const isOwner = owner?.username === currentUser.username;
 
-  console.log("Chat messages:", chatMessages);
+  console.log(RSVPs)
 
   return (
     <div className="p-4 border border-gray-300 rounded">
@@ -93,7 +94,7 @@ function LiveReadyCheckPage() {
         {description && <p>Description: {description}</p>}
       </div>
       {isOwner && (
-        <button onClick={() => { }} className="btn btn-sm btn-secondary">
+        <button onClick={() => {}} className="btn btn-sm btn-secondary">
           Edit ReadyCheck
         </button>
       )}
@@ -129,47 +130,60 @@ function LiveReadyCheckPage() {
             </div>
             <div className="mt-4 grid grid-cols-4 gap-4">
               <div className="col-span-1">
-                <h2 className="text-xl font-semibold">Invitees:</h2>
-                {invitees.map((invitee) => (
-                  <p key={invitee.username}>{invitee.username}</p>
-                ))}
+                <p className="font-semibold">Pending</p>
+                {invitees &&
+                  invitees
+                    .filter((RSVPs) => RSVPs.reply === 'Pending')
+                    .map((RSVPs) => <p key={RSVPs._id}>{RSVPs.user.username}</p>)}
               </div>
-              <div className="col-span-3">
-                <h2 className="text-xl font-semibold">RSVPs:</h2>
-                {RSVPs.map((rsvp) => (
-                  <p key={rsvp._id}>
-                    {rsvp.user.username}: {rsvp.reply}
-                  </p>
-                ))}
+              <div className="col-span-1">
+                <p className="font-semibold">Ready</p>
+                {invitees &&
+                  invitees
+                    .filter((RSVPs) => RSVPs.reply === 'Ready')
+                    .map((RSVPs) => <p key={RSVPs._id}>{RSVPs.user.username}</p>)}
+              </div>
+              <div className="col-span-1">
+                <p className="font-semibold">Maybe</p>
+                {invitees &&
+                  invitees
+                    .filter((RSVPs) => RSVPs.reply === 'Maybe')
+                    .map((RSVPs) => <p key={RSVPs._id}>{RSVPs.user.username}</p>)}
+              </div>
+              <div className="col-span-1">
+                <p className="font-semibold">Declined</p>
+                {invitees &&
+                  invitees
+                    .filter((RSVPs) => RSVPs.reply === 'Declined')
+                    .map((RSVPs) => <p key={RSVPs._id}>{RSVPs.user.username}</p>)}
               </div>
             </div>
+            <p className="text-sm mt-2">
+              {selectedResponse && `${currentUser.username} - ${selectedResponse}`}
+            </p>
           </label>
         </div>
       )}
-      <div className="mt-4">
-        <h2 className="text-xl font-semibold">Messages:</h2>
-        <ul ref={messagesRef} className="chat-messages">
-          {chatMessages.map((message) => (
-            <li key={message._id} className="border-b py-2">
-              <strong>{message.user.username}:</strong> {message.content}{' '}
-              <span className="text-sm text-gray-500">{message.timestamp}</span>
+
+      {/* Messaging System */}
+      <div className="border-t border-gray-300 mt-4 pt-4">
+        <h3 className="mb-2">ReadyCheck Live Chat</h3>
+        <ul ref={messagesRef} className="overflow-y-auto max-h-60">
+          {chatMessages?.map((msg, index) => (
+            <li key={index}>
+              <strong>{msg.user.username}:</strong> {msg.content} <span className="text-sm text-gray-500">{msg.timestamp}</span>
             </li>
           ))}
         </ul>
-      </div>
-      <div className="mt-4">
-        <form onSubmit={handleSendMessage} className="flex flex-row items-center">
+        <form onSubmit={handleSendMessage} className="mt-4 flex">
           <input
-            ref={inputRef}
             type="text"
-            className="flex-1 px-2 py-1 border border-gray-300 rounded mr-2"
-            placeholder="Type your message..."
             value={messageInput}
             onChange={(e) => setMessageInput(e.target.value)}
+            autoComplete="off"
+            className="form-input flex-grow mr-2"
           />
-          <button type="submit" className="btn btn-primary">
-            Send
-          </button>
+          <button type="submit" className="btn btn-sm btn-primary">Send</button>
         </form>
       </div>
     </div>
