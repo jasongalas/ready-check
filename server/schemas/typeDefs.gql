@@ -41,6 +41,7 @@ input ReadyCheckInput {
   timing: String!
   description: String
   inviteeIds: [ID]
+  ownerId: ID
 }
 
 type Notification {

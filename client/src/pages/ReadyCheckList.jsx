@@ -15,7 +15,7 @@ const ActiveReadyChecks = () => {
   const navigate = useNavigate();
 
   const openReadyCheckForm = () => {
-    document.getElementById('my_modal_3').showModal();
+    document.getElementById('readyCheckModal').showModal();
   };
 
   const goToLoginPage = () => {
@@ -60,7 +60,7 @@ const ActiveReadyChecks = () => {
               <h2 className="text-center font-bold text-xl">New ReadyCheck</h2>
             </div>
           </button>
-          <dialog id="my_modal_3" className="modal">
+          <dialog id="readyCheckModal" className="modal">
             <div className="modal-box">
               <form method="dialog">
                 <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>

@@ -135,8 +135,8 @@ const resolvers = {
             return updatedUser;
         },
 
-        createReadyCheck: async (_, { input }) => {
-            const { title, activity, timing, description, inviteeIds } = input;
+        createReadyCheck: async (_, { input }, context) => {
+            const { title, activity, timing, description, inviteeIds, ownerId } = input;
 
             const RSVPs = inviteeIds.map(userId => ({
                 user: userId,
@@ -148,14 +148,15 @@ const resolvers = {
                 activity,
                 timing,
                 description,
-                invitees: inviteeIds
+                invitees: inviteeIds,
+                owner: ownerId, // Assign the ownerId to the owner field
             });
-
+        
             await newReadyCheck.save();
-
-            // Populate the owner and RSVPs fields
+        
+            // Optionally, populate any fields you need before returning the newReadyCheck
             await newReadyCheck.populate('owner');
-
+        
             return newReadyCheck;
         },
 
