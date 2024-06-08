@@ -11,7 +11,7 @@ No installation is required for this app to function. You only need to create an
 
 ## Usage
 
-Once you create your account with ReadyCheck, you can follow your friends, family, and loved ones to grow your circles. You can also set your own custom status to let other users know what you're up to, your availablity, or however you're feeling. Now, say you're getting ready to hop online and play DOTA 2? You can then create a new ReadyCheck and send it to your DOTA 2 playing friends to play alongside you. You want to go out into Golden Gate park to explore? Make a ready check and meet your homies there! If you make a mistake, that's ok, as all your readychecks are editable.
+Once you create your account with ReadyCheck, you'll be directed to your own profile. You can update your bio here and introduce yourself to the world. Your ready checks will also live on this page. Once you're satisfied, you can hop over to the social page so you can follow your friends, family, and loved ones to grow your circles. You can also set your own custom status to let other users know what you're up to, your availablity, or however you're feeling. Now, say you're getting ready to hop online and play DOTA 2? You can then create a new ReadyCheck and send it to your DOTA 2 playing friends to play alongside you. You want to go out into Golden Gate park to explore? Make a ready check and meet your homies there! If you make a mistake, that's ok, as all your readychecks are editable.
 
 ## Credits
 

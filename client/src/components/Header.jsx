@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AuthService from '../utils/auth';
+import ReadyCheckForm from './ReadyCheckForm';
 
 const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);  // New state for modal
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -35,9 +37,14 @@ const Header = () => {
     navigate('/myprofile');
   }
 
-  const goToReadyCheckPage = () => {
-    navigate('/ready');
-  }
+  const openReadyCheckModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeReadyCheckModal = () => {
+    setIsModalOpen(false);
+  };
+
 
   return (
     <header className="header">
@@ -52,7 +59,7 @@ const Header = () => {
                 <li className="nav-item"><button onClick={goToHomePage} className="nav-link">Home</button></li>
                 <li className="nav-item"><button onClick={goToProfilePage} className="nav-link">Profile</button></li>
                 <li className="nav-item"><button onClick={goToSocialPage} className="nav-link">Social</button></li>
-                <li className="nav-item"><button onClick={goToReadyCheckPage} className="nav-link">New Ready Check</button></li>
+                <li className="nav-item"><button onClick={openReadyCheckModal} className="nav-link">New Ready Check</button></li>
                 <li className="nav-item"><button onClick={handleLogout} className="auth-button">Log Out</button></li>
               </>
             ) : (
@@ -72,6 +79,17 @@ const Header = () => {
           )}
         </div>
       </div>
+      {/* Modal */}
+      {isModalOpen && (
+        <dialog id="my_modal_3" className="modal" open>
+          <div className="modal-box">
+            <form method="dialog">
+              <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onClick={closeReadyCheckModal}>✕</button>
+            </form>
+            <ReadyCheckForm userId={1} />
+          </div>
+        </dialog>
+      )}
     </header>
   );
 }
