@@ -1,18 +1,27 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useQuery } from '@apollo/client';
 import ReadyCheckForm from '../components/ReadyCheckForm';
+import { QUERY_USER, QUERY_ME } from '../utils/queries';
 import { AuthServiceInstance } from '../utils/auth';
 
 const Home = () => {
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  const { username: userParam } = useParams();
+  const { loading, data } = useQuery(userParam ? QUERY_USER : QUERY_ME, {
+    variables: { username: userParam },
+  });
+
+  const user = data?.me || data?.getUser || {};
+
   useEffect(() => {
     setIsAuthenticated(AuthServiceInstance.loggedIn());
   }, []);
 
   const openReadyCheckForm = () => {
-    document.getElementById('my_modal_3').showModal();
+    document.getElementById('readyCheckModal').showModal();
   };
 
   return (
@@ -37,12 +46,12 @@ const Home = () => {
               </div>
             </button>
 
-            <dialog id="my_modal_3" className="modal">
+            <dialog id="readyCheckModal" className="modal">
               <div className="modal-box">
                 <form method="dialog">
                   <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                 </form>
-                <ReadyCheckForm userId={1} />
+                <ReadyCheckForm userId={user._id} />
               </div>
             </dialog>
           </div>
