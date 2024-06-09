@@ -11,6 +11,7 @@ const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);  // New state for modal
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false); 
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -78,7 +79,7 @@ const Header = () => {
       <div className="navbar bg-transparent text-navy-blue shadow-md">
         <div className="flex-1">
           <a className="btn btn-ghost text-neutral-100 text-2xl" onClick={goToHomePage}>
-            <img src={RCLogo} alt="ReadyCheck" className="h-8 w-auto" />
+            <img src={RCLogo} alt="ReadyCheck" className="h-12 mt-2 w-auto" />
           </a>
         </div>
         <div className="flex-none lg:hidden">
