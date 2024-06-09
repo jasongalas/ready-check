@@ -42,7 +42,7 @@ const SignUp = () => {
     <div className="hero min-h-screen bg-darker-background">
       <div className="hero-content flex-col lg:flex-row-reverse">
         <div className="text-center w-96">
-          <h1 className="text-5xl text-navy-blue font-bold">Sign Up!</h1>
+          <h1 className="text-5xl text-white font-bold">Sign Up!</h1>
         </div>
         <div className="card shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
         {data ? (

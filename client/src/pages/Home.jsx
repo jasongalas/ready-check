@@ -25,7 +25,7 @@ const Home = () => {
   };
 
   return (
-    <main className='mx-6'>
+    <main className='mx-6 '>
       {isAuthenticated ? (
         <div className="flex flex-col w-full lg:flex-row">
           <div className="flex flex-wrap w-2/3 justify-center gap-4">
@@ -75,14 +75,14 @@ const Home = () => {
           </div>
         </div>
       ) : (
-        <div className="hero min-h-screen bg-base-200">
+        <div className="hero min-h-screen bg-neutral-500">
           <div className="hero-content text-center">
-            <div className="max-w-md">
-              <h1 className="text-5xl font-bold">Welcome to Ready Check!</h1>
+            <div className="max-w-md text-white">
+              <h1 className="text-6xl font-bold">Welcome to Ready Check!</h1>
               <p className="py-6">An app where you can invite friends to join you while playing video games!</p>
-              <button className='text-primary' onClick={() => navigate('/signup')}>New here? Sign up!</button>
+              <button className='btn text-blue-800' onClick={() => navigate('/signup')}>New here? Sign up!</button>
               <br></br>
-              <button className='text-primary' onClick={() => navigate('/login')}>Already have an account? Log in!</button>
+              <button className='btn mt-2 text-blue-800' onClick={() => navigate('/login')}>Already have an account? Log in!</button>
             </div>
           </div>
         </div>
