@@ -4,6 +4,7 @@ import { QUERY_USER, QUERY_ME } from '../utils/queries';
 import { UPDATE_USER_BIO, UPDATE_USER_STATUS } from '../utils/mutations';
 import { useState } from 'react';
 import { AuthServiceInstance } from '../utils/auth';
+import ProfileStandIn from '../../../public/images/profile-stand-in.png'
 
 const Profile = () => {
   const { username: userParam } = useParams();
@@ -114,7 +115,7 @@ const Profile = () => {
               <div className="w-full px-4 flex justify-center">
                 <div className="avatar relative">
                   <div className="shadow-xl rounded-full h-auto align-middle border-none absolute -m-16 max-w-150-px">
-                    <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" alt="Profile" />
+                    <img src={ProfileStandIn} alt="Profile Image" />
                   </div>
                 </div>
               </div>
