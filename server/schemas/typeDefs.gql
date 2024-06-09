@@ -23,21 +23,21 @@ const typeDefs = `
 }
 
 type ReadyCheck {
-  _id: ID
+  _id: ID!
   owner: User
   title: String
-  activity: String
-  timing: String
+  activity: String!
+  timing: String!
   description: String
   createdAt: String
-  invitees: [User]
+  invitees: [User]!
   RSVPs: [RSVP]
   chatMessages: [ChatMessage] 
 }
 
 input ReadyCheckInput {
   title: String!
-  activity: String
+  activity: String!
   timing: String!
   description: String
   inviteeIds: [ID]
