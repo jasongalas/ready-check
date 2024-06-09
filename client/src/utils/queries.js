@@ -154,13 +154,16 @@ export const QUERY_NOTIFICATIONS = gql`
         _id
         username
       }
-      createdAt
-      read
+      recipient {
+        _id
+        username
+      }
       readyCheck {
         _id
         title
-        description
+      }
+      createdAt
+      read
       }
     }
-  }
 `;

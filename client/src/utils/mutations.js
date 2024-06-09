@@ -17,8 +17,8 @@ mutation CreateReadyCheck($input: ReadyCheckInput!) {
 `;
 
 export const UPDATE_READY_CHECK = gql`
-    mutation UpdateReadyCheck($id: ID!, $title: String!, $description: String) {
-        updateReadyCheck(id: $id, title: $title, description: $description) {
+    mutation UpdateReadyCheck($id: ID!, $title: String!, $activity: String, $timing: String!, $description: String) {
+        updateReadyCheck(id: $id, title: $title, activity: $activity, timing: $timing, description: $description) {
             _id
             title
             activity
@@ -26,14 +26,17 @@ export const UPDATE_READY_CHECK = gql`
             description
             createdAt
             invitees {
-                user {
-                    _id
-                    username
-                }
-                status
+                _id
+                username
             }
         }
     }
+`;
+
+export const DELETE_READY_CHECK = gql`
+mutation DeleteReadyCheck($id: ID!) {
+  deleteReadyCheck(id: $id)
+}
 `;
 
 export const RSVP_READY_CHECK = gql`

@@ -1,20 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/client';
 import { QUERY_READY_CHECK, QUERY_ME } from '../utils/queries';
-import { UPDATE_READY_CHECK, RSVP_READY_CHECK, SEND_CHAT_MESSAGE } from '../utils/mutations';
+import { UPDATE_READY_CHECK, RSVP_READY_CHECK, SEND_CHAT_MESSAGE, DELETE_READY_CHECK } from '../utils/mutations';
 import { useSocket } from './SocketContext';
 
 function LiveReadyCheckPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const socket = useSocket();
-  const { loading: userDataLoading, error: userDataError, data: userData } = useQuery(QUERY_ME); 
+  const { data: userData } = useQuery(QUERY_ME); // Fetch current user's data
 
   const [editMode, setEditMode] = useState(false);
   const [updatedReadyCheckData, setUpdatedReadyCheckData] = useState({});
-  const [selectedResponse, setSelectedResponse] = useState('Pending');
+  const [selectedResponse, setSelectedResponse] = useState(isOwner ? 'Ready' : 'Pending');
   const [messageInput, setMessageInput] = useState('');
   const messagesRef = useRef(null);
+
+  const isOwner = owner?.username === userData.me.username; 
 
   const { loading, error, data, refetch } = useQuery(QUERY_READY_CHECK, {
     variables: { id },
@@ -23,6 +26,7 @@ function LiveReadyCheckPage() {
   const [updateReadyCheck] = useMutation(UPDATE_READY_CHECK);
   const [rsvpReadyCheck] = useMutation(RSVP_READY_CHECK);
   const [sendChatMessage] = useMutation(SEND_CHAT_MESSAGE);
+  const [deleteReadyCheck] = useMutation(DELETE_READY_CHECK);
 
   useEffect(() => {
     if (socket) {
@@ -66,43 +70,69 @@ function LiveReadyCheckPage() {
     setSelectedResponse(response);
     try {
       await rsvpReadyCheck({
-        variables: { readyCheckId: id, userId: userData.me._id, reply: response }, // Use current user's ID
+        variables: { readyCheckId: id, userId: userData.me._id, reply: response },
         refetchQueries: [{ query: QUERY_READY_CHECK }]
       });
+      // Store selected response in local storage
+      localStorage.setItem('selectedResponse', response);
     } catch (error) {
       console.error('Error responding to ReadyCheck:', error.message);
     }
   };
 
+  useEffect(() => {
+    const storedResponse = localStorage.getItem('selectedResponse');
+    if (storedResponse) {
+      setSelectedResponse(storedResponse);
+    }
+  }, []);
+
+  useEffect(() => {
+    // Scroll to bottom of messages container when chatMessages changes
+    if (messagesRef.current) {
+      messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+    }
+  }, [data?.getReadyCheck?.chatMessages]); // Listen for changes in chatMessages
+
   const handleEditReadyCheck = () => {
+    const localTime = new Date().toLocaleString('en-CA', { hour12: false }).replace(",", "").slice(0, 16);
     setEditMode(true);
     setUpdatedReadyCheckData({
       title: data.getReadyCheck.title,
-      timing: data.getReadyCheck.timing,
+      timing: localTime,
       activity: data.getReadyCheck.activity,
       description: data.getReadyCheck.description,
     });
   };
 
   const handleSaveReadyCheck = async () => {
-  try {
-    await updateReadyCheck({
-      variables: {
-        id,
-        title: updatedReadyCheckData.title,
-        activity: updatedReadyCheckData.activity,
-        timing: updatedReadyCheckData.timing,
-        description: updatedReadyCheckData.description,
-      },
-    });
-    setEditMode(false);
-    refetch();
-    socket.emit('readyCheckUpdate', updatedReadyCheckData);
-  } catch (error) {
-    console.error('Error updating ReadyCheck:', error.message);
-  }
-};
+    try {
+      await updateReadyCheck({
+        variables: {
+          id,
+          title: updatedReadyCheckData.title,
+          activity: updatedReadyCheckData.activity,
+          timing: updatedReadyCheckData.timing,
+          description: updatedReadyCheckData.description,
+        },
+      });
+      setEditMode(false);
+      refetch();
+      socket.emit('readyCheckUpdate', updatedReadyCheckData);
+    } catch (error) {
+      console.error('Error updating ReadyCheck:', error.message);
+    }
+  };
 
+  const handleDeleteReadyCheck = async () => {
+    try {
+      console.log(`Deleting ReadyCheck with ID: ${id}`);
+      await deleteReadyCheck({ variables: { id } });
+      navigate('/'); // Redirect to another page after deletion
+    } catch (error) {
+      console.error('Error deleting ReadyCheck:', error.message);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -112,11 +142,14 @@ function LiveReadyCheckPage() {
     });
   };
 
+  const handleButtonWrapperClick = (e) => {
+    e.stopPropagation();
+  };
+
   if (loading) return <div className="py-4">Loading...</div>;
   if (error) return <div className="py-4">Error: {error.message}</div>;
 
   const { title, owner, timing, activity, invitees, description, RSVPs, chatMessages } = data.getReadyCheck || {};
-  const isOwner = owner?.username === userData.me.username; // Use current user's data
 
   return (
     <div className="p-4 border border-gray-300 rounded">
@@ -124,6 +157,16 @@ function LiveReadyCheckPage() {
       <div className="mb-4">
         {editMode ? (
           <div>
+            <label>
+              Title:
+              <input
+                type="text"
+                name="title"
+                value={updatedReadyCheckData.title}
+                onChange={handleChange}
+                className="input input-bordered w-full"
+              />
+            </label>
             <label>
               When:
               <input
@@ -165,11 +208,16 @@ function LiveReadyCheckPage() {
         )}
       </div>
       {isOwner && !editMode && (
-        <button onClick={handleEditReadyCheck} className="btn btn-sm btn-secondary">
-          Edit ReadyCheck
-        </button>
+        <>
+          <button onClick={handleEditReadyCheck} className="btn btn-sm btn-secondary">
+            Edit ReadyCheck
+          </button>
+          <button onClick={handleDeleteReadyCheck} className="btn btn-sm btn-danger ml-2">
+            Delete ReadyCheck
+          </button>
+        </>
       )}
-      {!isOwner && (
+      {
         <div className="mt-4">
           <label className="block mb-2">
             RSVP Options:
@@ -217,11 +265,11 @@ function LiveReadyCheckPage() {
             </div>
           </label>
         </div>
-      )}
+      }
       <div className="mt-4">
         <h2 className="text-xl font-semibold">Messages:</h2>
-        <ul ref={messagesRef} className="chat-messages">
-          {chatMessages.map((message) => (
+        <ul ref={messagesRef} className="chat-messages max-h-48 overflow-auto">
+          {chatMessages.slice(-10).map((message) => (
             <li key={message._id} className="border-b py-2">
               <strong>{message.user.username}:</strong> {message.content}{' '}
               <span className="text-sm text-gray-500">{message.timestamp}</span>

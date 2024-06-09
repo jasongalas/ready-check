@@ -8,13 +8,14 @@ import { AuthServiceInstance } from '../utils/auth';
 const Profile = () => {
   const { username: userParam } = useParams();
   const { loading, data, refetch } = useQuery(userParam ? QUERY_USER : QUERY_ME, {
-    variables: { username: userParam },
+    variables: userParam ? { id: userParam } : {},
   });
 
   const [updateUserBio] = useMutation(UPDATE_USER_BIO, {
     update(cache, { data: { updateUserBio } }) {
       cache.writeQuery({
         query: userParam ? QUERY_USER : QUERY_ME,
+        variables: userParam ? { id: userParam } : {},
         data: {
           me: userParam ? undefined : updateUserBio,
           getUser: userParam ? updateUserBio : undefined,
@@ -27,6 +28,7 @@ const Profile = () => {
     update(cache, { data: { updateUserStatus } }) {
       cache.writeQuery({
         query: userParam ? QUERY_USER : QUERY_ME,
+        variables: userParam ? { id: userParam } : {},
         data: {
           me: userParam ? undefined : updateUserStatus,
           getUser: userParam ? updateUserStatus : undefined,
@@ -108,17 +110,17 @@ const Profile = () => {
       <div className="w-full lg:w-4/12 px-4 mx-auto">
         <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-xl rounded-lg mt-16">
           <div className="px-6">
-            <div className="flex flex-wrap justify-center">
+            <div className="flex flex-col justify-center items-center">
               <div className="w-full px-4 flex justify-center">
                 <div className="avatar relative">
-                  <div className="shadow-xl rounded-full h-auto align-middle border-none absolute -m-16 -ml-20 max-w-150-px">
+                  <div className="shadow-xl rounded-full h-auto align-middle border-none absolute -m-16 max-w-150-px">
                     <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" alt="Profile" />
                   </div>
                 </div>
               </div>
-              <div className="w-full px-4 text-center mt-20">
+              <div className="w-full px-4 text-center mt-16">
                 <div className="flex justify-center lg:pt-4 pt-8">
-                  <div className="flex flex-col items-center mr-4 p-1">
+                  <div className="flex flex-col items-center">
                     <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
                       {user.friends ? user.friends.length : 0}
                     </span>
@@ -128,31 +130,12 @@ const Profile = () => {
               </div>
             </div>
             <div className="text-center mt-4">
-              <h3 className="text-3xl font-bold leading-normal mb-2 text-blueGray-700">
+              <h3 className="text-5xl font-bold leading-normal mb-2 text-blueGray-700">
                 {user.username}
               </h3>
               <h3 className="text-lg font-semibold leading-normal mb-2 text-blueGray-700">
                 {user.email}
               </h3>
-              <div className="mb-2 text-blueGray-600 mt-5">
-                {isEditingBio ? (
-                  <div>
-                    <textarea
-                      className="textarea textarea-bordered w-full"
-                      value={newBio}
-                      onChange={(e) => setNewBio(e.target.value)}
-                    />
-                    <button onClick={handleBioSubmit} className="btn btn-primary mt-2">Submit</button>
-                  </div>
-                ) : (
-                  <div>
-                    <p>{user.bio || 'No bio available'}</p>
-                    <div className='mt-6 text-primary'>
-                      <button onClick={handleEditBioClick} className="text-sm">Edit Bio</button>
-                    </div>
-                  </div>
-                )}
-              </div>
               <div className="mb-2 text-blueGray-600 mt-5">
                 {isEditingStatus ? (
                   <div>
@@ -165,29 +148,55 @@ const Profile = () => {
                   </div>
                 ) : (
                   <div>
-                    <p>{user.status || 'No status available'}</p>
-                    <div className='mt-6 text-primary'>
+                    <p>Status: {user.status || 'No status available'}</p>
+                    <div className='mt-2 text-primary'>
                       <button onClick={handleEditStatusClick} className="text-sm">Edit Status</button>
                     </div>
                   </div>
                 )}
               </div>
+              <div className="mb-2 text-blueGray-600 mt-7">
+                {isEditingBio ? (
+                  <div>
+                    <textarea
+                      className="textarea textarea-bordered w-full"
+                      value={newBio}
+                      onChange={(e) => setNewBio(e.target.value)}
+                    />
+                    <button onClick={handleBioSubmit} className="btn btn-primary mt-2">Submit</button>
+                  </div>
+                ) : (
+                  <div>
+                    <p className='text-xl font-semibold'>{user.bio || 'No bio available'}</p>
+                    <div className='mt-2 text-primary'>
+                      <button onClick={handleEditBioClick} className="text-sm">Edit Bio</button>
+                    </div>
+                  </div>
+                )}
+              </div>
+              
             </div>
             <div className="mt-10 py-10 border-t border-blueGray-200 text-center">
               <div className="flex flex-wrap justify-center">
                 <div className="w-full lg:w-9/12 px-4">
-                  <h3 className="text-xl font-bold leading-normal mb-2 text-blueGray-700">
+                  <h3 className="text-2xl font-bold leading-normal mb-4 text-blueGray-700">
                     Recent Activity
                   </h3>
-                  {user.ownedReadyChecks && user.ownedReadyChecks.length > 0 ? (
-                    user.ownedReadyChecks.map((check) => (
-                      <p key={check._id} className="mb-4 text-lg leading-relaxed text-blueGray-700">
-                        {check.title}
-                      </p>
-                    ))
-                  ) : (
-                    <p className="mb-4 text-lg leading-relaxed text-blueGray-700">No recent activity</p>
-                  )}
+                  <div className="flex flex-col items-center">
+                    {user.ownedReadyChecks && user.ownedReadyChecks.length > 0 ? (
+                      user.ownedReadyChecks.map((check) => (
+                        <button
+                          key={check._id}
+                          onClick={() => navigate(`/readycheck/${check._id}`)}
+                          className="mb-4 text-lg leading-relaxed text-blueGray-700 underline"
+                        >
+                          {check.title}
+                        </button>
+                      ))
+                    ) : (
+                      <p className="mb-4 text-lg leading-relaxed text-blueGray-700">No recent activity</p>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -197,7 +206,5 @@ const Profile = () => {
     </main>
   );
 };
-
-
 
 export default Profile;
