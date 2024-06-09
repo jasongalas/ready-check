@@ -151,7 +151,7 @@ function LiveReadyCheckPage() {
   const isOwner = owner?.username === userData.me.username; // Use current user's data
 
   return (
-    <div className="p-4 border border-gray-300 rounded">
+    <div className="p-4 border border-gray-300 rounded h-fill1">
       <h1 className="text-2xl font-semibold text-center mb-4">{title}</h1>
       <div className="mb-4">
         {editMode ? (
