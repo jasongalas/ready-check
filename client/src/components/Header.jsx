@@ -5,12 +5,12 @@ import ReadyCheckForm from './ReadyCheckForm';
 import { useQuery } from '@apollo/client';
 import { QUERY_USER, QUERY_ME, QUERY_NOTIFICATIONS } from '../utils/queries';
 import Notifications from './Notifications';
+import RCLogo from '../../../public/images/readycheck-logo-white.png'
 
 const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);  // New state for modal
   const [notificationsOpen, setNotificationsOpen] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -77,9 +77,9 @@ const Header = () => {
     <header className="header bg-neutral-700">
       <div className="navbar bg-transparent text-navy-blue shadow-md">
         <div className="flex-1">
-          <button className="btn btn-ghost text-neutral-100 text-2xl" onClick={goToHomePage}>
-            <img src="/images/readycheck-logo-white.png" alt="ReadyCheck" className="h-8 w-auto" />
-          </button>
+          <a className="btn btn-ghost text-neutral-100 text-2xl" onClick={goToHomePage}>
+            <img src={RCLogo} alt="ReadyCheck" className="h-8 w-auto" />
+          </a>
         </div>
         <div className="flex-none lg:hidden">
           <button className="btn btn-ghost btn-circle" onClick={toggleMenu}>
