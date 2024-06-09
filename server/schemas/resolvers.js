@@ -141,9 +141,9 @@ const resolvers = {
             if (!context.user) {
                 throw new AuthenticationError('You need to be logged in!');
             }
-
+        
             const { title, activity, timing, description, inviteeIds } = input;
-
+        
             const newReadyCheck = new ReadyCheck({
                 title,
                 activity,
@@ -154,24 +154,23 @@ const resolvers = {
             });
         
             await newReadyCheck.save();
-
-            inviteeIds.forEach(async (inviteeId) => {
+        
+            // Create an array of promises for creating notifications
+            const notificationPromises = inviteeIds.map(async (inviteeId) => {
                 await Notification.create({
-                  type: 'readyCheck',
-                  sender: context.user._id,
-                  recipient: inviteeId,
-                  readyCheck: newReadyCheck._id,
-                  createdAt: new Date(),
+                    type: 'readyCheck',
+                    sender: context.user._id,
+                    recipient: inviteeId,
+                    readyCheck: newReadyCheck._id,
+                    createdAt: new Date(),
                 });
-              });
-
-            await User.findByIdAndUpdate(context.user._id, {
-                $push: { ownedReadyChecks: newReadyCheck._id }
             });
-
-            return newReadyCheck.populate('owner invitees');
+        
+            // Wait for all notification creation promises to complete
+            await Promise.all(notificationPromises);
+        
+            return newReadyCheck;
         },
-
 
         updateReadyCheck: async (_, { id, title, activity, timing, description }, context) => {
             if (!context.user) {
