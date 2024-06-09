@@ -35,7 +35,7 @@ function Notifications({ userId }) {
                             <div>
                                 <span className="font-medium">{notification.sender.username}</span> {notification.type === 'follow' ? 'followed' : 'unfollowed'} you.
                             </div>
-                            <div className="text-sm text-gray-600">{new Date(notification.createdAt).toLocaleString()}</div>
+                            <div className="text-sm text-gray-600">{notification.createdAt}</div>
                         </Link>
                     </div>
                 ))
