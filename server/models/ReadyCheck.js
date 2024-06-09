@@ -58,7 +58,6 @@ const readyCheckSchema = new Schema({
   },
   description: {
     type: String,
-    minLength: 1,
     trim: true,
   },
   createdAt: {

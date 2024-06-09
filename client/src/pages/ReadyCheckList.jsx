@@ -48,12 +48,12 @@ const ActiveReadyChecks = () => {
   }
 
   return (
-    <main className='mx-6 h-fill'>
+    <main className='mx-6 h-fill1'>
       <div className="flex flex-col w-full h-full lg:flex-row">
         <div className="flex flex-wrap justify-center">
           <div className="text-center m-6 p-7">
-            <h1 className="text-5xl text-navy-blue font-bold">My ReadyChecks</h1>
-            <p className="pt-12 text-navy-blue text-lg">Click on an active ReadyCheck for more details</p>
+            <h1 className="text-5xl text-white font-bold">My ReadyChecks</h1>
+            <p className="pt-12 text-white text-lg">Click on an active ReadyCheck for more details</p>
           </div>
           <button onClick={openReadyCheckForm} className="btn btn-sky card h-fit bg-sky-600 hover:bg-aquamarine text-primary-content shadow-xl">
             <div className="card-body text-white text-center ">

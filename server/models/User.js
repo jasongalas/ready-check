@@ -5,8 +5,14 @@ const userSchema = new Schema({
   username: {
     type: String,
     required: true,
-    unique: true,
     trim: true,
+    validate: {
+      validator: async function(username) {
+        const user = await this.constructor.findOne({ username: { $regex: new RegExp(`^${username}$`, 'i') } });
+        return !user; 
+      },
+      message: 'Username must be unique.',
+    },
   },
   email: {
     type: String,
@@ -62,6 +68,8 @@ userSchema.methods.isCorrectPassword = async function (password) {
 userSchema.virtual('Following').get(function () {
   return this.friends.length;
 });
+
+userSchema.index({ username: 1 }, { unique: true, collation: { locale: 'en', strength: 2 } });
 
 const User = model('User', userSchema);
 

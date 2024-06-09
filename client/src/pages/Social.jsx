@@ -72,11 +72,11 @@ const Social = () => {
     }
 
     return (
-        <main>
+        <main className='h-fill1'>
             <div className="flex flex-col w-full lg:flex-row">
                 <div className="grid flex-grow h-fill w-1/2 card bg-darker-background rounded-box place-items-center m-6">
-                    <h1 className="text-3xl text-navy-blue font-bold">Friends List</h1>
-                    <div className="card w-96 bg-green-hover shadow-xl">
+                    <h1 className="text-5xl text-white font-bold">Friends List</h1>
+                    <div className="card w-96 bg-neutral-700 shadow-xl">
                         <div className="card-body text-navy-blue h-96 w-full">
                             {user.friends && user.friends.length > 0 ? (
                                 user.friends.map((friend) => (
@@ -103,8 +103,8 @@ const Social = () => {
                 </div>
                 <div className="divider lg:divider-horizontal"></div>
                 <div className="flex-grow h-fill w-1/2 card bg-darker-background rounded-box place-items-center m-6">
-                    <h1 className="text-3xl text-navy-blue font-bold my-7">Add a Friend</h1>
-                    <div className="card w-96 bg-blue-btn shadow-xl mt-8">
+                    <h1 className="text-5xl text-white font-bold my-7">Add a Friend</h1>
+                    <div className="card w-96 bg-neutral-700 shadow-xl mt-8">
                         <div className="card-body p-12 w-full">
                             <label className="input input-bordered flex items-center gap-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-4 h-4 opacity-70"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 0 0-11.215 0c-.22.578.254 1.139.872 1.139h9.47Z" /></svg>
