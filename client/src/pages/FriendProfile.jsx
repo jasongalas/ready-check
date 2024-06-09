@@ -1,23 +1,53 @@
-import { useParams } from 'react-router-dom';
-import { useQuery } from '@apollo/client';
-import { QUERY_USER } from '../utils/queries';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useQuery, useMutation } from '@apollo/client';
+import { QUERY_USER, QUERY_ME } from '../utils/queries';
+import { ADD_FRIEND, REMOVE_FRIEND } from '../utils/mutations';
 
 const FriendProfile = () => {
   const { id: userId } = useParams();
-  const { loading, error, data } = useQuery(QUERY_USER, {
+  const navigate = useNavigate();
+
+  const { loading: loadingUser, error: errorUser, data: dataUser } = useQuery(QUERY_USER, {
     variables: { id: userId },
   });
+  const { loading: loadingMe, error: errorMe, data: dataMe } = useQuery(QUERY_ME);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
+  const [followFriend] = useMutation(ADD_FRIEND, {
+    refetchQueries: [{ query: QUERY_ME }, { query: QUERY_USER, variables: { id: userId } }],
+  });
+  const [unfollowFriend] = useMutation(REMOVE_FRIEND, {
+    refetchQueries: [{ query: QUERY_ME }, { query: QUERY_USER, variables: { id: userId } }],
+  });
 
-  const user = data?.getUser;
+
+  if (loadingUser || loadingMe) return <div>Loading...</div>;
+  if (errorUser || errorMe) return <div>Error: {errorUser?.message || errorMe?.message}</div>;
+
+  const user = dataUser?.getUser;
+  const currentUser = dataMe?.me;
 
   if (!user) {
     return <div>User not found</div>;
   }
 
-  console.log('User data:', user);
+  const isFriend = currentUser?.friends?.some(friend => friend._id === user._id);
+
+  const handleFollow = async () => {
+    try {
+      await followFriend({ variables: { username: user.username } });
+    } catch (err) {
+      console.error('Error following friend:', err);
+    }
+  };
+
+  const handleUnfollow = async () => {
+    try {
+      await unfollowFriend({ variables: { username: user.username } });
+    } catch (err) {
+      console.error('Error unfollowing friend:', err);
+    }
+  };
+
 
   return (
     <main className="pt-16 bg-blueGray-50">
@@ -74,6 +104,13 @@ const FriendProfile = () => {
                     <p className="mb-4 text-lg leading-relaxed text-blueGray-700">No recent activity</p>
                   )}
                 </div>
+              </div>
+              <div className="mt-10 py-10 border-t border-blueGray-200 text-center">
+                {isFriend ? (
+                  <button onClick={handleUnfollow} className="btn btn-danger">Unfollow</button>
+                ) : (
+                  <button onClick={handleFollow} className="btn btn-primary">Follow</button>
+                )}
               </div>
             </div>
           </div>
