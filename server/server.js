@@ -17,6 +17,7 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: process.env.SOCKET_URL || "http://localhost:3000",
+    credentials: true,
   },
 });
 

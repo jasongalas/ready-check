@@ -11,11 +11,13 @@ import Social from './pages/Social.jsx';
 import ReadyCheck from './pages/LiveReadyCheck.jsx';
 import ReadyCheckList from './pages/ReadyCheckList.jsx';
 import FriendProfile from './pages/FriendProfile.jsx';
+import ErrorPage from './pages/ErrorPage.jsx';
 
 const router = createBrowserRouter([
     {
         path: '/',
         element: <App/>,
+        errorElement: <ErrorPage />,
         children: [
             {
                 index: true,
