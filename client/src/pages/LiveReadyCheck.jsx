@@ -4,6 +4,7 @@ import { useQuery, useMutation } from '@apollo/client';
 import { QUERY_READY_CHECK, QUERY_ME } from '../utils/queries';
 import { UPDATE_READY_CHECK, RSVP_READY_CHECK, SEND_CHAT_MESSAGE, DELETE_READY_CHECK } from '../utils/mutations';
 import { useSocket } from './SocketContext';
+import { parse, format } from 'date-fns';
 
 function LiveReadyCheckPage() {
   const { id } = useParams();
@@ -20,6 +21,15 @@ function LiveReadyCheckPage() {
   const { loading, error, data, refetch } = useQuery(QUERY_READY_CHECK, {
     variables: { id },
   });
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      refetch(); // Refetch the data to ensure the latest timing
+    }, 1000); // Update every second
+  
+    return () => clearInterval(intervalId); // Cleanup the interval on component unmount
+  }, []);
+  
 
   const [updateReadyCheck] = useMutation(UPDATE_READY_CHECK);
   const [rsvpReadyCheck] = useMutation(RSVP_READY_CHECK);
@@ -49,6 +59,14 @@ function LiveReadyCheckPage() {
       }
     };
   }, [socket]);
+
+  // useEffect(() => {
+  //   const intervalId = setInterval(() => {
+  //     refetch(); // Refetch the data to ensure the latest timing
+  //   }, 1000); // Update every second
+
+  //   return () => clearInterval(intervalId); // Cleanup the interval on component unmount
+  // }, []);
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
@@ -150,9 +168,76 @@ function LiveReadyCheckPage() {
   const { title, owner, timing, activity, invitees, description, RSVPs, chatMessages } = data.getReadyCheck || {};
   const isOwner = owner?.username === userData.me.username; // Use current user's data
 
+  // Function to calculate remaining time until the ready check's set timing
+  const calculateTimeRemaining = () => {
+    if (!data || !data.getReadyCheck) return null;
+
+    // Parse the date string into a valid Date object
+    const readyCheckTime = parse(data.getReadyCheck.timing, "MMMM do',' yyyy 'at' hh:mm a", new Date()).getTime();
+    const currentTime = new Date().getTime();
+    const timeDifference = readyCheckTime - currentTime;
+
+    if (isNaN(timeDifference) || timeDifference <= 0) {
+      console.log("Invalid time difference or time has passed.");
+      return { days: 0, hours: 0, minutes: 0, seconds: 0 }; // Handle invalid date or time has passed
+    }
+
+    const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+
+    return { days, hours, minutes, seconds };
+  };
+
+  const renderCountdown = () => {
+    const remainingTime = calculateTimeRemaining();
+
+    // Check if countdown is finished
+    if (remainingTime.days == 0 && remainingTime.hours == 0 && remainingTime.minutes == 0 && remainingTime.seconds == 0) {
+      return <p className="text-3xl font-bold">Ready Time!</p>;
+    }
+
+    // Render countdown if it's not finished
+    return (
+      <div className="text-center">
+        <p className="text-sm mb-0">Time Remaining:</p>
+        <div className="grid grid-flow-col gap-5 auto-cols-max text-center justify-center">
+          <div className="flex flex-col">
+            <span className="countdown font-mono text-4xl">
+              <span style={{ '--value': remainingTime.days }}></span>
+            </span>
+            days
+          </div>
+          <div className="flex flex-col">
+            <span className="countdown font-mono text-4xl">
+              <span style={{ '--value': remainingTime.hours }}></span>
+            </span>
+            hours
+          </div>
+          <div className="flex flex-col">
+            <span className="countdown font-mono text-4xl">
+              <span style={{ '--value': remainingTime.minutes }}></span>
+            </span>
+            min
+          </div>
+          <div className="flex flex-col">
+            <span className="countdown font-mono text-4xl">
+              <span style={{ '--value': remainingTime.seconds }}></span>
+            </span>
+            sec
+          </div>
+        </div>
+      </div>
+    );    
+  };
+
   return (
     <div className="p-4 border border-gray-300 rounded">
-      <h1 className="text-2xl font-semibold text-center mb-4">{title}</h1>
+      <h1 className="text-4xl font-semibold text-center mb-4">{title}</h1>
+      <div className="text-center mb-4">
+        {renderCountdown()}
+      </div>
       <div className="mb-4">
         {editMode ? (
           <div>
@@ -211,58 +296,58 @@ function LiveReadyCheckPage() {
           <button onClick={handleEditReadyCheck} className="btn btn-sm btn-secondary">
             Edit ReadyCheck
           </button>
-          <button onClick={handleDeleteReadyCheck} className="btn btn-sm btn-danger ml-2">
+          <button onClick={handleDeleteReadyCheck} className="btn btn-sm btn-error ml-2">
             Delete ReadyCheck
           </button>
         </>
       )}
-        <div className="mt-4" onClick={handleButtonWrapperClick}>
-          <label className="block mb-2">
-            RSVP Options:
-            <div className="flex flex-wrap gap-2">
-              <button
-                onClick={() => handleRSVPSelection('Pending')}
-                className={`btn btn-sm ${selectedResponse === 'Pending' ? 'btn-primary' : 'btn-outline-primary'}`}
-              >
-                Pending
-              </button>
-              <button
-                onClick={() => handleRSVPSelection('Ready')}
-                className={`btn btn-sm ${selectedResponse === 'Ready' ? 'btn-success' : 'btn-outline-success'}`}
-              >
-                I'm Ready
-              </button>
-              <button
-                onClick={() => handleRSVPSelection('Maybe')}
-                className={`btn btn-sm ${selectedResponse === 'Maybe' ? 'btn-warning' : 'btn-outline-warning'}`}
-              >
-                Maybe
-              </button>
-              <button
-                onClick={() => handleRSVPSelection('Declined')}
-                className={`btn btn-sm ${selectedResponse === 'Declined' ? 'btn-error' : 'btn-outline-error'}`}
-              >
-                I Can't Join
-              </button>
+      <div className="mt-4" onClick={handleButtonWrapperClick}>
+        <label className="block mb-2">
+          RSVP Options:
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => handleRSVPSelection('Pending')}
+              className={`btn btn-sm ${selectedResponse === 'Pending' ? 'btn-primary' : 'btn-outline-primary'}`}
+            >
+              Pending
+            </button>
+            <button
+              onClick={() => handleRSVPSelection('Ready')}
+              className={`btn btn-sm ${selectedResponse === 'Ready' ? 'btn-success' : 'btn-outline-success'}`}
+            >
+              I'm Ready
+            </button>
+            <button
+              onClick={() => handleRSVPSelection('Maybe')}
+              className={`btn btn-sm ${selectedResponse === 'Maybe' ? 'btn-warning' : 'btn-outline-warning'}`}
+            >
+              Maybe
+            </button>
+            <button
+              onClick={() => handleRSVPSelection('Declined')}
+              className={`btn btn-sm ${selectedResponse === 'Declined' ? 'btn-error' : 'btn-outline-error'}`}
+            >
+              I Can't Join
+            </button>
+          </div>
+          <div className="mt-4 grid grid-cols-4 gap-4">
+            <div className="col-span-1">
+              <h2 className="text-xl font-semibold">Invitees:</h2>
+              {invitees.map((invitee) => (
+                <p key={invitee.username}>{invitee.username}</p>
+              ))}
             </div>
-            <div className="mt-4 grid grid-cols-4 gap-4">
-              <div className="col-span-1">
-                <h2 className="text-xl font-semibold">Invitees:</h2>
-                {invitees.map((invitee) => (
-                  <p key={invitee.username}>{invitee.username}</p>
-                ))}
-              </div>
-              <div className="col-span-3">
-                <h2 className="text-xl font-semibold">RSVPs:</h2>
-                {RSVPs.map((rsvp) => (
-                  <p key={rsvp._id}>
-                    {rsvp.user.username}: {rsvp.reply}
-                  </p>
-                ))}
-              </div>
+            <div className="col-span-3">
+              <h2 className="text-xl font-semibold">RSVPs:</h2>
+              {RSVPs.map((rsvp) => (
+                <p key={rsvp._id}>
+                  {rsvp.user.username}: {rsvp.reply}
+                </p>
+              ))}
             </div>
-          </label>
-        </div>
+          </div>
+        </label>
+      </div>
       <div className="mt-4">
         <h2 className="text-xl font-semibold">Messages:</h2>
         <ul ref={messagesRef} className="chat-messages max-h-48 overflow-auto">
