@@ -77,8 +77,6 @@ function ReadyCheckForm({ userId, onReadyCheckCreated }) {
         );
     };
 
-    const filteredInvitees = inviteeData?.getUsers.filter(user => user._id !== userId) || [];
-
     return (
         <div>
             <h3 className="font-bold text-center p-3 text-3xl">Create Ready Check</h3>
@@ -148,7 +146,7 @@ function ReadyCheckForm({ userId, onReadyCheckCreated }) {
                                 onChange={(e) => handleInviteeClick(e.target.value)}
                             >
                                 <option value="">Select Invitees</option>
-                                {filteredInvitees.map((user) => (
+                                {inviteeData.getUsers.map((user) => (
                                     <option key={user._id} value={user._id}>
                                         {user.username}
                                     </option>
