@@ -60,14 +60,6 @@ function LiveReadyCheckPage() {
     };
   }, [socket]);
 
-  // useEffect(() => {
-  //   const intervalId = setInterval(() => {
-  //     refetch(); // Refetch the data to ensure the latest timing
-  //   }, 1000); // Update every second
-
-  //   return () => clearInterval(intervalId); // Cleanup the interval on component unmount
-  // }, []);
-
   const handleSendMessage = async (e) => {
     e.preventDefault();
     if (messageInput.trim() !== '') {
@@ -245,6 +237,11 @@ function LiveReadyCheckPage() {
             </button>
           </>
         )}
+        {isOwner && editMode && (
+          <button onClick={handleDeleteReadyCheck} className="btn btn-sm btn-error ml-2">
+            Delete ReadyCheck
+          </button>
+        )}
       </div>
       <h1 className="text-4xl font-semibold text-center mb-4">{title}</h1>
       <div className="text-center mb-4">
@@ -292,7 +289,12 @@ function LiveReadyCheckPage() {
                 className="textarea textarea-bordered w-full"
               />
             </label>
-            <button onClick={handleSaveReadyCheck} className="btn btn-primary mt-2">Save</button>
+            <button onClick={handleSaveReadyCheck} className="btn btn-sm btn-primary">
+              Save
+            </button>
+            <button onClick={() => setEditMode(false)} className="btn btn-sm btn-warning ml-3">
+              Cancel
+            </button>
           </div>
         ) :
           <div className="flex justify-center items-center">
@@ -358,7 +360,7 @@ function LiveReadyCheckPage() {
       <h2 className="text-xl font-semibold mt-5">Messages:</h2>
       <div className="mt-2 bottom-border border-gray-300 rounded-md p-0">
         <div>
-          <ul ref={messagesRef} className="chat-messages p-3 rounded-md max-h-48 overflow-auto border border-gray-300">
+          <ul ref={messagesRef} className="chat-messages p-3 max-h-48 overflow-auto border border-gray-300">
             {chatMessages.slice(-10).map((message, index) => (
               <li key={message._id} className={`py-2 ${index % 2 === 0 ? 'bg-transparent' : 'bg-gray-700 bg-opacity-20'}`}>
                 <strong>{message.user.username}:</strong> {message.content}{' '}
