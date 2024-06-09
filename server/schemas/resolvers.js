@@ -167,7 +167,7 @@ const resolvers = {
             if (!context.user) {
                 throw new AuthenticationError('You need to be logged in!');
             }
-
+        
             const updatedData = await ReadyCheck.findByIdAndUpdate(
                 id,
                 { title, activity, timing, description },
@@ -175,6 +175,7 @@ const resolvers = {
             ).populate('owner invitees RSVPs.user');
             return updatedData;
         },
+        
 
 
         updateUserStatus: async (_, { status }, context) => {
