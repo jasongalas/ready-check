@@ -158,7 +158,7 @@ const resolvers = {
             inviteeIds.forEach(async (inviteeId) => {
                 await Notification.create({
                   type: 'readyCheck',
-                  sender: ownerId,
+                  sender: context.user._id,
                   recipient: inviteeId,
                   readyCheck: newReadyCheck._id,
                   createdAt: new Date(),

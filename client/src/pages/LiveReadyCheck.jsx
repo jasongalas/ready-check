@@ -12,7 +12,7 @@ function LiveReadyCheckPage() {
 
   const [editMode, setEditMode] = useState(false);
   const [updatedReadyCheckData, setUpdatedReadyCheckData] = useState({});
-  const [selectedResponse, setSelectedResponse] = useState('Pending');
+  const [selectedResponse, setSelectedResponse] = useState(isOwner ? 'Ready' : 'Pending');
   const [messageInput, setMessageInput] = useState('');
   const messagesRef = useRef(null);
 
@@ -116,7 +116,7 @@ function LiveReadyCheckPage() {
   if (error) return <div className="py-4">Error: {error.message}</div>;
 
   const { title, owner, timing, activity, invitees, description, RSVPs, chatMessages } = data.getReadyCheck || {};
-  const isOwner = owner?.username === userData.me.username; // Use current user's data
+  const isOwner = owner?.username === userData.me.username; 
 
   return (
     <div className="p-4 border border-gray-300 rounded">
@@ -179,7 +179,7 @@ function LiveReadyCheckPage() {
           Edit ReadyCheck
         </button>
       )}
-      {!isOwner && (
+      {
         <div className="mt-4">
           <label className="block mb-2">
             RSVP Options:
@@ -227,7 +227,7 @@ function LiveReadyCheckPage() {
             </div>
           </label>
         </div>
-      )}
+      }
       <div className="mt-4">
         <h2 className="text-xl font-semibold">Messages:</h2>
         <ul ref={messagesRef} className="chat-messages">
