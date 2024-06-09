@@ -96,7 +96,7 @@ const Social = () => {
                                     </div>
                                 ))
                             ) : (
-                                <p>No friends found</p>
+                                <p className="text-white text-center">No friends found</p>
                             )}
                         </div>
                     </div>
