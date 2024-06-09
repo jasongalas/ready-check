@@ -80,9 +80,9 @@ const Home = () => {
             <div className="max-w-md text-white">
               <h1 className="text-6xl font-bold">Welcome to Ready Check!</h1>
               <p className="py-6">An app where you can invite friends to join you while playing video games!</p>
-              <button className='btn text-blue-800' onClick={() => navigate('/signup')}>New here? Sign up!</button>
+              <button className='btn btn-primary text-white' onClick={() => navigate('/signup')}>New here? Sign up!</button>
               <br></br>
-              <button className='btn mt-2 text-blue-800' onClick={() => navigate('/login')}>Already have an account? Log in!</button>
+              <button className='btn btn-primary mt-2 text-white' onClick={() => navigate('/login')}>Already have an account? Log in!</button>
             </div>
           </div>
         </div>

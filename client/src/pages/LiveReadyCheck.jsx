@@ -289,6 +289,21 @@ function LiveReadyCheckPage() {
                 className="textarea textarea-bordered w-full"
               />
             </label>
+            <div className="flex flex-wrap gap-2 mb-2 justify-center" style={{ flexDirection: 'row' }}>
+              {invitees.map((inviteeId) => {
+                const invitee = friends.find((friend) => friend._id === inviteeId);
+                return (
+                  <button
+                    key={invitee._id}
+                    type="button"
+                    onClick={() => handleInviteeClick(invitee._id)}
+                    className="btn btn-primary m-2"
+                  >
+                    {invitee.username}
+                  </button>
+                );
+              })}
+            </div>
             <button onClick={handleSaveReadyCheck} className="btn btn-sm btn-primary">
               Save
             </button>
