@@ -92,7 +92,7 @@ function ReadyCheckForm({ userId, onReadyCheckCreated }) {
                     />
                 </div>
                 <div className="label">
-                    <label>What to be ready for:</label>
+                    <label>Activity:</label>
                     <input
                         type="text"
                         value={activity}
@@ -102,7 +102,7 @@ function ReadyCheckForm({ userId, onReadyCheckCreated }) {
                     />
                 </div>
                 <div className="label">
-                    <label>When to be ready:</label>
+                    <label>Timing:</label>
                     <input
                         type="datetime-local"
                         value={timing}
@@ -112,11 +112,10 @@ function ReadyCheckForm({ userId, onReadyCheckCreated }) {
                     />
                 </div>
                 <div className="label">
-                    <label>Description:</label>
+                    <label>Description (optional):</label>
                     <textarea
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
-                        required
                         className="textarea w-full max-w-xs textarea-bordered"
                     />
                 </div>
