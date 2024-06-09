@@ -1,171 +1,95 @@
-import React, { useState, useEffect } from 'react';
-import { useMutation, useQuery } from '@apollo/client';
-import { CREATE_READY_CHECK } from '../utils/mutations';
-import { QUERY_INVITEES, QUERY_ME } from '../utils/queries';
-import { useNavigate } from 'react-router-dom';
-import { useSocket } from '../pages/SocketContext';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useQuery } from '@apollo/client';
+import { QUERY_USER, QUERY_ME } from '../utils/queries';
+import ReadyCheckForm from '../components/ReadyCheckForm';
+import { AuthServiceInstance } from '../utils/auth';
 
-function ReadyCheckForm({ userId, onReadyCheckCreated }) {
-    const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
-    const [activity, setActivity] = useState('');
-    const [timing, setTiming] = useState(new Date().toISOString().slice(0, 16)); // default to current time
-    const [invitees, setInvitees] = useState([]);
-    const responseOptions = [`I'm In`, `I'm Out`, `Maybe`];
+const ActiveReadyChecks = () => {
+  const { username: userParam } = useParams();
+  const { loading, data, refetch } = useQuery(userParam ? QUERY_USER : QUERY_ME, {
+    variables: { username: userParam },
+  });
 
-    const { loading: inviteesLoading, data: inviteeData } = useQuery(QUERY_INVITEES);
+  const user = data?.me || {};
 
-    const navigate = useNavigate();
-    const socket = useSocket();
+  const navigate = useNavigate();
 
-    const [createReadyCheck, { loading, error }] = useMutation(CREATE_READY_CHECK, {
-        update(cache, { data: { createReadyCheck } }) {
-            const { me } = cache.readQuery({ query: QUERY_ME });
+  const openReadyCheckForm = () => {
+    document.getElementById('readyCheckModal').showModal();
+  };
 
-            cache.writeQuery({
-                query: QUERY_ME,
-                data: { me: { ...me, ownedReadyChecks: [...me.ownedReadyChecks, createReadyCheck] } }
-            });
-        },
-        onCompleted: (data) => {
-            navigate(`/readycheck/${data.createReadyCheck._id}`);
-            if (onReadyCheckCreated) {
-                onReadyCheckCreated();
-            }
-            socket.emit('createReadyCheck', data.createReadyCheck);
-        }
-    });
+  const goToLoginPage = () => {
+    navigate('/login');
+  }
 
-    useEffect(() => {
-        if (socket) {
-            socket.on('readyCheckCreated', (readyCheck) => {
-                console.log('ReadyCheck created:', readyCheck);
-            });
+  const goToSignUpPage = () => {
+    navigate('/signup');
+  }
 
-            return () => {
-                socket.off('readyCheckCreated');
-            };
-        }
-    }, [socket]);
+  console.log(user);
 
-    useEffect(() => {
-        const localTime = new Date().toLocaleString('en-CA', { hour12: false }).replace(",", "");
-        setTiming(localTime.slice(0, 16));
-    }, []);
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        await createReadyCheck({
-            variables: {
-                input: {
-                    title,
-                    activity,
-                    timing,
-                    description,
-                    inviteeIds: invitees,
-                    ownerId: userId, // Assign the owner ID
-                }
-            }
-        });
-    };
-
-    const handleInviteeClick = (id) => {
-        setInvitees((prevInvitees) =>
-            prevInvitees.includes(id)
-                ? prevInvitees.filter((inviteeId) => inviteeId !== id)
-                : [...prevInvitees, id]
-        );
-    };
-
-    const filteredInvitees = inviteeData?.getUsers.filter(user => user._id !== userId) || [];
-
+  if (!user?.username) {
     return (
-        <div>
-            <h3 className="font-bold text-center p-3 text-3xl">Create Ready Check</h3>
-            <form id="readyCheckForm" onSubmit={handleSubmit}>
-                <div className="label">
-                    <label>Title:</label>
-                    <input
-                        type="text"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        required
-                        className="input input-bordered w-full max-w-xs"
-                    />
-                </div>
-                <div className="label">
-                    <label>What to be ready for:</label>
-                    <input
-                        type="text"
-                        value={activity}
-                        onChange={(e) => setActivity(e.target.value)}
-                        required
-                        className="input input-bordered w-full max-w-xs"
-                    />
-                </div>
-                <div className="label">
-                    <label>When to be ready:</label>
-                    <input
-                        type="datetime-local"
-                        value={timing}
-                        onChange={(e) => setTiming(e.target.value)}
-                        required
-                        className="input input-bordered w-full max-w-xs"
-                    />
-                </div>
-                <div className="label">
-                    <label>Description:</label>
-                    <textarea
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        required
-                        className="textarea w-full max-w-xs textarea-bordered"
-                    />
-                </div>
-                <div className="flex flex-wrap gap-2 mb-2 justify-center" style={{ flexDirection: 'row' }}>
-                    {invitees.map((inviteeId) => {
-                        const invitee = inviteeData.getUsers.find((user) => user._id === inviteeId);
-                        return (
-                            <button
-                                key={invitee._id}
-                                type="button"
-                                onClick={() => handleInviteeClick(invitee._id)}
-                                className="btn btn-primary m-2"
-                            >
-                                {invitee.username}
-                            </button>
-                        );
-                    })}
-                </div>
-                <div className="label">
-                    <label>Invitees:</label>
-                    {inviteesLoading ? (
-                        <div>Loading...</div>
-                    ) : (
-                        <>
-                            <select
-                                className="select select-bordered w-full max-w-xs"
-                                onChange={(e) => handleInviteeClick(e.target.value)}
-                            >
-                                <option value="">Select Invitees</option>
-                                {filteredInvitees.map((user) => (
-                                    <option key={user._id} value={user._id}>
-                                        {user.username}
-                                    </option>
-                                ))}
-                            </select>
-                        </>
-                    )}
-                </div>
-                <div className="justify-center modal-action">
-                    <button type="submit" className="btn" disabled={loading}>
-                        {loading ? 'Creating...' : 'Create Ready Check'}
-                    </button>
-                    {error && <p>Error: {error.message}</p>}
-                </div>
-            </form>
+      <div className="hero min-h-screen bg-base-200">
+        <div className="hero-content text-center">
+          <div className="max-w-md">
+            <h1 className="text-5xl font-bold">You're signed out!</h1>
+            <p className="py-6">You need to be logged in to see this. Click below or use the navigation links above to sign up or log in!</p>
+            <button onClick={goToLoginPage} className="btn btn-primary m-2">Login</button>
+            <button onClick={goToSignUpPage} className="btn btn-primary m-2">Sign Up</button>
+          </div>
         </div>
-    );
-}
+      </div>
+    )
+  }
 
-export default ReadyCheckForm;
+  return (
+    <main className='mx-6 h-fill'>
+      <div className="flex flex-col w-full h-full lg:flex-row">
+        <div className="flex flex-wrap justify-center">
+          <div className="text-center m-6 p-7">
+            <h1 className="text-5xl text-navy-blue font-bold">My ReadyChecks</h1>
+            <p className="pt-12 text-navy-blue text-lg">Click on an active ReadyCheck for more details</p>
+          </div>
+          <button onClick={openReadyCheckForm} className="btn btn-sky card h-fit bg-sky-600 hover:bg-aquamarine text-primary-content shadow-xl">
+            <div className="card-body text-white text-center ">
+              <h2 className="text-center font-bold text-xl">New ReadyCheck</h2>
+            </div>
+          </button>
+          <dialog id="readyCheckModal" className="modal">
+            <div className="modal-box">
+              <form method="dialog">
+                <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+              </form>
+              <ReadyCheckForm userId={1} />
+            </div>
+          </dialog>
+        </div>
+
+        <div className="divider lg:divider-horizontal"></div>
+        <div className="flex flex-wrap justify-center w-3/5 p-4 overflow-auto max-h-[calc(100vh-200px)]">
+          {user.ownedReadyChecks && user.ownedReadyChecks.length > 0 ? (
+            user.ownedReadyChecks.map((readyCheck) => (
+              <button key={readyCheck._id} onClick={() => navigate(`/readycheck/${readyCheck._id}`)} className="btn-accent card m-2 w-full h-32 bg-blue-btn hover:bg-blue-hover text-primary-content shadow-xl">
+                <div className="p-2 text-white text-left">
+                  <h2 className="font-bold text-4xl m-3">{readyCheck.title}</h2>
+                  <p className='py-2 px-6 text-lg'>{readyCheck.description}</p>
+                </div>
+              </button>
+            ))
+          ) : (
+            <div className='mt-20'>
+                <p className="text-3xl text-navy-blue">No active ReadyChecks found</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </main>
+  );
+};
+
+export default ActiveReadyChecks;
