@@ -8,7 +8,7 @@ import { useSocket } from './SocketContext';
 function LiveReadyCheckPage() {
   const { id } = useParams();
   const socket = useSocket();
-  const { loading: userDataLoading, error: userDataError, data: userData } = useQuery(QUERY_ME); 
+  const { data: userData } = useQuery(QUERY_ME); // Fetch current user's data
 
   const [editMode, setEditMode] = useState(false);
   const [updatedReadyCheckData, setUpdatedReadyCheckData] = useState({});
@@ -75,34 +75,34 @@ function LiveReadyCheckPage() {
   };
 
   const handleEditReadyCheck = () => {
+    const localTime = new Date().toLocaleString('en-CA', { hour12: false }).replace(",", "").slice(0, 16);
     setEditMode(true);
     setUpdatedReadyCheckData({
       title: data.getReadyCheck.title,
-      timing: data.getReadyCheck.timing,
+      timing: localTime,
       activity: data.getReadyCheck.activity,
       description: data.getReadyCheck.description,
     });
   };
 
   const handleSaveReadyCheck = async () => {
-  try {
-    await updateReadyCheck({
-      variables: {
-        id,
-        title: updatedReadyCheckData.title,
-        activity: updatedReadyCheckData.activity,
-        timing: updatedReadyCheckData.timing,
-        description: updatedReadyCheckData.description,
-      },
-    });
-    setEditMode(false);
-    refetch();
-    socket.emit('readyCheckUpdate', updatedReadyCheckData);
-  } catch (error) {
-    console.error('Error updating ReadyCheck:', error.message);
-  }
-};
-
+    try {
+      await updateReadyCheck({
+        variables: {
+          id,
+          title: updatedReadyCheckData.title,
+          activity: updatedReadyCheckData.activity,
+          timing: updatedReadyCheckData.timing,
+          description: updatedReadyCheckData.description,
+        },
+      });
+      setEditMode(false);
+      refetch();
+      socket.emit('readyCheckUpdate', updatedReadyCheckData);
+    } catch (error) {
+      console.error('Error updating ReadyCheck:', error.message);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -124,6 +124,16 @@ function LiveReadyCheckPage() {
       <div className="mb-4">
         {editMode ? (
           <div>
+            <label>
+              Title:
+              <input
+                type="text"
+                name="title"
+                value={updatedReadyCheckData.title}
+                onChange={handleChange}
+                className="input input-bordered w-full"
+              />
+            </label>
             <label>
               When:
               <input
