@@ -89,27 +89,28 @@ const resolvers = {
             if (!context.user) {
                 throw new AuthenticationError('You need to be logged in!');
             }
-
-            const friend = await User.findOne({ username });
+        
+            // Use a case-insensitive regex to find the friend
+            const friend = await User.findOne({ username: { $regex: new RegExp(username, "i") } });
             if (!friend) {
                 throw new AuthenticationError('Friend not found');
             }
-
+        
             const updatedUser = await User.findByIdAndUpdate(
                 context.user._id,
                 { $addToSet: { friends: friend._id } },
                 { new: true }
             ).populate('friends');
-
+        
             await Notification.create({
                 type: 'follow',
                 sender: context.user._id,
                 recipient: friend._id,
                 createdAt: new Date()
             });
-
+        
             return updatedUser;
-        },
+        },        
 
         unfollowFriend: async (_, { username }, context) => {
             if (!context.user) {
