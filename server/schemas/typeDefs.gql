@@ -41,15 +41,17 @@ input ReadyCheckInput {
   timing: String!
   description: String
   inviteeIds: [ID]
+  ownerId: ID
 }
 
 type Notification {
-  _id: ID
-  type: String
-  sender: User
+  _id: ID!
+  type: String!
+  sender: User!
+  recipient: User!
   readyCheck: ReadyCheck
-  createdAt: String
-  read: Boolean
+  createdAt: String!
+  read: Boolean!
 }
 
 type Auth {
@@ -74,45 +76,55 @@ type Mutation {
     email: String!,
     password: String!
   ): Auth
+
   login(
     email: String!,
     password: String!
   ): Auth
+
   followFriend (
     username: String!
   ): User
+
   unfollowFriend (
     username: String!
   ): User
-  createReadyCheck(input: ReadyCheckInput!): ReadyCheck!
+
+  createReadyCheck(
+    input: ReadyCheckInput!
+  ): ReadyCheck!
+
   updateReadyCheck(
     id: ID!,
-    title: String,
+    title: String!,
     activity: String,
-    timing: String,
+    timing: String!,
     description: String
   ): ReadyCheck
+
   updateUserStatus(
     status: String!
   ): User
+
   updateUserBio(
     bio: String!
   ): User
-  markNotificationAsRead(
-    notificationId: ID!
-  ): Notification
+
   deleteNotification(
     notificationId: ID!
   ): Notification
+
   rsvpReadyCheck(
     readyCheckId: String!,
     userId: String!,
     reply: String!
   ): ReadyCheck
-    sendMessage(
-      readyCheckId: ID!, 
-      userId: ID!, 
-      content: String!): ReadyCheck
+
+  sendMessage(
+    readyCheckId: ID!, 
+    userId: ID!, 
+    content: String!
+  ): ReadyCheck
 }
 `;
 

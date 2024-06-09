@@ -6,25 +6,27 @@ import { AuthServiceInstance } from '../utils/auth';
 
 const ActiveReadyChecks = () => {
   const { username: userParam } = useParams();
-  const { loading, data } = useQuery(userParam ? QUERY_USER : QUERY_ME, {
+  const { loading, data, refetch } = useQuery(userParam ? QUERY_USER : QUERY_ME, {
     variables: { username: userParam },
   });
 
-  const user = data?.me || data?.getUser || {};
+  const user = data?.me || {};
 
   const navigate = useNavigate();
 
   const openReadyCheckForm = () => {
-    document.getElementById('my_modal_3').showModal();
+    document.getElementById('readyCheckModal').showModal();
   };
 
   const goToLoginPage = () => {
     navigate('/login');
-  };
+  }
 
   const goToSignUpPage = () => {
     navigate('/signup');
-  };
+  }
+
+  console.log(user);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -42,10 +44,8 @@ const ActiveReadyChecks = () => {
           </div>
         </div>
       </div>
-    );
+    )
   }
-
-  console.log(user);
 
   return (
     <main className='mx-6 h-fill'>
@@ -60,12 +60,12 @@ const ActiveReadyChecks = () => {
               <h2 className="text-center font-bold text-xl">New ReadyCheck</h2>
             </div>
           </button>
-          <dialog id="my_modal_3" className="modal">
+          <dialog id="readyCheckModal" className="modal">
             <div className="modal-box">
               <form method="dialog">
                 <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
               </form>
-              <ReadyCheckForm userId={user._id} />
+              <ReadyCheckForm userId={1} />
             </div>
           </dialog>
         </div>
