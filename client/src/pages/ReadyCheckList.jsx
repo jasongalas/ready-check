@@ -6,11 +6,11 @@ import Auth from '../utils/auth';
 
 const ActiveReadyChecks = () => {
   const { username: userParam } = useParams();
-  const { loading, data } = useQuery(userParam ? QUERY_USER : QUERY_ME, {
+  const { loading, data, refetch } = useQuery(userParam ? QUERY_USER : QUERY_ME, {
     variables: { username: userParam },
   });
 
-  const user = data?.me || data?.getUser || {};
+  const user = data?.me || {};
 
   const navigate = useNavigate();
 
@@ -20,11 +20,13 @@ const ActiveReadyChecks = () => {
 
   const goToLoginPage = () => {
     navigate('/login');
-  };
+  }
 
   const goToSignUpPage = () => {
     navigate('/signup');
-  };
+  }
+
+  console.log(user);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -42,10 +44,8 @@ const ActiveReadyChecks = () => {
           </div>
         </div>
       </div>
-    );
+    )
   }
-
-  console.log(user);
 
   return (
     <main className='mx-6 h-fill'>
@@ -65,7 +65,7 @@ const ActiveReadyChecks = () => {
               <form method="dialog">
                 <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
               </form>
-              <ReadyCheckForm userId={user._id} />
+              <ReadyCheckForm userId={1} />
             </div>
           </dialog>
         </div>

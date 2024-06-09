@@ -13,17 +13,17 @@ const resolvers = {
 
         getReadyCheck: async (_, { id }) => {
             return ReadyCheck.findById(id)
-              .populate('owner')
-              .populate('invitees')
-              .populate({
-                path: 'RSVPs.user',
-                model: 'User',
-              })
-              .populate({
-                path: 'chatMessages.user',
-                model: 'User',
-              });
-          },
+                .populate('owner')
+                .populate('invitees')
+                .populate({
+                    path: 'RSVPs.user',
+                    model: 'User',
+                })
+                .populate({
+                    path: 'chatMessages.user',
+                    model: 'User',
+                });
+        },
 
         readyChecks: async () => {
             return ReadyCheck.find().populate('owner invitees RSVPs.user');
@@ -41,7 +41,7 @@ const resolvers = {
             if (!context.user) {
                 throw new AuthenticationError('You need to be logged in!');
             }
-            return User.findById(context.user._id).populate('friends');
+            return User.findById(context.user._id).populate('friends').populate('ownedReadyChecks').populate('receivedReadyChecks');
         },
 
         notifications: async (_, { userId }, context) => {
@@ -135,38 +135,45 @@ const resolvers = {
             return updatedUser;
         },
 
-        createReadyCheck: async (_, { input }) => {
-            const { title, activity, timing, description, inviteeIds } = input;
+        createReadyCheck: async (_, { input }, context) => {
+            if (!context.user) {
+                throw new AuthenticationError('You need to be logged in!');
+            }
 
-            const RSVPs = inviteeIds.map(userId => ({
-                user: userId,
-                reply: 'pending',
-            }));
+            const { title, activity, timing, description, inviteeIds } = input;
 
             const newReadyCheck = new ReadyCheck({
                 title,
                 activity,
                 timing,
                 description,
-                invitees: inviteeIds
+                invitees: inviteeIds,
+                owner: context.user._id
             });
 
             await newReadyCheck.save();
 
-            // Populate the owner and RSVPs fields
-            await newReadyCheck.populate('owner');
+            await User.findByIdAndUpdate(context.user._id, {
+                $push: { ownedReadyChecks: newReadyCheck._id }
+            });
 
-            return newReadyCheck;
+            return newReadyCheck.populate('owner invitees');
         },
 
-        updateReadyCheck: async (_, { id, title, description }, context) => {
+
+        updateReadyCheck: async (_, { id, title, activity, timing, description }, context) => {
+            if (!context.user) {
+                throw new AuthenticationError('You need to be logged in!');
+            }
+
             const updatedData = await ReadyCheck.findByIdAndUpdate(
                 id,
-                { title, description },
+                { title, activity, timing, description },
                 { new: true }
             ).populate('owner invitees RSVPs.user');
             return updatedData;
         },
+
 
         updateUserStatus: async (_, { status }, context) => {
             if (!context.user) {
