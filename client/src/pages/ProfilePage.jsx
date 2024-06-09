@@ -8,13 +8,14 @@ import { AuthServiceInstance } from '../utils/auth';
 const Profile = () => {
   const { username: userParam } = useParams();
   const { loading, data, refetch } = useQuery(userParam ? QUERY_USER : QUERY_ME, {
-    variables: { username: userParam },
+    variables: userParam ? { id: userParam } : {},
   });
 
   const [updateUserBio] = useMutation(UPDATE_USER_BIO, {
     update(cache, { data: { updateUserBio } }) {
       cache.writeQuery({
         query: userParam ? QUERY_USER : QUERY_ME,
+        variables: userParam ? { id: userParam } : {},
         data: {
           me: userParam ? undefined : updateUserBio,
           getUser: userParam ? updateUserBio : undefined,
@@ -27,6 +28,7 @@ const Profile = () => {
     update(cache, { data: { updateUserStatus } }) {
       cache.writeQuery({
         query: userParam ? QUERY_USER : QUERY_ME,
+        variables: userParam ? { id: userParam } : {},
         data: {
           me: userParam ? undefined : updateUserStatus,
           getUser: userParam ? updateUserStatus : undefined,
@@ -179,15 +181,21 @@ const Profile = () => {
                   <h3 className="text-xl font-bold leading-normal mb-2 text-blueGray-700">
                     Recent Activity
                   </h3>
-                  {user.ownedReadyChecks && user.ownedReadyChecks.length > 0 ? (
-                    user.ownedReadyChecks.map((check) => (
-                      <p key={check._id} className="mb-4 text-lg leading-relaxed text-blueGray-700">
-                        {check.title}
-                      </p>
-                    ))
-                  ) : (
-                    <p className="mb-4 text-lg leading-relaxed text-blueGray-700">No recent activity</p>
-                  )}
+                  <div className="flex flex-col items-center">
+                    {user.ownedReadyChecks && user.ownedReadyChecks.length > 0 ? (
+                      user.ownedReadyChecks.map((check) => (
+                        <button
+                          key={check._id}
+                          onClick={() => navigate(`/readycheck/${check._id}`)}
+                          className="mb-4 text-lg leading-relaxed text-blueGray-700 underline"
+                        >
+                          {check.title}
+                        </button>
+                      ))
+                    ) : (
+                      <p className="mb-4 text-lg leading-relaxed text-blueGray-700">No recent activity</p>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -197,7 +205,5 @@ const Profile = () => {
     </main>
   );
 };
-
-
 
 export default Profile;
