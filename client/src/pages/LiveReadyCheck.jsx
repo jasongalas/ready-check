@@ -26,10 +26,10 @@ function LiveReadyCheckPage() {
     const intervalId = setInterval(() => {
       refetch(); // Refetch the data to ensure the latest timing
     }, 1000); // Update every second
-  
+
     return () => clearInterval(intervalId); // Cleanup the interval on component unmount
   }, []);
-  
+
 
   const [updateReadyCheck] = useMutation(UPDATE_READY_CHECK);
   const [rsvpReadyCheck] = useMutation(RSVP_READY_CHECK);
@@ -229,7 +229,7 @@ function LiveReadyCheckPage() {
           </div>
         </div>
       </div>
-    );    
+    );
   };
 
   return (
@@ -301,52 +301,56 @@ function LiveReadyCheckPage() {
           </button>
         </>
       )}
-      <div className="mt-4" onClick={handleButtonWrapperClick}>
-        <label className="block mb-2">
-          RSVP Options:
-          <div className="flex flex-wrap gap-2">
-            <button
-              onClick={() => handleRSVPSelection('Pending')}
-              className={`btn btn-sm ${selectedResponse === 'Pending' ? 'btn-primary' : 'btn-outline-primary'}`}
-            >
-              Pending
-            </button>
-            <button
-              onClick={() => handleRSVPSelection('Ready')}
-              className={`btn btn-sm ${selectedResponse === 'Ready' ? 'btn-success' : 'btn-outline-success'}`}
-            >
-              I'm Ready
-            </button>
-            <button
-              onClick={() => handleRSVPSelection('Maybe')}
-              className={`btn btn-sm ${selectedResponse === 'Maybe' ? 'btn-warning' : 'btn-outline-warning'}`}
-            >
-              Maybe
-            </button>
-            <button
-              onClick={() => handleRSVPSelection('Declined')}
-              className={`btn btn-sm ${selectedResponse === 'Declined' ? 'btn-error' : 'btn-outline-error'}`}
-            >
-              I Can't Join
-            </button>
+      <div className="mt-4">
+        <h2 className="text-xl font-semibold">RSVP Options:</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-2">
+          <button
+            onClick={() => handleRSVPSelection('Pending')}
+            className={`btn ${selectedResponse === 'Pending' ? 'btn-primary' : 'btn-outline-primary'}`}
+          >
+            Pending
+          </button>
+          <button
+            onClick={() => handleRSVPSelection('Ready')}
+            className={`btn ${selectedResponse === 'Ready' ? 'btn-success' : 'btn-outline-success'}`}
+          >
+            I'm Ready
+          </button>
+          <button
+            onClick={() => handleRSVPSelection('Maybe')}
+            className={`btn ${selectedResponse === 'Maybe' ? 'btn-warning' : 'btn-outline-warning'}`}
+          >
+            Maybe
+          </button>
+          <button
+            onClick={() => handleRSVPSelection('Declined')}
+            className={`btn ${selectedResponse === 'Declined' ? 'btn-error' : 'btn-outline-error'}`}
+          >
+            I Can't Join
+          </button>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mt-1">
+          <div className="border-r pr-4">
+            {RSVPs.filter((rsvp) => rsvp.reply === 'Pending').map((rsvp) => (
+              <p className="text-center" key={rsvp.user._id}>{rsvp.user.username}</p>
+            ))}
           </div>
-          <div className="mt-4 grid grid-cols-4 gap-4">
-            <div className="col-span-1">
-              <h2 className="text-xl font-semibold">Invitees:</h2>
-              {invitees.map((invitee) => (
-                <p key={invitee.username}>{invitee.username}</p>
-              ))}
-            </div>
-            <div className="col-span-3">
-              <h2 className="text-xl font-semibold">RSVPs:</h2>
-              {RSVPs.map((rsvp) => (
-                <p key={rsvp._id}>
-                  {rsvp.user.username}: {rsvp.reply}
-                </p>
-              ))}
-            </div>
+          <div className="border-r pr-4">
+            {RSVPs.filter((rsvp) => rsvp.reply === 'Ready').map((rsvp) => (
+              <p className="text-center" key={rsvp.user._id}>{rsvp.user.username}</p>
+            ))}
           </div>
-        </label>
+          <div className="border-r pr-4">
+            {RSVPs.filter((rsvp) => rsvp.reply === 'Maybe').map((rsvp) => (
+              <p className="text-center" key={rsvp.user._id}>{rsvp.user.username}</p>
+            ))}
+          </div>
+          <div>
+            {RSVPs.filter((rsvp) => rsvp.reply === 'Declined').map((rsvp) => (
+              <p className="text-center" key={rsvp.user._id}>{rsvp.user.username}</p>
+            ))}
+          </div>
+        </div>
       </div>
       <div className="mt-4">
         <h2 className="text-xl font-semibold">Messages:</h2>
