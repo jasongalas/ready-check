@@ -11,9 +11,8 @@ function ReadyCheckForm({ userId, onReadyCheckCreated }) {
     const [activity, setActivity] = useState('');
     const [timing, setTiming] = useState(new Date().toISOString().slice(0, 16)); // default to current time
     const [invitees, setInvitees] = useState([]);
-    const responseOptions = [`I'm In`, `I'm Out`, `Maybe`];
 
-    const { loading: inviteesLoading, data: inviteeData } = useQuery(QUERY_INVITEES);
+    const { loading: meLoading, data: meData } = useQuery(QUERY_ME);
 
     const navigate = useNavigate();
     const socket = useSocket();
@@ -77,6 +76,12 @@ function ReadyCheckForm({ userId, onReadyCheckCreated }) {
         );
     };
 
+    if (meLoading) {
+        return <div>Loading...</div>;
+    }
+
+    const friends = meData?.me?.friends || [];
+
     return (
         <div>
             <h3 className="font-bold text-center p-3 text-3xl">Create Ready Check</h3>
@@ -121,7 +126,7 @@ function ReadyCheckForm({ userId, onReadyCheckCreated }) {
                 </div>
                 <div className="flex flex-wrap gap-2 mb-2 justify-center" style={{ flexDirection: 'row' }}>
                     {invitees.map((inviteeId) => {
-                        const invitee = inviteeData.getUsers.find((user) => user._id === inviteeId);
+                        const invitee = friends.find((friend) => friend._id === inviteeId);
                         return (
                             <button
                                 key={invitee._id}
@@ -136,23 +141,17 @@ function ReadyCheckForm({ userId, onReadyCheckCreated }) {
                 </div>
                 <div className="label">
                     <label>Invitees:</label>
-                    {inviteesLoading ? (
-                        <div>Loading...</div>
-                    ) : (
-                        <>
-                            <select
-                                className="select select-bordered w-full max-w-xs"
-                                onChange={(e) => handleInviteeClick(e.target.value)}
-                            >
-                                <option value="">Select Invitees</option>
-                                {inviteeData.getUsers.map((user) => (
-                                    <option key={user._id} value={user._id}>
-                                        {user.username}
-                                    </option>
-                                ))}
-                            </select>
-                        </>
-                    )}
+                    <select
+                        className="select select-bordered w-full max-w-xs"
+                        onChange={(e) => handleInviteeClick(e.target.value)}
+                    >
+                        <option value="">Select Invitees</option>
+                        {friends.map((friend) => (
+                            <option key={friend._id} value={friend._id}>
+                                {friend.username}
+                            </option>
+                        ))}
+                    </select>
                 </div>
                 <div className="justify-center modal-action">
                     <button type="submit" className="btn" disabled={loading}>
