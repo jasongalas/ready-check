@@ -96,9 +96,9 @@ type Mutation {
 
   updateReadyCheck(
     id: ID!,
-    title: String,
+    title: String!,
     activity: String,
-    timing: String,
+    timing: String!,
     description: String
   ): ReadyCheck
 
