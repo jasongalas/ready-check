@@ -50,7 +50,7 @@ mutation rsvpReadyCheck($readyCheckId: String!, $userId: String!, $reply: String
 }`
 
 export const UPDATE_USER_STATUS = gql`
-    mutation UpdateUserStatus($status: String!) {
+    mutation updateUserStatus($status: String!) {
         updateUserStatus(status: $status) {
             _id
             status
@@ -87,6 +87,14 @@ export const REMOVE_FRIEND = gql`
                 _id
                 username
             }
+        }
+    }
+`;
+
+export const DELETE_NOTIFICATION = gql`
+    mutation DeleteNotification($notificationId: ID!) {
+        deleteNotification(notificationId: $notificationId) {
+            _id
         }
     }
 `;

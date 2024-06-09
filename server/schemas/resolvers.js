@@ -105,6 +105,7 @@ const resolvers = {
                 type: 'follow',
                 sender: context.user._id,
                 recipient: friend._id,
+                createdAt: new Date()
             });
 
             return updatedUser;
@@ -130,6 +131,7 @@ const resolvers = {
                 type: 'unfollow',
                 sender: context.user._id,
                 recipient: friend._id,
+                createdAt: new Date()
             });
 
             return updatedUser;
@@ -203,28 +205,12 @@ const resolvers = {
             return updatedUser;
         },
 
-
-        markNotificationAsRead: async (_, { notificationId }, context) => {
-            if (!context.user) {
-                throw new AuthenticationError('You need to be logged in!');
-            }
-
-            const notification = await Notification.findByIdAndUpdate(
-                notificationId,
-                { read: true },
-                { new: true }
-            ).populate('sender readyCheck');
-
-            return notification;
-        },
-
         deleteNotification: async (_, { notificationId }, context) => {
             if (!context.user) {
                 throw new AuthenticationError('You need to be logged in!');
             }
 
-            const notification = await Notification.findByIdAndDelete(notificationId).populate('sender readyCheck');
-
+            const notification = await Notification.findByIdAndDelete(notificationId);
             return notification;
         },
 

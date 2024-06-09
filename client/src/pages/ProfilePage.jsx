@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/client';
 import { QUERY_USER, QUERY_ME } from '../utils/queries';
-import { UPDATE_USER_BIO } from '../utils/mutations';
+import { UPDATE_USER_BIO, UPDATE_USER_STATUS } from '../utils/mutations';
 import { useState } from 'react';
 import { AuthServiceInstance } from '../utils/auth';
 
@@ -23,8 +23,22 @@ const Profile = () => {
     }
   });
 
-  const [isEditing, setIsEditing] = useState(false);
+  const [updateUserStatus] = useMutation(UPDATE_USER_STATUS, {
+    update(cache, { data: { updateUserStatus } }) {
+      cache.writeQuery({
+        query: userParam ? QUERY_USER : QUERY_ME,
+        data: {
+          me: userParam ? undefined : updateUserStatus,
+          getUser: userParam ? updateUserStatus : undefined,
+        },
+      });
+    }
+  });
+
+  const [isEditingBio, setIsEditingBio] = useState(false);
   const [newBio, setNewBio] = useState('');
+  const [isEditingStatus, setIsEditingStatus] = useState(false);
+  const [newStatus, setNewStatus] = useState('');
 
   const user = data?.me || data?.getUser || {};
 
@@ -38,19 +52,35 @@ const Profile = () => {
     navigate('/signup');
   };
 
-  const handleEditClick = () => {
-    setIsEditing(true);
+  const handleEditBioClick = () => {
+    setIsEditingBio(true);
     setNewBio(user.bio || '');
   };
 
-  const handleSubmit = async () => {
+  const handleEditStatusClick = () => {
+    setIsEditingStatus(true);
+    setNewStatus(user.status || '');
+  };
+
+  const handleBioSubmit = async () => {
     try {
       const { data } = await updateUserBio({ variables: { bio: newBio } });
       console.log('Updated bio:', data);
-      setIsEditing(false);
+      setIsEditingBio(false);
       refetch(); // This ensures the page is refetched and updated
     } catch (err) {
       console.error('Error updating bio:', err);
+    }
+  };
+
+  const handleStatusSubmit = async () => {
+    try {
+      const { data } = await updateUserStatus({ variables: { status: newStatus } });
+      console.log('Updated status:', data);
+      setIsEditingStatus(false);
+      refetch(); // This ensures the page is refetched and updated
+    } catch (err) {
+      console.error('Error updating status:', err);
     }
   };
 
@@ -105,20 +135,39 @@ const Profile = () => {
                 {user.email}
               </h3>
               <div className="mb-2 text-blueGray-600 mt-5">
-                {isEditing ? (
+                {isEditingBio ? (
                   <div>
                     <textarea
                       className="textarea textarea-bordered w-full"
                       value={newBio}
                       onChange={(e) => setNewBio(e.target.value)}
                     />
-                    <button onClick={handleSubmit} className="btn btn-primary mt-2">Submit</button>
+                    <button onClick={handleBioSubmit} className="btn btn-primary mt-2">Submit</button>
                   </div>
                 ) : (
                   <div>
                     <p>{user.bio || 'No bio available'}</p>
                     <div className='mt-6 text-primary'>
-                      <button onClick={handleEditClick} className="text-sm">Edit Bio</button>
+                      <button onClick={handleEditBioClick} className="text-sm">Edit Bio</button>
+                    </div>
+                  </div>
+                )}
+              </div>
+              <div className="mb-2 text-blueGray-600 mt-5">
+                {isEditingStatus ? (
+                  <div>
+                    <textarea
+                      className="textarea textarea-bordered w-full"
+                      value={newStatus}
+                      onChange={(e) => setNewStatus(e.target.value)}
+                    />
+                    <button onClick={handleStatusSubmit} className="btn btn-primary mt-2">Submit</button>
+                  </div>
+                ) : (
+                  <div>
+                    <p>{user.status || 'No status available'}</p>
+                    <div className='mt-6 text-primary'>
+                      <button onClick={handleEditStatusClick} className="text-sm">Edit Status</button>
                     </div>
                   </div>
                 )}

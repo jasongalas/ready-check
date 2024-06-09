@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useMutation, useQuery } from '@apollo/client';
 import { ADD_FRIEND, REMOVE_FRIEND } from '../utils/mutations';
 import { QUERY_USERS, QUERY_FRIENDS} from '../utils/queries';
-
 import Auth from '../utils/auth';
 
 function FriendsList({setRecipients, userId}) {
@@ -77,12 +76,12 @@ function FriendsList({setRecipients, userId}) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         
-        const { data } = await updateFriends({ variables: { input: readyCheck } });
+    //     const { data } = await updateFriends({ variables: { input: readyCheck } });
 
-        if (data) {
-            socket.emit('updateFriends', data.updateFriends);
-        }
-    };
+    //     if (data) {
+    //         socket.emit('updateFriends', data.updateFriends);
+    //     }
+    // };
 
     return (
         <div>
@@ -129,7 +128,8 @@ function FriendsList({setRecipients, userId}) {
                 ))}
             </ul>
         </div>
-    );
+        );
+    }
 }
 
 export default FriendsList;
