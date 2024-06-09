@@ -150,7 +150,7 @@ const resolvers = {
                 invitees: inviteeIds,
                 owner: context.user._id
             });
-
+        
             await newReadyCheck.save();
 
             await User.findByIdAndUpdate(context.user._id, {

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { CREATE_USER } from '../utils/mutations';
-import Auth from '../utils/auth';
+import { AuthServiceInstance } from '../utils/auth';
 
 const SignUp = () => {
   const [formState, setFormState] = useState({ username: '', email: '', password: '' });
@@ -26,7 +26,7 @@ const SignUp = () => {
       });
 
       const { token } = response.data.createUser;
-      Auth.login(token); 
+      AuthServiceInstance.login(token); 
     } catch (e) {
       console.error(e);
     }

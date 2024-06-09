@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import AuthService from '../utils/auth';
+import { useNavigate, useParams } from 'react-router-dom';
+import { AuthServiceInstance  } from '../utils/auth';
 import ReadyCheckForm from './ReadyCheckForm';
+import { useQuery } from '@apollo/client';
+import { QUERY_USER, QUERY_ME } from '../utils/queries';
 
 const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -9,11 +11,18 @@ const Header = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setIsLoggedIn(AuthService.loggedIn());
+    setIsLoggedIn(AuthServiceInstance.loggedIn());
   }, []);
 
+  const { username: userParam } = useParams();
+  const { loading, data } = useQuery(userParam ? QUERY_USER : QUERY_ME, {
+    variables: { username: userParam },
+  });
+
+  const user = data?.me || data?.getUser || {};
+
   const handleLogout = () => {
-    AuthService.logout();
+    AuthServiceInstance.logout();
     setIsLoggedIn(false);
   }
 
@@ -81,12 +90,12 @@ const Header = () => {
       </div>
       {/* Modal */}
       {isModalOpen && (
-        <dialog id="my_modal_3" className="modal" open>
+        <dialog id="readyCheckModal" className="modal" open>
           <div className="modal-box">
             <form method="dialog">
               <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onClick={closeReadyCheckModal}>✕</button>
             </form>
-            <ReadyCheckForm userId={1} />
+            <ReadyCheckForm userId={user._id} />
           </div>
         </dialog>
       )}

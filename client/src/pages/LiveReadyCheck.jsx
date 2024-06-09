@@ -8,7 +8,7 @@ import { useSocket } from './SocketContext';
 function LiveReadyCheckPage() {
   const { id } = useParams();
   const socket = useSocket();
-  const { data: userData } = useQuery(QUERY_ME); // Fetch current user's data
+  const { loading: userDataLoading, error: userDataError, data: userData } = useQuery(QUERY_ME); 
 
   const [editMode, setEditMode] = useState(false);
   const [updatedReadyCheckData, setUpdatedReadyCheckData] = useState({});
