@@ -97,6 +97,7 @@ export const QUERY_USER = gql`
       _id
       username
       bio
+      status
       friends {
         _id
         username
@@ -110,8 +111,6 @@ export const QUERY_USER = gql`
     }
   }
 `;
-
-
 
 export const QUERY_FRIENDS = gql`
   query getFriends($userId: ID!) {
@@ -131,6 +130,7 @@ export const QUERY_ME = gql`
       username
       email
       bio
+      status
       friends {
         _id
         username
@@ -154,6 +154,8 @@ export const QUERY_NOTIFICATIONS = gql`
         _id
         username
       }
+      createdAt
+      read
       readyCheck {
         _id
         title
