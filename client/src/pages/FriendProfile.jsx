@@ -27,14 +27,14 @@ const FriendProfile = () => {
             <div className="flex flex-wrap justify-center">
               <div className="w-full px-4 flex justify-center">
                 <div className="avatar relative">
-                  <div className="shadow-xl rounded-full h-auto align-middle border-none absolute -m-16 -ml-20 max-w-150-px">
+                  <div className="shadow-xl rounded-full h-auto align-middle border-none absolute -m-16 max-w-150-px">
                     <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" alt="Profile" />
                   </div>
                 </div>
               </div>
-              <div className="w-full px-4 text-center mt-20">
+              <div className="w-full px-4 text-center mt-16">
                 <div className="flex justify-center lg:pt-4 pt-8">
-                  <div className="flex flex-col items-center mr-4 p-1">
+                  <div className="flex flex-col items-center">
                     <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
                       {user.friends ? user.friends.length : 0}
                     </span>
@@ -44,11 +44,14 @@ const FriendProfile = () => {
               </div>
             </div>
             <div className="text-center mt-4">
-              <h3 className="text-3xl font-bold leading-normal mb-2 text-blueGray-700">
+              <h3 className="text-5xl font-bold leading-normal mb-2 text-blueGray-700">
                 {user.username}
               </h3>
               <div className="mb-2 text-blueGray-600 mt-5">
-                <p>{user.bio || 'No bio available'}</p>
+                <p>Status: {user.status || 'No bio available'}</p>
+              </div>
+              <div className="mb-2 text-blueGray-600 mt-5">
+                <p className='text-xl font-semibold'>{user.bio || 'No bio available'}</p>
               </div>
             </div>
             <div className="mt-10 py-10 border-t border-blueGray-200 text-center">
@@ -59,9 +62,13 @@ const FriendProfile = () => {
                   </h3>
                   {user.ownedReadyChecks && user.ownedReadyChecks.length > 0 ? (
                     user.ownedReadyChecks.map((check) => (
-                      <p key={check._id} className="mb-4 text-lg leading-relaxed text-blueGray-700">
-                        {check.title}
-                      </p>
+                      <button
+                          key={check._id}
+                          onClick={() => navigate(`/readycheck/${check._id}`)}
+                          className="mb-4 text-lg leading-relaxed text-blueGray-700 underline"
+                        >
+                          {check.title}
+                      </button>
                     ))
                   ) : (
                     <p className="mb-4 text-lg leading-relaxed text-blueGray-700">No recent activity</p>
