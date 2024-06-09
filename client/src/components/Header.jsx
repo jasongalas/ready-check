@@ -5,7 +5,7 @@ import ReadyCheckForm from './ReadyCheckForm';
 import { useQuery } from '@apollo/client';
 import { QUERY_USER, QUERY_ME, QUERY_NOTIFICATIONS } from '../utils/queries';
 import Notifications from './Notifications';
-import RCLogo from '.public/images/readycheck-logo-white'
+import RCLogo from '../../../public/images/readycheck-logo-white.png'
 
 const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
