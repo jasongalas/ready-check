@@ -166,5 +166,4 @@ export const QUERY_NOTIFICATIONS = gql`
       read
       }
     }
-  }
 `;

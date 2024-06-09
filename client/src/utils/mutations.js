@@ -33,6 +33,11 @@ export const UPDATE_READY_CHECK = gql`
     }
 `;
 
+export const DELETE_READY_CHECK = gql`
+mutation DeleteReadyCheck($id: ID!) {
+  deleteReadyCheck(id: $id)
+}
+`;
 
 export const RSVP_READY_CHECK = gql`
 mutation rsvpReadyCheck($readyCheckId: String!, $userId: String!, $reply: String!) {

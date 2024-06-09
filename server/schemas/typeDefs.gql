@@ -102,6 +102,8 @@ type Mutation {
     description: String
   ): ReadyCheck
 
+  deleteReadyCheck(id: ID!): Boolean
+
   updateUserStatus(
     status: String!
   ): User
