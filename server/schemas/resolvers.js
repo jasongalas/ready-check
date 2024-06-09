@@ -155,6 +155,16 @@ const resolvers = {
         
             await newReadyCheck.save();
 
+            inviteeIds.forEach(async (inviteeId) => {
+                await Notification.create({
+                  type: 'readyCheck',
+                  sender: ownerId,
+                  recipient: inviteeId,
+                  readyCheck: newReadyCheck._id,
+                  createdAt: new Date(),
+                });
+              });
+
             await User.findByIdAndUpdate(context.user._id, {
                 $push: { ownedReadyChecks: newReadyCheck._id }
             });

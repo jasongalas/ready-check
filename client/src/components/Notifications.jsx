@@ -31,9 +31,9 @@ function Notifications({ userId }) {
                     className="py-2 border-b border-gray-200"
                     onClick={() => handleNotificationClick(notification._id)}
                 >
-                        <Link to={`/profile/${notification.sender._id}`}>
+                        <Link to={notification.readyCheck ? `/readycheck/${notification.readyCheck._id}` : `/profile/${notification.sender._id}`}>
                             <div>
-                                <span className="font-medium">{notification.sender.username}</span> {notification.type === 'follow' ? 'followed' : 'unfollowed'} you.
+                                <span className="font-medium">{notification.sender.username}</span> {notification.type === 'follow' ? 'followed' : notification.type === 'unfollow' ? 'unfollowed' : 'sent you a ReadyCheck'}.
                             </div>
                             <div className="text-sm text-gray-600">{notification.createdAt}</div>
                         </Link>

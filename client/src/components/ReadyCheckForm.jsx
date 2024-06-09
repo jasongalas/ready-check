@@ -32,6 +32,7 @@ function ReadyCheckForm({ userId, onReadyCheckCreated }) {
             if (onReadyCheckCreated) {
                 onReadyCheckCreated();
             }
+            socket.emit('createReadyCheck', data.createReadyCheck);
         }
     });
 
@@ -54,7 +55,7 @@ function ReadyCheckForm({ userId, onReadyCheckCreated }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const { data } = await createReadyCheck({
+        await createReadyCheck({
             variables: {
                 input: {
                     title,
@@ -66,10 +67,6 @@ function ReadyCheckForm({ userId, onReadyCheckCreated }) {
                 }
             }
         });
-
-        if (data) {
-            socket.emit('createReadyCheck', data.createReadyCheck);
-        }
     };
 
     const handleInviteeClick = (id) => {
