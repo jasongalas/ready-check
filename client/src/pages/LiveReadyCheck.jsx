@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/client';
 import { QUERY_READY_CHECK, QUERY_ME } from '../utils/queries';
-import { UPDATE_READY_CHECK, RSVP_READY_CHECK, SEND_CHAT_MESSAGE } from '../utils/mutations';
+import { UPDATE_READY_CHECK, RSVP_READY_CHECK, SEND_CHAT_MESSAGE, DELETE_READY_CHECK } from '../utils/mutations';
 import { useSocket } from './SocketContext';
 
 function LiveReadyCheckPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const socket = useSocket();
   const { data: userData } = useQuery(QUERY_ME); // Fetch current user's data
 
@@ -23,6 +24,7 @@ function LiveReadyCheckPage() {
   const [updateReadyCheck] = useMutation(UPDATE_READY_CHECK);
   const [rsvpReadyCheck] = useMutation(RSVP_READY_CHECK);
   const [sendChatMessage] = useMutation(SEND_CHAT_MESSAGE);
+  const [deleteReadyCheck] = useMutation(DELETE_READY_CHECK);
 
   useEffect(() => {
     if (socket) {
@@ -104,6 +106,16 @@ function LiveReadyCheckPage() {
     }
   };
 
+  const handleDeleteReadyCheck = async () => {
+    try {
+      console.log(`Deleting ReadyCheck with ID: ${id}`);
+      await deleteReadyCheck({ variables: { id } });
+      navigate('/'); // Redirect to another page after deletion
+    } catch (error) {
+      console.error('Error deleting ReadyCheck:', error.message);
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUpdatedReadyCheckData({
@@ -175,9 +187,14 @@ function LiveReadyCheckPage() {
         )}
       </div>
       {isOwner && !editMode && (
-        <button onClick={handleEditReadyCheck} className="btn btn-sm btn-secondary">
-          Edit ReadyCheck
-        </button>
+        <>
+          <button onClick={handleEditReadyCheck} className="btn btn-sm btn-secondary">
+            Edit ReadyCheck
+          </button>
+          <button onClick={handleDeleteReadyCheck} className="btn btn-sm btn-danger ml-2">
+            Delete ReadyCheck
+          </button>
+        </>
       )}
       {!isOwner && (
         <div className="mt-4">
