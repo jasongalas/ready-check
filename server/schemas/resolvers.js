@@ -155,16 +155,6 @@ const resolvers = {
         
             await newReadyCheck.save();
 
-            inviteeIds.forEach(async (inviteeId) => {
-                await Notification.create({
-                  type: 'readyCheck',
-                  sender: ownerId,
-                  recipient: inviteeId,
-                  readyCheck: newReadyCheck._id,
-                  createdAt: new Date(),
-                });
-              });
-
             await User.findByIdAndUpdate(context.user._id, {
                 $push: { ownedReadyChecks: newReadyCheck._id }
             });
@@ -186,7 +176,30 @@ const resolvers = {
             return updatedData;
         },
         
-
+        deleteReadyCheck: async (_, { id }, context) => {
+            if (!context.user) {
+              throw new AuthenticationError('You need to be logged in to perform this action');
+            }
+      
+            try {
+              const readyCheck = await ReadyCheck.findById(id);
+      
+              if (!readyCheck) {
+                throw new Error('ReadyCheck not found');
+              }
+      
+              // Ensure the current user is the owner of the ready check
+              if (readyCheck.owner.toString() !== context.user._id.toString()) {
+                throw new AuthenticationError('You are not authorized to delete this ReadyCheck');
+              }
+      
+              await ReadyCheck.findByIdAndDelete(id);
+              return true;
+            } catch (error) {
+              console.error(error);
+              return false;
+            }
+          },
 
         updateUserStatus: async (_, { status }, context) => {
             if (!context.user) {
