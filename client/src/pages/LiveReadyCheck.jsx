@@ -216,7 +216,6 @@ function LiveReadyCheckPage() {
           </button>
         </>
       )}
-      (
         <div className="mt-4" onClick={handleButtonWrapperClick}>
           <label className="block mb-2">
             RSVP Options:
@@ -264,7 +263,6 @@ function LiveReadyCheckPage() {
             </div>
           </label>
         </div>
-      )
       <div className="mt-4">
         <h2 className="text-xl font-semibold">Messages:</h2>
         <ul ref={messagesRef} className="chat-messages max-h-48 overflow-auto">
