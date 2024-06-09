@@ -16,6 +16,8 @@ function LiveReadyCheckPage() {
   const [messageInput, setMessageInput] = useState('');
   const messagesRef = useRef(null);
 
+  const isOwner = owner?.username === userData.me.username; 
+
   const { loading, error, data, refetch } = useQuery(QUERY_READY_CHECK, {
     variables: { id },
   });
@@ -116,7 +118,6 @@ function LiveReadyCheckPage() {
   if (error) return <div className="py-4">Error: {error.message}</div>;
 
   const { title, owner, timing, activity, invitees, description, RSVPs, chatMessages } = data.getReadyCheck || {};
-  const isOwner = owner?.username === userData.me.username; 
 
   return (
     <div className="p-4 border border-gray-300 rounded">
