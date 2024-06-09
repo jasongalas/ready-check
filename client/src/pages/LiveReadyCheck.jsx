@@ -10,14 +10,13 @@ function LiveReadyCheckPage() {
   const socket = useSocket();
   const { loading: userDataLoading, error: userDataError, data: userData } = useQuery(QUERY_ME); 
 
+  const [editMode, setEditMode] = useState(false);
   const [updatedReadyCheckData, setUpdatedReadyCheckData] = useState({});
   const [selectedResponse, setSelectedResponse] = useState('Pending');
-  const formRef = useRef(null);
-  const inputRef = useRef(null);
   const [messageInput, setMessageInput] = useState('');
   const messagesRef = useRef(null);
 
-  const { loading, error, data } = useQuery(QUERY_READY_CHECK, {
+  const { loading, error, data, refetch } = useQuery(QUERY_READY_CHECK, {
     variables: { id },
   });
 
@@ -75,25 +74,98 @@ function LiveReadyCheckPage() {
     }
   };
 
-  if (loading || userDataLoading) return <div className="py-4">Loading...</div>;
-  if (error || userDataError) return <div className="py-4">Error: {error?.message || userDataError?.message}</div>;
+  const handleEditReadyCheck = () => {
+    setEditMode(true);
+    setUpdatedReadyCheckData({
+      title: data.getReadyCheck.title,
+      timing: data.getReadyCheck.timing,
+      activity: data.getReadyCheck.activity,
+      description: data.getReadyCheck.description,
+    });
+  };
+
+  const handleSaveReadyCheck = async () => {
+  try {
+    await updateReadyCheck({
+      variables: {
+        id,
+        title: updatedReadyCheckData.title,
+        activity: updatedReadyCheckData.activity,
+        timing: updatedReadyCheckData.timing,
+        description: updatedReadyCheckData.description,
+      },
+    });
+    setEditMode(false);
+    refetch();
+    socket.emit('readyCheckUpdate', updatedReadyCheckData);
+  } catch (error) {
+    console.error('Error updating ReadyCheck:', error.message);
+  }
+};
+
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setUpdatedReadyCheckData({
+      ...updatedReadyCheckData,
+      [name]: value,
+    });
+  };
+
+  if (loading) return <div className="py-4">Loading...</div>;
+  if (error) return <div className="py-4">Error: {error.message}</div>;
 
   const { title, owner, timing, activity, invitees, description, RSVPs, chatMessages } = data.getReadyCheck || {};
-  const isOwner = userData?.me && owner?.username === userData.me.username; // Use optional chaining
-
-  console.log("Chat messages:", chatMessages);
+  const isOwner = owner?.username === userData.me.username; // Use current user's data
 
   return (
     <div className="p-4 border border-gray-300 rounded">
       <h1 className="text-2xl font-semibold text-center mb-4">{title}</h1>
       <div className="mb-4">
-        {timing && <p>When: {timing}</p>}
-        {owner?.username && <p>Owner: {owner.username}</p>}
-        {activity && <p>Activity: {activity}</p>}
-        {description && <p>Description: {description}</p>}
+        {editMode ? (
+          <div>
+            <label>
+              When:
+              <input
+                type="datetime-local"
+                name="timing"
+                value={updatedReadyCheckData.timing}
+                onChange={handleChange}
+                className="input input-bordered w-full"
+              />
+            </label>
+            <label>
+              Activity:
+              <input
+                type="text"
+                name="activity"
+                value={updatedReadyCheckData.activity}
+                onChange={handleChange}
+                className="input input-bordered w-full"
+              />
+            </label>
+            <label>
+              Description:
+              <textarea
+                name="description"
+                value={updatedReadyCheckData.description}
+                onChange={handleChange}
+                className="textarea textarea-bordered w-full"
+              />
+            </label>
+            <button onClick={handleSaveReadyCheck} className="btn btn-primary mt-2">Save</button>
+          </div>
+        ) : (
+          <>
+            {timing && <p>When: {timing}</p>}
+            {owner?.username && <p>Owner: {owner.username}</p>}
+            {activity && <p>Activity: {activity}</p>}
+            {description && <p>Description: {description}</p>}
+          </>
+        )}
       </div>
-      {isOwner && (
-        <button onClick={() => { }} className="btn btn-sm btn-secondary">
+      {isOwner && !editMode && (
+        <button onClick={handleEditReadyCheck} className="btn btn-sm btn-secondary">
           Edit ReadyCheck
         </button>
       )}
@@ -160,7 +232,6 @@ function LiveReadyCheckPage() {
       <div className="mt-4">
         <form onSubmit={handleSendMessage} className="flex flex-row items-center">
           <input
-            ref={inputRef}
             type="text"
             className="flex-1 px-2 py-1 border border-gray-300 rounded mr-2"
             placeholder="Type your message..."

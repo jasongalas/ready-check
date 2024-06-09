@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useMutation, useQuery } from '@apollo/client';
 import { CREATE_READY_CHECK } from '../utils/mutations';
-import { QUERY_INVITEES } from '../utils/queries';
+import { QUERY_INVITEES, QUERY_ME } from '../utils/queries';
 import { useNavigate } from 'react-router-dom';
 import { useSocket } from '../pages/SocketContext';
 
-function ReadyCheckForm({ userId }) {
+function ReadyCheckForm({ userId, onReadyCheckCreated }) {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [activity, setActivity] = useState('');
@@ -19,8 +19,19 @@ function ReadyCheckForm({ userId }) {
     const socket = useSocket();
 
     const [createReadyCheck, { loading, error }] = useMutation(CREATE_READY_CHECK, {
+        update(cache, { data: { createReadyCheck } }) {
+            const { me } = cache.readQuery({ query: QUERY_ME });
+
+            cache.writeQuery({
+                query: QUERY_ME,
+                data: { me: { ...me, ownedReadyChecks: [...me.ownedReadyChecks, createReadyCheck] } }
+            });
+        },
         onCompleted: (data) => {
             navigate(`/readycheck/${data.createReadyCheck._id}`);
+            if (onReadyCheckCreated) {
+                onReadyCheckCreated();
+            }
         }
     });
 
@@ -28,7 +39,6 @@ function ReadyCheckForm({ userId }) {
         if (socket) {
             socket.on('readyCheckCreated', (readyCheck) => {
                 console.log('ReadyCheck created:', readyCheck);
-                // Additional logic to handle the created ReadyCheck if necessary
             });
 
             return () => {
