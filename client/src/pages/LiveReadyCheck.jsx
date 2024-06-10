@@ -247,7 +247,7 @@ function LiveReadyCheckPage() {
       <div className="text-center mb-4">
         {renderCountdown()}
       </div>
-      <div className="mb-4">
+      <div className="mb-4 ">
         {editMode ? (
           <div>
             <label>
@@ -313,7 +313,7 @@ function LiveReadyCheckPage() {
           </div>
         ) :
           <div className="flex justify-center items-center">
-            <div className="p-4 bg-gray-800 rounded-md w-5/12 shadow-xl">
+            <div className="p-4 bg-gray-800 text-white rounded-md w-5/12 shadow-xl">
               {timing && <p className="text-center">When: <b>{timing}</b></p>}
               {owner?.username && <p className="text-center">Owner: <b>{owner.username}</b></p>}
               {activity && <p className="text-center">Activity: <b>{activity}</b></p>}

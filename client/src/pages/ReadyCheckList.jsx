@@ -20,11 +20,11 @@ const ActiveReadyChecks = () => {
 
   const goToLoginPage = () => {
     navigate('/login');
-  }
+  };
 
   const goToSignUpPage = () => {
     navigate('/signup');
-  }
+  };
 
   console.log(user);
 
@@ -44,7 +44,7 @@ const ActiveReadyChecks = () => {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -65,27 +65,48 @@ const ActiveReadyChecks = () => {
               <form method="dialog">
                 <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
               </form>
-              <ReadyCheckForm userId={1} />
+              <ReadyCheckForm userId={user._id} />
             </div>
           </dialog>
         </div>
 
         <div className="divider lg:divider-horizontal"></div>
         <div className="flex flex-wrap justify-center w-3/5 p-4 overflow-auto max-h-[calc(100vh-200px)]">
-          {user.ownedReadyChecks && user.ownedReadyChecks.length > 0 ? (
-            user.ownedReadyChecks.map((readyCheck) => (
-              <button key={readyCheck._id} onClick={() => navigate(`/readycheck/${readyCheck._id}`)} className="btn-accent card m-2 w-full h-32 bg-blue-btn hover:bg-blue-hover text-primary-content shadow-xl">
-                <div className="p-2 text-white text-left">
-                  <h2 className="font-bold text-4xl m-3">{readyCheck.title}</h2>
-                  <p className='py-2 px-6 text-lg'>{readyCheck.description}</p>
-                </div>
-              </button>
-            ))
-          ) : (
-            <div className='mt-20'>
-                <p className="text-3xl text-navy-blue">No active ReadyChecks found</p>
-            </div>
-          )}
+          <div className="w-full">
+            <h2 className="text-3xl text-white font-bold mb-4">Owned ReadyChecks</h2>
+            {user.ownedReadyChecks && user.ownedReadyChecks.length > 0 ? (
+              user.ownedReadyChecks.map((readyCheck) => (
+                <button key={readyCheck._id} onClick={() => navigate(`/readycheck/${readyCheck._id}`)} className="btn-accent card m-2 w-full h-32 bg-blue-btn hover:bg-blue-hover text-primary-content shadow-xl">
+                  <div className="p-2 text-white text-left">
+                    <h2 className="font-bold text-4xl m-3">{readyCheck.title}</h2>
+                    <p className='py-2 px-6 text-lg'>{readyCheck.description}</p>
+                  </div>
+                </button>
+              ))
+            ) : (
+              <div className='mt-4'>
+                  <p className="text-3xl text-white">No active ReadyChecks found</p>
+              </div>
+            )}
+          </div>
+
+          <div className="w-full mt-8">
+            <h2 className="text-3xl text-white font-bold mb-4">Received ReadyChecks</h2>
+            {user.receivedReadyChecks && user.receivedReadyChecks.length > 0 ? (
+              user.receivedReadyChecks.map((readyCheck) => (
+                <button key={readyCheck._id} onClick={() => navigate(`/readycheck/${readyCheck._id}`)} className="btn-accent card m-2 w-full h-32 bg-blue-btn hover:bg-blue-hover text-primary-content shadow-xl">
+                  <div className="p-2 text-white text-left">
+                    <h2 className="font-bold text-4xl m-3">{readyCheck.title}</h2>
+                    <p className='py-2 px-6 text-lg'>{readyCheck.description}</p>
+                  </div>
+                </button>
+              ))
+            ) : (
+              <div className='mt-4'>
+                  <p className="text-3xl text-white">No received ReadyChecks found</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </main>
