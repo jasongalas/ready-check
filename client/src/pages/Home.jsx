@@ -37,11 +37,11 @@ const Home = () => {
                   <div className='m-4'>
                     <ul className='text-lg'>
                       <li>• Group up for a gaming session</li>
-                      <li>• Meet up for some pickleball</li>
+                      <li>• Organize some impromptu pickleball</li>
                       <li>• See who's in for Cabo!</li>
                     </ul>
                   </div>
-                  <p className='text-xl font-semibold mb'>The world is your oyster!</p>
+                  <p className='text-xl font-semibold mb'>Be ready for anything!</p>
                 </div>
               </div>
             </button>

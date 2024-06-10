@@ -5,27 +5,27 @@ import ReadyCheckForm from './ReadyCheckForm';
 import { useQuery } from '@apollo/client';
 import { QUERY_USER, QUERY_ME, QUERY_NOTIFICATIONS } from '../utils/queries';
 import Notifications from './Notifications';
-import RCLogo from '../../../public/images/readycheck-logo-white.png'
+import RCLogo from '../../../public/images/readycheck-logo-white.png';
 
 const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);  // New state for modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false); 
+  const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     setIsLoggedIn(AuthServiceInstance.loggedIn());
-  }, []);
+  }, [AuthServiceInstance.loggedIn()]);
 
   const { username: userParam } = useParams();
-  const { loading, data } = useQuery(userParam ? QUERY_USER : QUERY_ME, {
+  const { loading, data, error } = useQuery(userParam ? QUERY_USER : QUERY_ME, {
     variables: { username: userParam },
   });
 
   const user = data?.me || data?.getUser || {};
 
-  const { loading: notificationsLoading, data: notificationsData } = useQuery(QUERY_NOTIFICATIONS, {
+  const { loading: notificationsLoading, data: notificationsData, error: notificationsError } = useQuery(QUERY_NOTIFICATIONS, {
     variables: { userId: user._id },
     skip: !isLoggedIn,
   });
@@ -36,6 +36,7 @@ const Header = () => {
   const handleLogout = () => {
     AuthServiceInstance.logout();
     setIsLoggedIn(false);
+    navigate('/');
   };
 
   const goToLoginPage = () => {
@@ -73,6 +74,10 @@ const Header = () => {
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
+
+  if (error || notificationsError) {
+    return <div>Error! {error ? error.message : notificationsError.message}</div>;
+  }
 
   return (
     <header className="header bg-neutral-700">
