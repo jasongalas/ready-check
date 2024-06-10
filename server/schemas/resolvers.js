@@ -4,11 +4,11 @@ const { signToken, AuthenticationError } = require('../utils/auth');
 const resolvers = {
     Query: {
         getUser: async (_, { id }) => {
-            return User.findById(id).populate('friends ownedReadyChecks');
+            return User.findById(id).populate('friends ownedReadyChecks receivedReadyChecks');
         },
 
         getUserByUsername: async (_, { username }) => {
-            return User.findOne({ username }).populate('friends ownedReadyChecks');
+            return User.findOne({ username }).populate('friends ownedReadyChecks receivedReadyChecks');
         },
 
         getUsers: async (_, __, context) => {
@@ -160,8 +160,8 @@ const resolvers = {
         
             await newReadyCheck.save();
         
-            // Create an array of promises for creating notifications
-            const notificationPromises = inviteeIds.map(async (inviteeId) => {
+            // Create an array of promises for creating notifications and updating receivedReadyChecks
+            const updatePromises = inviteeIds.map(async (inviteeId) => {
                 await Notification.create({
                     type: 'readyCheck',
                     sender: context.user._id,
@@ -169,10 +169,14 @@ const resolvers = {
                     readyCheck: newReadyCheck._id,
                     createdAt: new Date(),
                 });
+
+                await User.findByIdAndUpdate(inviteeId, {
+                    $addToSet: { receivedReadyChecks: newReadyCheck._id }
+                });
             });
         
-            // Wait for all notification creation promises to complete
-            await Promise.all(notificationPromises);
+            // Wait for all promises to complete
+            await Promise.all(updatePromises);
         
             return newReadyCheck;
         },

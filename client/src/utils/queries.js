@@ -162,6 +162,12 @@ export const QUERY_ME = gql`
         description
         createdAt
       }
+      receivedReadyChecks {
+        _id
+        title
+        description
+        createdAt
+      }
     }
   }
 `;

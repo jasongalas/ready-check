@@ -143,7 +143,7 @@ const Social = () => {
                             {errorMessage && <p className="text-red-500 mt-2">{errorMessage}</p>}
                             <div className="mt-4">
                                 {searchResult ? (
-                                    <div className="flex items-center justify-between mb-2">
+                                    <div className="flex items-center text-white justify-between mb-2">
                                         <span>{searchResult.username}</span>
                                         <button
                                             className="btn btn-sm btn-primary ml-2"
