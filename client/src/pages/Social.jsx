@@ -1,24 +1,38 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/client';
-import { QUERY_USER, QUERY_ME } from '../utils/queries';
-import { ADD_FRIEND, REMOVE_FRIEND } from '../utils/mutations';
-import { useState } from 'react';
-import { AuthServiceInstance } from '../utils/auth';
+import { QUERY_USER, QUERY_ME, QUERY_USER_BY_USERNAME } from '../utils/queries';
+import { REMOVE_FRIEND } from '../utils/mutations';
+import { useState, useEffect } from 'react';
 
 const Social = () => {
     const { username: userParam } = useParams();
-    const { loading, data, refetch } = useQuery(userParam ? QUERY_USER : QUERY_ME, {
+    const navigate = useNavigate();
+
+    const { loading: loadingMe, data: dataMe, refetch: refetchMe } = useQuery(QUERY_ME);
+    const { loading: loadingUser, data: dataUser, refetch: refetchUser } = useQuery(QUERY_USER, {
         variables: { username: userParam },
+        skip: !userParam,
     });
 
-    const [addFriend] = useMutation(ADD_FRIEND);
     const [removeFriend] = useMutation(REMOVE_FRIEND);
-    const [friendUsername, setFriendUsername] = useState('');
+    const [searchUsername, setSearchUsername] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const [searchResult, setSearchResult] = useState(null);
 
-    const user = data?.me || data?.getUser || {};
+    const { loading: loadingSearch, data: searchData, refetch: refetchUserByUsername } = useQuery(QUERY_USER_BY_USERNAME, {
+        variables: { username: searchUsername },
+        skip: true,
+    });
 
-    const navigate = useNavigate();
+    const user = dataMe?.me || dataUser?.getUser || {};
+
+    useEffect(() => {
+        if (searchData?.getUserByUsername) {
+            setSearchResult(searchData.getUserByUsername);
+        } else {
+            setSearchResult(null);
+        }
+    }, [searchData]);
 
     const goToLoginPage = () => {
         navigate('/login');
@@ -28,31 +42,36 @@ const Social = () => {
         navigate('/signup');
     };
 
-    const handleAddFriend = async () => {
-        try {
-            await addFriend({ variables: { username: friendUsername } });
-            setFriendUsername('');
-            setErrorMessage('');
-            refetch(); // Refetch the user data to get the updated friends list
-        } catch (error) {
-            setErrorMessage(error.message);
+    const handleSearch = async () => {
+        if (searchUsername.trim() === '') {
+            setErrorMessage('Please enter a username to search.');
+            return;
         }
+        setErrorMessage('');
+        try {
+            const { data } = await refetchUserByUsername({ username: searchUsername });
+            setSearchResult(data?.getUserByUsername || null);
+        } catch (error) {
+            console.error('Error searching for user:', error);
+            setErrorMessage('An error occurred while searching for the user.');
+        }
+    };
+
+    const goToUserProfile = (userId) => {
+        navigate(`/profile/${userId}`);
     };
 
     const handleRemoveFriend = async (username) => {
         try {
             await removeFriend({ variables: { username } });
-            refetch(); // Refetch the user data to get the updated friends list
+            refetchMe();
+            if (userParam) refetchUser();
         } catch (error) {
             console.error('Error removing friend:', error);
         }
     };
 
-    const goToFriendProfile = (friendId) => {
-        navigate(`/profile/${friendId}`);
-    };
-
-    if (loading) {
+    if (loadingMe || (userParam && loadingUser)) {
         return <div>Loading...</div>;
     }
 
@@ -83,7 +102,7 @@ const Social = () => {
                                     <div key={friend._id} className="flex items-center justify-between">
                                         <button
                                             className="btn font-bold text-2xl"
-                                            onClick={() => goToFriendProfile(friend._id)}
+                                            onClick={() => goToUserProfile(friend._id)}
                                         >
                                             {friend.username}
                                         </button>
@@ -103,21 +122,40 @@ const Social = () => {
                 </div>
                 <div className="divider lg:divider-horizontal"></div>
                 <div className="flex-grow h-fill w-1/2 card bg-darker-background rounded-box place-items-center m-6">
-                    <h1 className="text-5xl text-white font-bold my-7">Add a Friend</h1>
+                    <h1 className="text-5xl text-white font-bold my-7">Find a Friend</h1>
                     <div className="card w-96 bg-neutral-700 shadow-xl mt-8">
                         <div className="card-body p-12 w-full">
                             <label className="input input-bordered flex items-center gap-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-4 h-4 opacity-70"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 0 0-11.215 0c-.22.578.254 1.139.872 1.139h9.47Z" /></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-4 h-4 opacity-70">
+                                    <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 0 0-11.215 0c-.22.578.254 1.139.872 1.139h9.47Z" />
+                                </svg>
                                 <input
                                     type="text"
                                     className="grow"
                                     placeholder="Username"
-                                    value={friendUsername}
-                                    onChange={(e) => setFriendUsername(e.target.value)}
+                                    value={searchUsername}
+                                    onChange={(e) => setSearchUsername(e.target.value)}
                                 />
                             </label>
-                            <button className="btn btn-primary mt-4" onClick={handleAddFriend}>Add</button>
+                            <button className="btn btn-primary mt-4" onClick={handleSearch} disabled={loadingSearch}>
+                                {loadingSearch ? 'Searching...' : 'Search'}
+                            </button>
                             {errorMessage && <p className="text-red-500 mt-2">{errorMessage}</p>}
+                            <div className="mt-4">
+                                {searchResult ? (
+                                    <div className="flex items-center justify-between mb-2">
+                                        <span>{searchResult.username}</span>
+                                        <button
+                                            className="btn btn-sm btn-primary ml-2"
+                                            onClick={() => goToUserProfile(searchResult._id)}
+                                        >
+                                            View Profile
+                                        </button>
+                                    </div>
+                                ) : (
+                                    searchUsername && !loadingSearch && <p>No users found</p>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>
