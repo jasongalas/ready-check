@@ -11,6 +11,10 @@ const ActiveReadyChecks = () => {
   });
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  useEffect(() => {
+    setIsAuthenticated(AuthServiceInstance.loggedIn());
+  }, []);
+
   const user = data?.me || {};
 
   const navigate = useNavigate();
