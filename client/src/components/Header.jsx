@@ -66,6 +66,10 @@ const Header = () => {
     navigate('/myprofile');
   };
 
+  const goToReadyCheckPage = () => {
+    navigate('/readychecks');
+  };
+
   const openReadyCheckModal = () => {
     setIsModalOpen(true);
   };
@@ -105,6 +109,7 @@ const Header = () => {
                 <li className="nav-item"><button onClick={goToProfilePage} className="nav-link">Profile</button></li>
                 <li className="nav-item"><button onClick={goToSocialPage} className="nav-link">Social</button></li>
                 <li className="nav-item"><button onClick={openReadyCheckModal} className="nav-link">New Ready Check</button></li>
+                <li className="nav-item"><button onClick={goToReadyCheckPage} className="nav-link">Active Ready Checks</button></li>
                 <li className="nav-item"><button onClick={handleLogout} className="auth-button">Log Out</button></li>
               </>
             ) : (
