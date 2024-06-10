@@ -26,10 +26,10 @@ function LiveReadyCheckPage() {
     const intervalId = setInterval(() => {
       refetch(); // Refetch the data to ensure the latest timing
     }, 1000); // Update every second
-  
+
     return () => clearInterval(intervalId); // Cleanup the interval on component unmount
   }, []);
-  
+
 
   const [updateReadyCheck] = useMutation(UPDATE_READY_CHECK);
   const [rsvpReadyCheck] = useMutation(RSVP_READY_CHECK);
@@ -59,14 +59,6 @@ function LiveReadyCheckPage() {
       }
     };
   }, [socket]);
-
-  // useEffect(() => {
-  //   const intervalId = setInterval(() => {
-  //     refetch(); // Refetch the data to ensure the latest timing
-  //   }, 1000); // Update every second
-
-  //   return () => clearInterval(intervalId); // Cleanup the interval on component unmount
-  // }, []);
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
@@ -229,11 +221,28 @@ function LiveReadyCheckPage() {
           </div>
         </div>
       </div>
-    );    
+    );
   };
 
   return (
-    <div className="p-4 border border-gray-300 rounded">
+    <div className="p-4">
+      <div className="flex justify-end">
+        {isOwner && !editMode && (
+          <>
+            <button onClick={handleEditReadyCheck} className="btn btn-sm btn-secondary">
+              Edit ReadyCheck
+            </button>
+            <button onClick={handleDeleteReadyCheck} className="btn btn-sm btn-error ml-2">
+              Delete ReadyCheck
+            </button>
+          </>
+        )}
+        {isOwner && editMode && (
+          <button onClick={handleDeleteReadyCheck} className="btn btn-sm btn-error ml-2">
+            Delete ReadyCheck
+          </button>
+        )}
+      </div>
       <h1 className="text-4xl font-semibold text-center mb-4">{title}</h1>
       <div className="text-center mb-4">
         {renderCountdown()}
@@ -280,98 +289,115 @@ function LiveReadyCheckPage() {
                 className="textarea textarea-bordered w-full"
               />
             </label>
-            <button onClick={handleSaveReadyCheck} className="btn btn-primary mt-2">Save</button>
-          </div>
-        ) : (
-          <>
-            {timing && <p>When: {timing}</p>}
-            {owner?.username && <p>Owner: {owner.username}</p>}
-            {activity && <p>Activity: {activity}</p>}
-            {description && <p>Description: {description}</p>}
-          </>
-        )}
-      </div>
-      {isOwner && !editMode && (
-        <>
-          <button onClick={handleEditReadyCheck} className="btn btn-sm btn-secondary">
-            Edit ReadyCheck
-          </button>
-          <button onClick={handleDeleteReadyCheck} className="btn btn-sm btn-error ml-2">
-            Delete ReadyCheck
-          </button>
-        </>
-      )}
-      <div className="mt-4" onClick={handleButtonWrapperClick}>
-        <label className="block mb-2">
-          RSVP Options:
-          <div className="flex flex-wrap gap-2">
-            <button
-              onClick={() => handleRSVPSelection('Pending')}
-              className={`btn btn-sm ${selectedResponse === 'Pending' ? 'btn-primary' : 'btn-outline-primary'}`}
-            >
-              Pending
-            </button>
-            <button
-              onClick={() => handleRSVPSelection('Ready')}
-              className={`btn btn-sm ${selectedResponse === 'Ready' ? 'btn-success' : 'btn-outline-success'}`}
-            >
-              I'm Ready
-            </button>
-            <button
-              onClick={() => handleRSVPSelection('Maybe')}
-              className={`btn btn-sm ${selectedResponse === 'Maybe' ? 'btn-warning' : 'btn-outline-warning'}`}
-            >
-              Maybe
-            </button>
-            <button
-              onClick={() => handleRSVPSelection('Declined')}
-              className={`btn btn-sm ${selectedResponse === 'Declined' ? 'btn-error' : 'btn-outline-error'}`}
-            >
-              I Can't Join
-            </button>
-          </div>
-          <div className="mt-4 grid grid-cols-4 gap-4">
-            <div className="col-span-1">
-              <h2 className="text-xl font-semibold">Invitees:</h2>
-              {invitees.map((invitee) => (
-                <p key={invitee.username}>{invitee.username}</p>
-              ))}
+            <div className="flex flex-wrap gap-2 mb-2 justify-center" style={{ flexDirection: 'row' }}>
+              {invitees.map((inviteeId) => {
+                const invitee = friends.find((friend) => friend._id === inviteeId);
+                return (
+                  <button
+                    key={invitee._id}
+                    type="button"
+                    onClick={() => handleInviteeClick(invitee._id)}
+                    className="btn btn-primary m-2"
+                  >
+                    {invitee.username}
+                  </button>
+                );
+              })}
             </div>
-            <div className="col-span-3">
-              <h2 className="text-xl font-semibold">RSVPs:</h2>
-              {RSVPs.map((rsvp) => (
-                <p key={rsvp._id}>
-                  {rsvp.user.username}: {rsvp.reply}
-                </p>
-              ))}
-            </div>
+            <button onClick={handleSaveReadyCheck} className="btn btn-sm btn-primary">
+              Save
+            </button>
+            <button onClick={() => setEditMode(false)} className="btn btn-sm btn-warning ml-3">
+              Cancel
+            </button>
           </div>
-        </label>
+        ) :
+          <div className="flex justify-center items-center">
+            <div className="p-4 bg-gray-800 rounded-md w-5/12 shadow-xl">
+              {timing && <p className="text-center">When: <b>{timing}</b></p>}
+              {owner?.username && <p className="text-center">Owner: <b>{owner.username}</b></p>}
+              {activity && <p className="text-center">Activity: <b>{activity}</b></p>}
+              {description && <p className="text-center">Description: <b>{description}</b></p>}
+            </div>
+          </div>}
       </div>
       <div className="mt-4">
-        <h2 className="text-xl font-semibold">Messages:</h2>
-        <ul ref={messagesRef} className="chat-messages max-h-48 overflow-auto">
-          {chatMessages.slice(-10).map((message) => (
-            <li key={message._id} className="border-b py-2">
-              <strong>{message.user.username}:</strong> {message.content}{' '}
-              <span className="text-sm text-gray-500">{message.timestamp}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div className="mt-4">
-        <form onSubmit={handleSendMessage} className="flex flex-row items-center">
-          <input
-            type="text"
-            className="flex-1 px-2 py-1 border border-gray-300 rounded mr-2"
-            placeholder="Type your message..."
-            value={messageInput}
-            onChange={(e) => setMessageInput(e.target.value)}
-          />
-          <button type="submit" className="btn btn-primary">
-            Send
+        <h2 className="text-xl text-center font-semibold">RSVP Options:</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-2">
+          <button
+            onClick={() => handleRSVPSelection('Pending')}
+            className={`btn ${selectedResponse === 'Pending' ? 'btn-primary' : 'btn-outline-primary'}`}
+          >
+            Pending
           </button>
-        </form>
+          <button
+            onClick={() => handleRSVPSelection('Ready')}
+            className={`btn ${selectedResponse === 'Ready' ? 'btn-success' : 'btn-outline-success'}`}
+          >
+            I'm Ready
+          </button>
+          <button
+            onClick={() => handleRSVPSelection('Maybe')}
+            className={`btn ${selectedResponse === 'Maybe' ? 'btn-warning' : 'btn-outline-warning'}`}
+          >
+            Maybe
+          </button>
+          <button
+            onClick={() => handleRSVPSelection('Declined')}
+            className={`btn ${selectedResponse === 'Declined' ? 'btn-error' : 'btn-outline-error'}`}
+          >
+            I Can't Join
+          </button>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mt-1">
+          <div className="pr-4">
+            {RSVPs.filter((rsvp) => rsvp.reply === 'Pending').map((rsvp) => (
+              <p className="text-center" key={rsvp.user._id}>{rsvp.user.username}</p>
+            ))}
+          </div>
+          <div className="pr-4">
+            {RSVPs.filter((rsvp) => rsvp.reply === 'Ready').map((rsvp) => (
+              <p className="text-center" key={rsvp.user._id}>{rsvp.user.username}</p>
+            ))}
+          </div>
+          <div className="pr-4">
+            {RSVPs.filter((rsvp) => rsvp.reply === 'Maybe').map((rsvp) => (
+              <p className="text-center" key={rsvp.user._id}>{rsvp.user.username}</p>
+            ))}
+          </div>
+          <div>
+            {RSVPs.filter((rsvp) => rsvp.reply === 'Declined').map((rsvp) => (
+              <p className="text-center" key={rsvp.user._id}>{rsvp.user.username}</p>
+            ))}
+          </div>
+        </div>
+      </div>
+      <h2 className="text-xl font-semibold mt-5">Messages:</h2>
+      <div className="mt-2 bottom-border border-gray-300 rounded-md p-0">
+        <div>
+          <ul ref={messagesRef} className="chat-messages p-3 max-h-48 overflow-auto border border-gray-300">
+            {chatMessages.slice(-10).map((message, index) => (
+              <li key={message._id} className={`py-2 ${index % 2 === 0 ? 'bg-transparent' : 'bg-gray-700 bg-opacity-20'}`}>
+                <strong>{message.user.username}:</strong> {message.content}{' '}
+                <span className="text-sm text-gray-500">{message.timestamp}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="mt-4 p-4 rounded-lg shadow-lg">
+          <form onSubmit={handleSendMessage} className="flex items-center">
+            <input
+              type="text"
+              className="flex-1 px-4 py-2 mr-4 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+              placeholder="Type your message..."
+              value={messageInput}
+              onChange={(e) => setMessageInput(e.target.value)}
+            />
+            <button type="submit" className="btn btn-primary">
+              Send
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );

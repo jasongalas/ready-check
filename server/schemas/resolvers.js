@@ -7,6 +7,10 @@ const resolvers = {
             return User.findById(id).populate('friends ownedReadyChecks');
         },
 
+        getUserByUsername: async (_, { username }) => {
+            return User.findOne({ username }).populate('friends ownedReadyChecks');
+        },
+
         getUsers: async (_, __, context) => {
             return User.find({});
         },

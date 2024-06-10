@@ -112,6 +112,27 @@ export const QUERY_USER = gql`
   }
 `;
 
+export const QUERY_USER_BY_USERNAME = gql`
+  query getUserByUsername($username: String!) {
+    getUserByUsername(username: $username) {
+      _id
+      username
+      bio
+      status
+      friends {
+        _id
+        username
+      }
+      ownedReadyChecks {
+        _id
+        title
+        description
+        createdAt
+      }
+    }
+  }
+`;
+
 export const QUERY_FRIENDS = gql`
   query getFriends($userId: ID!) {
     getFriends(userId: $userId) {
