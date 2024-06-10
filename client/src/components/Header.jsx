@@ -16,7 +16,7 @@ const Header = () => {
 
   useEffect(() => {
     setIsLoggedIn(AuthServiceInstance.loggedIn());
-  }, [AuthServiceInstance.loggedIn()]);
+  }, []);
 
   const { username: userParam } = useParams();
   const { loading, data, error } = useQuery(userParam ? QUERY_USER : QUERY_ME, {
@@ -75,17 +75,13 @@ const Header = () => {
     setMenuOpen(!menuOpen);
   };
 
-  if (error || notificationsError) {
-    return <div>Error! {error ? error.message : notificationsError.message}</div>;
-  }
-
   return (
     <header className="header bg-neutral-700">
       <div className="navbar bg-transparent text-navy-blue shadow-md">
         <div className="flex-1">
-          <a className="btn btn-ghost text-neutral-100 text-2xl" onClick={goToHomePage}>
+          <button className="btn btn-ghost text-neutral-100 text-2xl" onClick={goToHomePage}>
             <img src={RCLogo} alt="ReadyCheck" className="h-12 mt-2 w-auto" />
-          </a>
+          </button>
         </div>
         <div className="flex-none lg:hidden">
           <button className="btn btn-ghost btn-circle" onClick={toggleMenu}>
