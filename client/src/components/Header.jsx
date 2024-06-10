@@ -36,7 +36,12 @@ const Header = () => {
   const handleLogout = () => {
     AuthServiceInstance.logout();
     setIsLoggedIn(false);
-    navigate('/');
+    
+    if (window.location.pathname === '/') {
+      window.location.reload();
+    } else {
+      navigate('/');
+    }
   };
 
   const goToLoginPage = () => {
