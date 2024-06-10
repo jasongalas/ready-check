@@ -61,6 +61,7 @@ type Auth {
 
 type Query {
   getUser(id: ID!): User
+  getUserByUsername(username: String!): User
   getUsers: [User]
   getReadyCheck(id: ID!): ReadyCheck
   getFriends(userId: ID!): [User]
