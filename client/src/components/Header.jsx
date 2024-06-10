@@ -5,27 +5,29 @@ import ReadyCheckForm from './ReadyCheckForm';
 import { useQuery } from '@apollo/client';
 import { QUERY_USER, QUERY_ME, QUERY_NOTIFICATIONS } from '../utils/queries';
 import Notifications from './Notifications';
-import RCLogo from '../../../public/images/readycheck-logo-white.png'
+import RCLogo from '../../../public/images/readycheck-logo-white.png';
 
 const Header = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);  // New state for modal
+  const [isLoggedIn, setIsLoggedIn] = useState(AuthServiceInstance.loggedIn());
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false); 
+  const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    setIsLoggedIn(AuthServiceInstance.loggedIn());
+    const checkAuthStatus = () => setIsLoggedIn(AuthServiceInstance.loggedIn());
+    window.addEventListener('storage', checkAuthStatus);
+    return () => window.removeEventListener('storage', checkAuthStatus);
   }, []);
 
   const { username: userParam } = useParams();
-  const { loading, data } = useQuery(userParam ? QUERY_USER : QUERY_ME, {
+  const { loading, data, error } = useQuery(userParam ? QUERY_USER : QUERY_ME, {
     variables: { username: userParam },
   });
 
   const user = data?.me || data?.getUser || {};
 
-  const { loading: notificationsLoading, data: notificationsData } = useQuery(QUERY_NOTIFICATIONS, {
+  const { loading: notificationsLoading, data: notificationsData, error: notificationsError } = useQuery(QUERY_NOTIFICATIONS, {
     variables: { userId: user._id },
     skip: !isLoggedIn,
   });
@@ -36,6 +38,12 @@ const Header = () => {
   const handleLogout = () => {
     AuthServiceInstance.logout();
     setIsLoggedIn(false);
+    
+    if (window.location.pathname === '/') {
+      window.location.reload();
+    } else {
+      navigate('/');
+    }
   };
 
   const goToLoginPage = () => {
@@ -78,9 +86,9 @@ const Header = () => {
     <header className="header bg-neutral-700">
       <div className="navbar bg-transparent text-navy-blue shadow-md">
         <div className="flex-1">
-          <a className="btn btn-ghost text-neutral-100 text-2xl" onClick={goToHomePage}>
+          <button className="btn btn-ghost text-neutral-100 text-2xl" onClick={goToHomePage}>
             <img src={RCLogo} alt="ReadyCheck" className="h-12 mt-2 w-auto" />
-          </a>
+          </button>
         </div>
         <div className="flex-none lg:hidden">
           <button className="btn btn-ghost btn-circle" onClick={toggleMenu}>

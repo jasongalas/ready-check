@@ -19,7 +19,6 @@ function Notifications({ userId }) {
         }
     };
 
-
     return (
         <div className="p-2">
             <h3 className="text-lg font-bold">Recent Notifications</h3>

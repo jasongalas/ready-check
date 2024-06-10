@@ -21,15 +21,7 @@ function LiveReadyCheckPage() {
   const { loading, error, data, refetch } = useQuery(QUERY_READY_CHECK, {
     variables: { id },
   });
-
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      refetch(); // Refetch the data to ensure the latest timing
-    }, 1000); // Update every second
-
-    return () => clearInterval(intervalId); // Cleanup the interval on component unmount
-  }, [refetch]);
-
+  
   const [updateReadyCheck] = useMutation(UPDATE_READY_CHECK);
   const [rsvpReadyCheck] = useMutation(RSVP_READY_CHECK);
   const [sendChatMessage] = useMutation(SEND_CHAT_MESSAGE);
@@ -390,14 +382,35 @@ function LiveReadyCheckPage() {
       <h2 className="text-xl font-semibold mt-5">Messages:</h2>
       <div className="mt-2 bottom-border border-gray-300 rounded-md p-0">
         <div>
-          <ul ref={messagesRef} className="chat-messages p-3 max-h-48 overflow-auto border border-gray-300">
-            {chatMessages.slice(-10).map((message, index) => (
-              <li key={message._id} className={`py-2 ${index % 2 === 0 ? 'bg-transparent' : 'bg-gray-700 bg-opacity-20'}`}>
-                <strong>{message.user.username}:</strong> {message.content}{' '}
-                <span className="text-sm text-gray-500">{message.timestamp}</span>
-              </li>
-            ))}
-          </ul>
+          {chatMessages.length === 0 ? (
+            <div className="alert bg-gray-400 text-black shadow-lg">
+              <div>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="stroke-current flex-shrink-0 h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12c0-4.418-3.582-8-8-8S5 7.582 5 12s3.582 8 8 8 8-3.582 8-8z"
+                  />
+                </svg>
+                <span>No messages yet. Be the first to say something!</span>
+              </div>
+            </div>
+          ) : (
+            <ul ref={messagesRef} className="chat-messages p-3 max-h-48 overflow-auto border border-gray-300 bg-gray-900 rounded-md">
+              {chatMessages.slice(-10).map((message, index) => (
+                <li key={message._id} className={`py-2 ${index % 2 === 0 ? 'bg-transparent' : 'bg-gray-700 bg-opacity-20'} rounded-md`}>
+                  <strong>{message.user.username}:</strong> {message.content}{' '}
+                  <span className="text-sm text-gray-500">{message.timestamp}</span>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
         <div className="mt-4 p-4 rounded-lg shadow-lg">
           <form onSubmit={handleSendMessage} className="flex items-center">
