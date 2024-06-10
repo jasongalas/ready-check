@@ -8,14 +8,16 @@ import Notifications from './Notifications';
 import RCLogo from '../../../public/images/readycheck-logo-white.png';
 
 const Header = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(AuthServiceInstance.loggedIn());
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    setIsLoggedIn(AuthServiceInstance.loggedIn());
+    const checkAuthStatus = () => setIsLoggedIn(AuthServiceInstance.loggedIn());
+    window.addEventListener('storage', checkAuthStatus);
+    return () => window.removeEventListener('storage', checkAuthStatus);
   }, []);
 
   const { username: userParam } = useParams();
