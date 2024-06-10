@@ -133,7 +133,7 @@ const Profile = () => {
                   {isEditingStatus ? (
                     <div>
                       <textarea
-                        className="textarea textarea-bordered w-full"
+                        className="textarea textarea-bordered w-full bg-white border border-gray-700"
                         value={newStatus}
                         onChange={(e) => setNewStatus(e.target.value)}
                       />
@@ -152,7 +152,7 @@ const Profile = () => {
                   {isEditingBio ? (
                     <div>
                       <textarea
-                        className="textarea textarea-bordered w-full"
+                        className="textarea textarea-bordered w-full bg-white border border-gray-700"
                         value={newBio}
                         onChange={(e) => setNewBio(e.target.value)}
                       />
