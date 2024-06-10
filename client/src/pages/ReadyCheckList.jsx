@@ -9,6 +9,7 @@ const ActiveReadyChecks = () => {
   const { loading, data, refetch } = useQuery(userParam ? QUERY_USER : QUERY_ME, {
     variables: { username: userParam },
   });
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const user = data?.me || {};
 
