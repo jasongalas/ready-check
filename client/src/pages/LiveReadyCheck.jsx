@@ -4,13 +4,13 @@ import { useQuery, useMutation } from '@apollo/client';
 import { QUERY_READY_CHECK, QUERY_ME } from '../utils/queries';
 import { UPDATE_READY_CHECK, RSVP_READY_CHECK, SEND_CHAT_MESSAGE, DELETE_READY_CHECK } from '../utils/mutations';
 import { useSocket } from './SocketContext';
-import { parse, format } from 'date-fns';
+import { parse } from 'date-fns';
 
 function LiveReadyCheckPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const socket = useSocket();
-  const { data: userData } = useQuery(QUERY_ME); // Fetch current user's data
+  const { data: userData, loading: meLoading } = useQuery(QUERY_ME); // Fetch current user's data
 
   const [editMode, setEditMode] = useState(false);
   const [updatedReadyCheckData, setUpdatedReadyCheckData] = useState({});
@@ -28,8 +28,7 @@ function LiveReadyCheckPage() {
     }, 1000); // Update every second
 
     return () => clearInterval(intervalId); // Cleanup the interval on component unmount
-  }, []);
-
+  }, [refetch]);
 
   const [updateReadyCheck] = useMutation(UPDATE_READY_CHECK);
   const [rsvpReadyCheck] = useMutation(RSVP_READY_CHECK);
@@ -110,6 +109,7 @@ function LiveReadyCheckPage() {
       timing: localTime,
       activity: data.getReadyCheck.activity,
       description: data.getReadyCheck.description,
+      invitees: data.getReadyCheck.invitees.map(invitee => invitee._id) // Add invitees to the state
     });
   };
 
@@ -122,6 +122,7 @@ function LiveReadyCheckPage() {
           activity: updatedReadyCheckData.activity,
           timing: updatedReadyCheckData.timing,
           description: updatedReadyCheckData.description,
+          inviteeIds: updatedReadyCheckData.invitees // Include inviteeIds in the mutation variables
         },
       });
       setEditMode(false);
@@ -150,11 +151,20 @@ function LiveReadyCheckPage() {
     });
   };
 
+  const handleInviteeClick = (id) => {
+    setUpdatedReadyCheckData((prevData) => ({
+      ...prevData,
+      invitees: prevData.invitees.includes(id)
+        ? prevData.invitees.filter((inviteeId) => inviteeId !== id)
+        : [...prevData.invitees, id],
+    }));
+  };
+
   const handleButtonWrapperClick = (e) => {
     e.stopPropagation();
   };
 
-  if (loading) return <div className="py-4">Loading...</div>;
+  if (loading || meLoading) return <div className="py-4">Loading...</div>;
   if (error) return <div className="py-4">Error: {error.message}</div>;
 
   const { title, owner, timing, activity, invitees, description, RSVPs, chatMessages } = data.getReadyCheck || {};
@@ -186,8 +196,8 @@ function LiveReadyCheckPage() {
     const remainingTime = calculateTimeRemaining();
 
     // Check if countdown is finished
-    if (remainingTime.days == 0 && remainingTime.hours == 0 && remainingTime.minutes == 0 && remainingTime.seconds == 0) {
-      return <p className="text-3xl font-bold">Ready Time!</p>;
+    if (remainingTime.days === 0 && remainingTime.hours === 0 && remainingTime.minutes === 0 && remainingTime.seconds === 0) {
+      return <p className="text-3xl font-bold">It's Time!</p>;
     }
 
     // Render countdown if it's not finished
@@ -229,7 +239,7 @@ function LiveReadyCheckPage() {
       <div className="flex justify-end">
         {isOwner && !editMode && (
           <>
-            <button onClick={handleEditReadyCheck} className="btn btn-sm btn-secondary">
+            <button onClick={handleEditReadyCheck} className="btn btn-sm btn-warning">
               Edit ReadyCheck
             </button>
             <button onClick={handleDeleteReadyCheck} className="btn btn-sm btn-error ml-2">
@@ -247,7 +257,7 @@ function LiveReadyCheckPage() {
       <div className="text-center mb-4">
         {renderCountdown()}
       </div>
-      <div className="mb-4 ">
+      <div className="mb-4">
         {editMode ? (
           <div>
             <label>
@@ -289,21 +299,21 @@ function LiveReadyCheckPage() {
                 className="textarea textarea-bordered w-full"
               />
             </label>
-            <div className="flex flex-wrap gap-2 mb-2 justify-center" style={{ flexDirection: 'row' }}>
-              {invitees.map((inviteeId) => {
-                const invitee = friends.find((friend) => friend._id === inviteeId);
-                return (
+            <label>
+              Invitees:
+              <div className="flex flex-wrap gap-2 mb-2 justify-center" style={{ flexDirection: 'row' }}>
+                {userData.me.friends.map((friend) => (
                   <button
-                    key={invitee._id}
+                    key={friend._id}
                     type="button"
-                    onClick={() => handleInviteeClick(invitee._id)}
-                    className="btn btn-primary m-2"
+                    onClick={() => handleInviteeClick(friend._id)}
+                    className={`btn ${updatedReadyCheckData.invitees.includes(friend._id) ? 'btn-primary' : 'btn-outline-primary'} m-2`}
                   >
-                    {invitee.username}
+                    {friend.username}
                   </button>
-                );
-              })}
-            </div>
+                ))}
+              </div>
+            </label>
             <button onClick={handleSaveReadyCheck} className="btn btn-sm btn-primary">
               Save
             </button>
@@ -311,15 +321,20 @@ function LiveReadyCheckPage() {
               Cancel
             </button>
           </div>
-        ) :
+        ) : (
           <div className="flex justify-center items-center">
             <div className="p-4 bg-gray-800 text-white rounded-md w-5/12 shadow-xl">
               {timing && <p className="text-center">When: <b>{timing}</b></p>}
               {owner?.username && <p className="text-center">Owner: <b>{owner.username}</b></p>}
               {activity && <p className="text-center">Activity: <b>{activity}</b></p>}
               {description && <p className="text-center">Description: <b>{description}</b></p>}
+              <p className="text-center mt-4">Invitees:</p>
+              {invitees.map((invitee) => (
+                <p className="text-center" key={invitee._id}>{invitee.username}</p>
+              ))}
             </div>
-          </div>}
+          </div>
+        )}
       </div>
       <div className="mt-4">
         <h2 className="text-xl text-center font-semibold">RSVP Options:</h2>
