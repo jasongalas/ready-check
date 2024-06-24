@@ -78,6 +78,10 @@ type Mutation {
     password: String!
   ): Auth
 
+deleteUser (
+  _id: ID!
+): User
+
   login(
     email: String!,
     password: String!

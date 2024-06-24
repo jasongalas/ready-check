@@ -71,6 +71,21 @@ const resolvers = {
             return { token, newUser };
         },
 
+        deleteUser: async (_, { _id }, context) => {
+            if (!context.user) {
+                throw new AuthenticationError('You need to be logged in!');
+            }
+            const userId = context.user._id;
+
+            await ReadyCheck.deleteMany({ owner: userId });
+
+            await Notification.deleteMany({ $or: [{ sender: userId }, { recipient: userId }] });
+
+            const deletedUser = await User.findOneAndDelete({ _id: userId });
+
+            return deletedUser;
+        },
+
         login: async (_, { email, password }) => {
             const user = await User.findOne({ email });
 

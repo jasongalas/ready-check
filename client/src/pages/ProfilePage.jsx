@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/client';
 import { QUERY_USER, QUERY_ME } from '../utils/queries';
-import { UPDATE_USER_BIO, UPDATE_USER_STATUS } from '../utils/mutations';
+import { UPDATE_USER_BIO, UPDATE_USER_STATUS, DELETE_USER } from '../utils/mutations';
 import { useState, useEffect } from 'react';
 import { AuthServiceInstance } from '../utils/auth';
 import ProfileStandIn from '../../../public/images/profile-stand-in.png'
@@ -44,6 +44,7 @@ const Profile = () => {
     }
   });
 
+  const [deleteUser] = useMutation(DELETE_USER);
   const [isEditingBio, setIsEditingBio] = useState(false);
   const [newBio, setNewBio] = useState('');
   const [isEditingStatus, setIsEditingStatus] = useState(false);
@@ -92,6 +93,18 @@ const Profile = () => {
       console.error('Error updating status:', err);
     }
   };
+
+  const handleDeleteAccount = async () => {
+    try {
+      await deleteUser({ variables: { _id: user._id } });
+      AuthServiceInstance.logout(); // Ensure the user is logged out
+      navigate('/'); // Redirect to home or login page
+      window.location.reload(); // Reload the page to clear any state
+    } catch (err) {
+      console.error('Error deleting account:', err);
+    }
+  };
+
 
   if (loading) {
     return <div>Loading...</div>;
@@ -192,6 +205,11 @@ const Profile = () => {
                     </div>
                   </div>
                 </div>
+              </div>
+              <div className="mt-10 py-10 border-t border-blueGray-200 text-center">
+                <button className="btn btn-danger" onClick={handleDeleteAccount}>
+                  Delete Account
+                </button>
               </div>
             </div>
           </div>
