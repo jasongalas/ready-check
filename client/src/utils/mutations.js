@@ -126,6 +126,16 @@ export const CREATE_USER = gql`
   }
 `;
 
+export const DELETE_USER = gql`
+  mutation deleteUser($_id: ID!) {
+    deleteUser(_id: $_id) {
+      _id
+      username
+    }
+  }
+`;
+
+
 export const SEND_CHAT_MESSAGE = gql`
   mutation SendMessage($readyCheckId: ID!, $userId: ID!, $content: String!) {
     sendMessage(readyCheckId: $readyCheckId, userId: $userId, content: $content) {
